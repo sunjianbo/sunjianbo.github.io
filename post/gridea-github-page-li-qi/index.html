@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>文章归档 | 孙建博的小站</title>
+<title>Gridea——github pages搭建个人博客利器 | 孙建博的小站</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -12,13 +12,22 @@
 <link rel="stylesheet" href="https://sunjianbo.github.io/styles/main.css">
 
 
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
 
 <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
 
 
-    <meta name="description" content="互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升">
+    <meta name="description" content="以前也想过搞github pages做博客,但是一搜教程看着那一步步超级麻烦的操作步骤,无奈放弃.
+今天浏览网站时无意中发现了Gridea,顿时惊为天人.
+它提供一个美观方便的客户端工具,以此简化了github pages的操作方法.使小白..." />
+    <meta name="keywords" content="github page,Gridea" />
   </head>
   <body>
     <div id="app" class="main">
@@ -93,47 +102,62 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
-          
+          <div class="post-detail">
+            <h2 class="post-title">Gridea——github pages搭建个人博客利器</h2>
+            <div class="post-date">2020-02-25</div>
+            
+            <div class="post-content" v-pre>
+              <p>以前也想过搞github pages做博客,但是一搜教程看着那一步步超级麻烦的操作步骤,无奈放弃.<br>
+今天浏览网站时无意中发现了Gridea,顿时惊为天人.<br>
+它提供一个美观方便的客户端工具,以此简化了github pages的操作方法.使小白也能简简单单搭建一个个人博客了.<br>
+同时还支持MarkDown,简直不能再妙!</p>
+<blockquote>
+<p>官方网站:</p>
+</blockquote>
+<p>https://gridea.dev/</p>
+<blockquote>
+<p>github主页:</p>
+</blockquote>
+<p>https://github.com/getgridea/gridea</p>
+<blockquote>
+<p>简单教程:</p>
+</blockquote>
+<p>https://fehey.com/post/hve-notes-start/</p>
 
-          <h2 class="archives-title">文章归档</h2>
-          <div class="archives-container">
+            </div>
             
-              <h2 class="year" data-aos="fade-in" data-aos-delay="500">2020</h2>
+              <div class="tag-container">
+                
+                  <a href="https://sunjianbo.github.io/tag/rMH1KzyfW/" class="tag">
+                    github page
+                  </a>
+                
+                  <a href="https://sunjianbo.github.io/tag/0HhNSXVHg/" class="tag">
+                    Gridea
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://sunjianbo.github.io/post/hello-gridea/">
+                  <h3 class="post-title">
+                    Hello Gridea
+                  </h3>
+                </a>
+              </div>
+            
+
+            
               
-                
-                  <article class="post">
-                    <a href="https://sunjianbo.github.io/post/gridea-github-page-li-qi/">
-                      <h2 class="post-title">
-                        Gridea——github pages搭建个人博客利器
-                      </h2>
-                    </a>
-                  </article>
-                
+                <div id="gitalk-container" data-aos="fade-in"></div>
               
-                
+
               
             
-              <h2 class="year" data-aos="fade-in" data-aos-delay="500">2018</h2>
-              
-                
-              
-                
-                  <article class="post">
-                    <a href="https://sunjianbo.github.io/post/hello-gridea/">
-                      <h2 class="post-title">
-                        Hello Gridea
-                      </h2>
-                    </a>
-                  </article>
-                
-              
-            
+
           </div>
-
-          <div class="pagination-container">
-  
-  
-</div>
 
         </div>
       </div>
@@ -154,6 +178,29 @@ var app = new Vue({
 </script>
 
 
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
 
 
 
