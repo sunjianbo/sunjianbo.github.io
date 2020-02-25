@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://sunjianbo.github.io</id>
     <title>孙建博的小站</title>
-    <updated>2020-02-25T07:58:22.689Z</updated>
+    <updated>2020-02-25T08:08:04.141Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://sunjianbo.github.io"/>
     <link rel="self" href="https://sunjianbo.github.io/atom.xml"/>
@@ -20,18 +20,12 @@
 今天浏览网站时无意中发现了Gridea,顿时惊为天人.<br>
 它提供一个美观方便的客户端工具,以此简化了github pages的操作方法.使小白也能简简单单搭建一个个人博客了.<br>
 同时还支持MarkDown,简直不能再妙!</p>
-<blockquote>
-<p>官方网站:</p>
-</blockquote>
-<p>https://gridea.dev/</p>
-<blockquote>
-<p>github主页:</p>
-</blockquote>
-<p>https://github.com/getgridea/gridea</p>
-<blockquote>
-<p>简单教程:</p>
-</blockquote>
-<p>https://fehey.com/post/hve-notes-start/</p>
+<h2 id="官方网站">官方网站:</h2>
+<p><a href="https://gridea.dev/">https://gridea.dev/</a></p>
+<h2 id="github主页">github主页:</h2>
+<p><a href="https://github.com/getgridea/gridea">https://github.com/getgridea/gridea</a></p>
+<h2 id="简单教程">简单教程:</h2>
+<p><a href="https://fehey.com/post/hve-notes-start/">https://fehey.com/post/hve-notes-start/</a></p>
 ]]></content>
     </entry>
     <entry>
