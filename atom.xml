@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://sunjianbo.github.io</id>
+    <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-03-08T03:05:45.239Z</updated>
+    <updated>2020-03-08T03:45:40.098Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://sunjianbo.github.io"/>
-    <link rel="self" href="https://sunjianbo.github.io/atom.xml"/>
+    <link rel="alternate" href="https://www.sunjianbo.com"/>
+    <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
     <subtitle>互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升</subtitle>
-    <logo>https://sunjianbo.github.io/images/avatar.png</logo>
-    <icon>https://sunjianbo.github.io/favicon.ico</icon>
+    <logo>https://www.sunjianbo.com/images/avatar.png</logo>
+    <icon>https://www.sunjianbo.com/favicon.ico</icon>
     <rights>All rights reserved 2020, 孙建博的小站</rights>
     <entry>
         <title type="html"><![CDATA[Gridea——github pages搭建个人博客利器]]></title>
-        <id>https://sunjianbo.github.io/post/gridea-github-page-li-qi/</id>
-        <link href="https://sunjianbo.github.io/post/gridea-github-page-li-qi/">
+        <id>https://www.sunjianbo.com/post/gridea-github-page-li-qi/</id>
+        <link href="https://www.sunjianbo.com/post/gridea-github-page-li-qi/">
         </link>
         <updated>2020-02-25T07:42:55.000Z</updated>
         <content type="html"><![CDATA[<p>以前也想过搞github pages做博客,但是一搜教程看着那一步步超级麻烦的操作步骤,无奈放弃.<br>
@@ -30,8 +30,8 @@
     </entry>
     <entry>
         <title type="html"><![CDATA[springboot通过java -jar运行实现ApplicationContextAware接口报空指针NUllPointerException]]></title>
-        <id>https://sunjianbo.github.io/post/2019-07-22-springboot-applicationcontextaware-nullpointerexception/</id>
-        <link href="https://sunjianbo.github.io/post/2019-07-22-springboot-applicationcontextaware-nullpointerexception/">
+        <id>https://www.sunjianbo.com/post/2019-07-22-springboot-applicationcontextaware-nullpointerexception/</id>
+        <link href="https://www.sunjianbo.com/post/2019-07-22-springboot-applicationcontextaware-nullpointerexception/">
         </link>
         <updated>2019-07-22T00:06:58.000Z</updated>
         <content type="html"><![CDATA[<h2 id="先描述背景">先描述背景：</h2>
@@ -56,8 +56,8 @@ at com.ceair.b2t.messagecenter.SpringContextUtil.getBean(SpringContextUtil.java:
     </entry>
     <entry>
         <title type="html"><![CDATA[FileZilla支持Windows XP版本官方下载地址]]></title>
-        <id>https://sunjianbo.github.io/post/2019-04-10-filezilla-for-windows-xp-download/</id>
-        <link href="https://sunjianbo.github.io/post/2019-04-10-filezilla-for-windows-xp-download/">
+        <id>https://www.sunjianbo.com/post/2019-04-10-filezilla-for-windows-xp-download/</id>
+        <link href="https://www.sunjianbo.com/post/2019-04-10-filezilla-for-windows-xp-download/">
         </link>
         <updated>2019-04-09T17:59:04.000Z</updated>
         <content type="html"><![CDATA[<p>FileZilla很早就已经不支持xp系统了</p>
@@ -72,8 +72,8 @@ at com.ceair.b2t.messagecenter.SpringContextUtil.getBean(SpringContextUtil.java:
     </entry>
     <entry>
         <title type="html"><![CDATA[最简单解决linux解压缩乱码问题]]></title>
-        <id>https://sunjianbo.github.io/post/2018-12-26-the-easiest-solution-to-linux-decompression-garbled/</id>
-        <link href="https://sunjianbo.github.io/post/2018-12-26-the-easiest-solution-to-linux-decompression-garbled/">
+        <id>https://www.sunjianbo.com/post/2018-12-26-the-easiest-solution-to-linux-decompression-garbled/</id>
+        <link href="https://www.sunjianbo.com/post/2018-12-26-the-easiest-solution-to-linux-decompression-garbled/">
         </link>
         <updated>2018-12-25T18:07:26.000Z</updated>
         <content type="html"><![CDATA[<p>因为在windows下压缩的文件是使用(gbk,gb18030)编码的，所以在linux(utf-8)下面直接解压有编码问题</p>
@@ -88,8 +88,8 @@ at com.ceair.b2t.messagecenter.SpringContextUtil.getBean(SpringContextUtil.java:
     </entry>
     <entry>
         <title type="html"><![CDATA[No value specified for 'BigDecimal']]></title>
-        <id>https://sunjianbo.github.io/post/2018-07-24-no-value-specified-for-bigdecimal/</id>
-        <link href="https://sunjianbo.github.io/post/2018-07-24-no-value-specified-for-bigdecimal/">
+        <id>https://www.sunjianbo.com/post/2018-07-24-no-value-specified-for-bigdecimal/</id>
+        <link href="https://www.sunjianbo.com/post/2018-07-24-no-value-specified-for-bigdecimal/">
         </link>
         <updated>2018-07-24T01:52:34.000Z</updated>
         <content type="html"><![CDATA[<p>使用<strong>org.apache.commons.beanutils.BeanUtils</strong>进行对象拷贝时，遇到BigDecimal的属性会报错</p>
@@ -106,8 +106,8 @@ ConvertUtils.register(bd, java.math.BigDecimal.class);
     </entry>
     <entry>
         <title type="html"><![CDATA[Web大规模高并发请求和抢购的解决方案]]></title>
-        <id>https://sunjianbo.github.io/post/2018-07-10-high-concurrency-requests-and-snap-up/</id>
-        <link href="https://sunjianbo.github.io/post/2018-07-10-high-concurrency-requests-and-snap-up/">
+        <id>https://www.sunjianbo.com/post/2018-07-10-high-concurrency-requests-and-snap-up/</id>
+        <link href="https://www.sunjianbo.com/post/2018-07-10-high-concurrency-requests-and-snap-up/">
         </link>
         <updated>2018-07-09T22:12:16.000Z</updated>
         <content type="html"><![CDATA[<p>转载的,我看得地方也是转载的,所以就不贴原文地址了,文章写得很细致,可以一看.</p>
@@ -188,8 +188,8 @@ ConvertUtils.register(bd, java.math.BigDecimal.class);
     </entry>
     <entry>
         <title type="html"><![CDATA[本站启用了SSL（HTTPS）]]></title>
-        <id>https://sunjianbo.github.io/post/2018-01-31-https/</id>
-        <link href="https://sunjianbo.github.io/post/2018-01-31-https/">
+        <id>https://www.sunjianbo.com/post/2018-01-31-https/</id>
+        <link href="https://www.sunjianbo.com/post/2018-01-31-https/">
         </link>
         <updated>2018-01-30T23:41:22.000Z</updated>
         <content type="html"><![CDATA[<p>今天给网站www.sunjianbo.com和note.sunjianbo.com启用了ssl，全程使用宝塔面板操作，简直不要太简单。</p>
@@ -199,20 +199,20 @@ ConvertUtils.register(bd, java.math.BigDecimal.class);
     </entry>
     <entry>
         <title type="html"><![CDATA[忘记Linux 3.X/4.x/5.x 宝塔面板密码的解决方案]]></title>
-        <id>https://sunjianbo.github.io/post/2017-10-14-lostbtpwd/</id>
-        <link href="https://sunjianbo.github.io/post/2017-10-14-lostbtpwd/">
+        <id>https://www.sunjianbo.com/post/2017-10-14-lostbtpwd/</id>
+        <link href="https://www.sunjianbo.com/post/2017-10-14-lostbtpwd/">
         </link>
         <updated>2017-10-13T16:25:10.000Z</updated>
         <content type="html"><![CDATA[<p>如果是忘记了默认密码</p>
 <p>可以输入以下命令回车找回默认初始密码（默认账号admin）</p>
 <pre><code>cat /www/server/panel/default.pl
 </code></pre>
-<figure data-type="image" tabindex="1"><img src="https://sunjianbo.github.io/post-images/1583405745828.png" alt="showpwd" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://www.sunjianbo.com/post-images/1583405745828.png" alt="showpwd" loading="lazy"></figure>
 <p>如图紫框即初始默认密码</p>
 <p>也可以通过重置密码的方式来解决（其中“新密码”即你要改的密码）</p>
 <pre><code>cd /www/server/panel &amp;&amp; python tools.pyc panel 新密码
 </code></pre>
-<figure data-type="image" tabindex="2"><img src="https://sunjianbo.github.io/post-images/1583405781224.png" alt="changpwd" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://www.sunjianbo.com/post-images/1583405781224.png" alt="changpwd" loading="lazy"></figure>
 <p>紫框即你要修改的密码</p>
 <p>红框即面板账户</p>
 <p>如果提示多次登录失败，暂时禁止登录 请输入以下命令 清除登录限制</p>
@@ -223,8 +223,8 @@ ConvertUtils.register(bd, java.math.BigDecimal.class);
     </entry>
     <entry>
         <title type="html"><![CDATA[OpenShift V2停止服务&备份他喵的太重要了啊]]></title>
-        <id>https://sunjianbo.github.io/post/2017-10-13-openshift-v2-stop/</id>
-        <link href="https://sunjianbo.github.io/post/2017-10-13-openshift-v2-stop/">
+        <id>https://www.sunjianbo.com/post/2017-10-13-openshift-v2-stop/</id>
+        <link href="https://www.sunjianbo.com/post/2017-10-13-openshift-v2-stop/">
         </link>
         <updated>2017-10-12T23:16:59.000Z</updated>
         <content type="html"><![CDATA[<p>OpenShift V2彻底停止服务了,刚巧在十一期间,我本人还在湖南湖北晃荡着.</p>
@@ -241,8 +241,8 @@ ConvertUtils.register(bd, java.math.BigDecimal.class);
     </entry>
     <entry>
         <title type="html"><![CDATA[Apache修改AllowOverride all 导致error 403]]></title>
-        <id>https://sunjianbo.github.io/post/2017-07-28-apache-allowoverrideall-403/</id>
-        <link href="https://sunjianbo.github.io/post/2017-07-28-apache-allowoverrideall-403/">
+        <id>https://www.sunjianbo.com/post/2017-07-28-apache-allowoverrideall-403/</id>
+        <link href="https://www.sunjianbo.com/post/2017-07-28-apache-allowoverrideall-403/">
         </link>
         <updated>2017-07-28T01:10:07.000Z</updated>
         <content type="html"><![CDATA[<p>Apache 将conf中的<code>AllowOverride None</code>改为<code>AllowOverride All</code></p>
