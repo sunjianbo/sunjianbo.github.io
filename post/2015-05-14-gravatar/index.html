@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>联图网无法生成带gravatar头像的二维码 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://sunjianbo.github.io/favicon.ico?v=1583635963255">
+<link rel="stylesheet" href="https://sunjianbo.github.io/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="联图网是提供在线二维码在线生成的一个工具，我的博客右下角悬浮窗的二维码就是利用她的API生成的。
+API格式大概如下：
+http://qr.liantu.com/api.php?text=http://www.sunjianbo.com&a..." />
+    <meta name="keywords" content="gravatar" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://sunjianbo.github.io">
+        <img src="https://sunjianbo.github.io/images/avatar.png?v=1583635963255" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://www.miitbeian.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://sunjianbo.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">联图网无法生成带gravatar头像的二维码</h2>
+            <div class="post-date">2015-05-14</div>
+            
+            <div class="post-content" v-pre>
+              <p>联图网是提供在线二维码在线生成的一个工具，我的博客右下角悬浮窗的二维码就是利用她的API生成的。</p>
+<p>API格式大概如下：</p>
+<p>http://qr.liantu.com/api.php?text=http://www.sunjianbo.com&amp;w=150&amp;m=5&amp;el=h&amp;logo=http://cn.gravatar.com/avatar/e537596fceb91b0bf1648b667defadcb</p>
+<p>具体参数详情参看这里<a title="http://liantu.com/pingtai/" href="http://liantu.com/pingtai/" target="_blank">http://liantu.com/pingtai/</a></p>
+<p>但是实际使用中我发现无法生成中间带gravatar头像的二维码。</p>
+<p>仔细观察gravatar的链接，我突然想是不是因为链接的问题呢，于是在后面加了个.png或者.jpg，结果真的可以了！！</p>
+<p>我擦，这还带图片过滤吗？</p>
+<p>于是在后面加了.aaa果然生成了不了。。。</p>
+<p><span style="color: #ff0000;"><strong>那么解决方法就是在头像链接后加入一个图片扩展名</strong></span></p>
+<p>类似如下的格式：</p>
+<p>http://qr.liantu.com/api.php?text=http://www.sunjianbo.com&amp;w=150&amp;m=5&amp;el=h&amp;logo=http://cn.gravatar.com/avatar/e537596fceb91b0bf1648b667defadcb.png</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://sunjianbo.github.io/tag/4EGHyYoVALE/" class="tag">
+                    gravatar
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://sunjianbo.github.io/post/2015-05-13-agile-scrum/">
+                  <h3 class="post-title">
+                    敏捷开发之Scrum扫盲篇
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

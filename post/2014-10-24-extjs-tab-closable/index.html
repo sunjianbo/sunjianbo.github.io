@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>tab标签页关闭按钮的动态显隐 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://sunjianbo.github.io/favicon.ico?v=1583635963255">
+<link rel="stylesheet" href="https://sunjianbo.github.io/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="看到有些人发的日报格式，我勒个去，和以前发周报差不多呀！
+我已经受够了周报了——要写三件主要工作，每一项工作要包括描述、进展、遇到的问题和解决方案。然后还要有图表的数据支持，团队的评价，个人总结和下周工作安排。
+每周要花整整半天的时间来完成..." />
+    <meta name="keywords" content="ExtJs,tab,每日总结" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://sunjianbo.github.io">
+        <img src="https://sunjianbo.github.io/images/avatar.png?v=1583635963255" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://www.miitbeian.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://sunjianbo.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">tab标签页关闭按钮的动态显隐</h2>
+            <div class="post-date">2014-10-24</div>
+            
+            <div class="post-content" v-pre>
+              <p>看到有些人发的日报格式，我勒个去，和以前发周报差不多呀！</p>
+<p>我已经受够了周报了——要写三件主要工作，每一项工作要包括描述、进展、遇到的问题和解决方案。然后还要有图表的数据支持，团队的评价，个人总结和下周工作安排。</p>
+<p>每周要花整整半天的时间来完成这个汇报，想起来就头疼。</p>
+<p>鉴于目前还不需要给很多领导看，我就随意了o(<em>￣▽￣</em>)ゞ</p>
+<p><strong>今天主要工作有：</strong></p>
+<p>1、完成FOSS20141106日常版本中限制少货找到差异重复上报需求的走读、对比、单元测试交付物。</p>
+<p>2、完成POP项目新增价格方案详情前台代码。</p>
+<p>3、办理异动。</p>
+<p><strong>今天的收获：</strong></p>
+<p>今天遇到一个问题，因为价格方案要求根据不同的重量体积临界值分段配置，于是我就用一个tabPanel把临界值和价格这些重复出现的数据分段填写展示，并且允许用户新增删除tab。</p>
+<p>那么问题来了，只填写一个临界值的情况下，分段就必须按照顺序排列，那么我就不能允许用户任意删除tab，只能够让她从最后一个往前删除。</p>
+<p>最简单的实现方法呢，就是通过按钮来删除，想怎么控制怎么控制。</p>
+<p>但是我不想用按钮来做删除，麻烦，而且用户体验不好，我在标签上通过closable属性添加了删除按钮。</p>
+<p>我要达到的效果是只有最后一个标签上有叉，其他的标签没有。</p>
+<p>那么问题又来了，挖掘机。。咳咳＞＜</p>
+<p>问题在于如何动态的控制这个按钮。首先尝试了closable=false，失败了，根本无法重新渲染，doLayout也好，hide然后show也好，叉叉一直都在。</p>
+<p>咨询了杨伟，他也没有做过，给出了一个解决方案不太靠谱，叉叉留着，监听beforeclose事件中进行判断，我不太满意。</p>
+<p>后来我从hide()show()中得到启发，可以把tab中的数据保存起来，然后销毁她，重新创建一个新的标签。</p>
+<p>尝试一下，果然可行。</p>
+<p>相对应的，新增按钮时候，我要移除当前tab关闭按钮，创建一个新的可关闭tab；关闭tab时还要把上一个tab的关闭按钮加上。</p>
+<p>（补充：关闭之后加上按钮方法可以放在form的监听事件中，通过up()找到tab）</p>
+<p>于是封装方法如下：</p>
+<pre><code class="language-javascript">/**
+ * 设置分段标签关闭属性
+ * @param tab 选项卡
+ * @param index 对应标签角标
+ * @param closable 设置是否可关闭
+ * @returns tab 选项卡
+ * @author 148246-孙建博
+ */
+pricing.setTabClosable = function(tab,index,closable){
+	//缓存当前form的值
+	var oldFormValues = tab.items.get(index).getValues();
+   //缓存分段数
+   var section = index+1;
+   //重新渲染
+   tab.remove(index);
+   var newTabForm = Ext.create('Foss.pricing.pricePlan.PricePlanDetialSectionForm',{
+		title : '第'+section+'段',
+       //取消前一标签页关闭功能
+       closable : closable,
+       sectionID : section
+    });
+      
+	newTabForm.getForm().setValues(oldFormValues);
+	tab.add(newTabForm);
+	return tab;  
+}
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://sunjianbo.github.io/tag/eH2V16AuWl-/" class="tag">
+                    ExtJs
+                  </a>
+                
+                  <a href="https://sunjianbo.github.io/tag/wRRTVa2Ehct/" class="tag">
+                    tab
+                  </a>
+                
+                  <a href="https://sunjianbo.github.io/tag/IRXpdNM1wTC/" class="tag">
+                    每日总结
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://sunjianbo.github.io/post/2014-10-23-report-2014-10-23/">
+                  <h3 class="post-title">
+                    2014年10月23日每日总结
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

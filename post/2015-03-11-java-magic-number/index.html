@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>JAVA为什么使用魔法数字 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://sunjianbo.github.io/favicon.ico?v=1583635963255">
+<link rel="stylesheet" href="https://sunjianbo.github.io/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="原文地址：http://blog.sina.com.cn/s/blog_4d8f51e301007woj.html
+说明：所谓魔法数值，是指在代码中直接出现的数值，只有在这个数值记述的那部分代码中才能明确了解其含义。
+魔法数值使代码的可读性..." />
+    <meta name="keywords" content="java" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://sunjianbo.github.io">
+        <img src="https://sunjianbo.github.io/images/avatar.png?v=1583635963255" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://www.miitbeian.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://sunjianbo.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">JAVA为什么使用魔法数字</h2>
+            <div class="post-date">2015-03-11</div>
+            
+            <div class="post-content" v-pre>
+              <p>原文地址：<a href="http://blog.sina.com.cn/s/blog_4d8f51e301007woj.html">http://blog.sina.com.cn/s/blog_4d8f51e301007woj.html</a></p>
+<p>说明：所谓魔法数值，是指在代码中直接出现的数值，只有在这个数值记述的那部分代码中才能明确了解其含义。</p>
+<p>魔法数值使代码的可读性大大下降。而且，如果同样的数值多次出现时，到底这些数值是不是带有同样的含义呢，谁也说不清楚。另一方面，如果本来应该使用相同数值的地方，一旦用错了，也很难发现。因此，需要注意以下几点，极力避免使用魔法数值。</p>
+<p>① 不使用魔法数值，代之以有名字的Static final或者enum值</p>
+<p>在Java语言中，对有名字的值的定义，可以使用用Static final或者enum来声明的值</p>
+<p>注意(命名方法)：在取名时一定要注意增加名字的信息量。比如，为16命名为SIXTEEN是没有意义的。</p>
+<p>如果16表示的是价格表的一个元素，则应该命名为PRICE_TABLE_MAX。关于命名规则，还要参照本小册子的第6条。</p>
+<p>② 原则上，数值就是魔法数值</p>
+<p>但是，0，作为数组的最小下标是经常使用的。</p>
+<p>例：<code>for( int i = 0; I &lt; table.leERRORth(); i++ )</code></p>
+<p>读到这里，读者都会认为这里的0是数组的最小下标，所以在这里不认为0是魔法数值。</p>
+<p>另外，0经常被作为变量初始化的缺省值，这时候一般也不认为0是魔法数值。</p>
+<p>通过使用有名字的值，一方面可以提高代码的可读性，另一方面，也可以把变更的地方局部化，从而提高可维护性。</p>
+<p>例子：</p>
+<p>魔法数字的例子</p>
+<p><code>int priceTable[] = new int[16]; //ERROR：这个16究竟有何含义呢?</code></p>
+<p>使用了带名字的数值的例子</p>
+<pre><code>static final int PRICE\_TABLE\_MAX = 16; //OK：带名字
+int price Table[] = new int [PRICE\_TABLE\_MAX]; //OK：名字的含义是很清楚
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://sunjianbo.github.io/tag/0tmsVkBYC52/" class="tag">
+                    java
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://sunjianbo.github.io/post/2015-03-11-java-array-copy/">
+                  <h3 class="post-title">
+                    实体bean中get方法返回内部数组问题及java数组复制方法
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>理解Html DOM、Ext Element及Component | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://sunjianbo.github.io/favicon.ico?v=1583635963255">
+<link rel="stylesheet" href="https://sunjianbo.github.io/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="要学习及应用好Ext框架，需要理解Html DOM、Ext Element及Component三者的区别。
+Ext是基于Web的富客户端框架，其完全是基于标准W3C技术构建设的，使用到的都是HTML、CSS、DIV等相关技术。Ext最杰出之..." />
+    <meta name="keywords" content="ExtJs" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://sunjianbo.github.io">
+        <img src="https://sunjianbo.github.io/images/avatar.png?v=1583635963255" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://www.miitbeian.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://sunjianbo.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">理解Html DOM、Ext Element及Component</h2>
+            <div class="post-date">2015-05-11</div>
+            
+            <div class="post-content" v-pre>
+              <p>要学习及应用好Ext框架，需要理解Html DOM、Ext Element及Component三者的区别。</p>
+<p>Ext是基于Web的富客户端框架，其完全是基于标准W3C技术构建设的，使用到的都是HTML、CSS、DIV等相关技术。Ext最杰出之处，是开发了一系列非常简单易用的控件及组件，我们只需要使用这些组件就能实现各种丰富多彩的UI的开发。</p>
+<p>无论组件有多少配置属性、还是事件、方法等等，其最终都会转化为HTML在浏览器上显示出来，而每一个HTML页面都有一个层次分明的DOM树模型，浏览器中的所有内容都有相应的DOM对象，动态改变页面的内容，正是通过使用脚本语言来操作DOM对象实现。</p>
+<p>仅仅有DOM是不够的，比如要把页面中的某一个节点移到其它位置，要给某一个节点添加阴影效果，要隐藏或显示某一个节点等，我们都需要通过几句 javascript才能完成。因此，Ext在DOM的基础上，创建了Ext Element，可以使用Element来包装任何DOM，Element对象中添加了一系列快捷、简便的实用方法。</p>
+<p>对于终端用户来说，仅仅有Element是不够的，比如用户要显示一个表格、要显示一棵树、要显示一个弹出窗口等。因此，除了Element以外，Ext 还建立了一系列的客户端界面组件Component，我们在编程时，只要使用这些组件Componet即可实现相关数据展示及交互等，而 Component是较高层次的抽象，每一个组件在渲染render的时候，都会依次通过Element、DOM来生成最终的页面效果。</p>
+<p>在使用Ext开发的应用程序中，组件Component是最高层次的抽象，是直接给用户使用的，Ext Element是Ext的底层API，主要是由Ext或自定义组件调用的，而DOM是W3C标准定义的原始API，Ext的Element通过操作DOM 来实现页面的效果显示。</p>
+<p>在Ext中，组件渲染以后可以通过访问组件的el属性来得到组件对应的Element，通过访问Element的dom属性可以得到其下面的DOM对象。另外，我们可以通过通过Ext类的快捷方法getCmp、get、getDom等方法来得组件Component、Ext元素Element及DOM节点。比如：</p>
+<pre><code>var view=new Ext.Viewport();//创建了一个组件Component
+view.el.setOpacity(.5);//调用Element的setOpacity方法
+view.el.dom.innerHTML=&quot;Hello Ext&quot;;//通过Element的dom属性操作DOM对象
+</code></pre>
+<p>再看下面的代码：</p>
+<pre><code>var win=new Ext.Window({id:&quot;win1&quot;,title:&quot;我的窗口&quot;,width:200,height:200});
+win.show();
+var c=Ext.getCmp(&quot;win1&quot;);//得到组件win
+var e=Ext.get(&quot;win1&quot;);//根据id得到组件win相应的Element
+var dom=Ext.getDom(&quot;win1&quot;);//得到id为win1的DOM节点
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://sunjianbo.github.io/tag/eH2V16AuWl-/" class="tag">
+                    ExtJs
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://sunjianbo.github.io/post/2015-05-10-java-volatile/">
+                  <h3 class="post-title">
+                    Java 理论与实践: 正确使用 Volatile 变量
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

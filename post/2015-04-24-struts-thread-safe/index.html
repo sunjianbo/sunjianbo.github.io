@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>struts1、struts2、spring是线程安全的吗？ | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://sunjianbo.github.io/favicon.ico?v=1583635963255">
+<link rel="stylesheet" href="https://sunjianbo.github.io/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="原文来自：http://blog.chinaunix.net/uid-26602509-id-3075063.html
+问题：
+Struts 2 Action对象为每一个请求产生一个实例，因此没有线程安全问题。
+Spring的Ioc容器管理..." />
+    <meta name="keywords" content="spring,struts" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://sunjianbo.github.io">
+        <img src="https://sunjianbo.github.io/images/avatar.png?v=1583635963255" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://www.miitbeian.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://sunjianbo.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">struts1、struts2、spring是线程安全的吗？</h2>
+            <div class="post-date">2015-04-24</div>
+            
+            <div class="post-content" v-pre>
+              <p>原文来自：<a href="http://blog.chinaunix.net/uid-26602509-id-3075063.html">http://blog.chinaunix.net/uid-26602509-id-3075063.html</a></p>
+<p>问题：</p>
+<p>Struts 2 Action对象为每一个请求产生一个实例，因此没有线程安全问题。</p>
+<p>Spring的Ioc容器管理的bean默认是单实例的,上一次请求处理的状态信息被保持下来，并影响了下一次的请求,实际上就是Action中的类变量被不同的请求读取，出现错误结果</p>
+<p>解决：就是不用单例, spring中bean的作用域设为prototype,每个请求对应一个实例.</p>
+<p>1、Struts1</p>
+<p>Struts1是单例模式，也就是所，Web容器（例如：Tomcat）启动的时候，就会实例化一个Action对象，那么所有请求都是用的这个对象。所以当遇到2个请求并发的时候，那么其实他们调用的是同一个类，这个时候当你在Action内部定义属性的时候，就会产生线程同步的问题。</p>
+<p>例如：</p>
+<p>你在Action定义了一个 int i = 0；</p>
+<p>然后在这个Action里面的某一个方法里面对这个i进行操作。当并发的时候就会遇到问题。</p>
+<p>所以：我们在用struts1的时候不能在action里面定义属性。要用到只的话只能在方法里面定义。</p>
+<p>2、struts2</p>
+<p>Struts 2 Action对象为每一个请求产生一个实例，因此没有线程安全问题。所以我们可以在Struts2的Action里面去定义属性。但是Struts2由于 Action和普通的Java类没有任何区别（也就是不用像Struts1里面那样去实现一个Struts的接口，有兴趣的朋友可以自己去了解），所以我们可以用Spring去管理Struts2的Action，这个时候我们就要注意了，因为当我们在spring里面去定义bean的时候，spring默认用的是单例模式。所以在这个时候，你就要修改Spring的配置文件---即修改scope为prototype。</p>
+<p>为什么struts1中并没有考虑到线程问题，因为所有的代码都是写在execute的方法中，所有变量都是定义在里面，所以没有线程安全问题。</p>
+<p>而现在的struts2就不一样了。struts2的action中就像一个POJO一样，定义了很多的类变量。这就有线程安全问题了。。此时，就使用scope=prototype来指定是个原型模式，而不是单例，这样就解决了线程安全问题。每个线程都是一个新的实例。。</p>
+<p>但是，线程同步是不得以的方法,是比较复杂的,而且会带来性能的损失。等效的代码中，不需要同步在编写容易度和性能上会更好些。</p>
+<p>我这里强调的是什么代码是始终为线程安全的、是不需要同步的。如下:</p>
+<p>1)常量始终是线程安全的，因为只存在读操作。</p>
+<p>2)对构造器的访问(new 操作)是线程安全的，因为每次都新建一个实例，不会访问共享的资源。</p>
+<p>3)最重要的是:局部变量是线程安全的。因为每执行一个方法，都会在独立的空间创建局部变量，它不是共享的资源。局部变量包括方法的参数变量。</p>
+<p>struts user guide里有：</p>
+<p>Only Use Local Variables - The most important principle that aids in thread-safe coding is to use only local variables, not instance variables , in your Action class.</p>
+<p>译:只使用用局部变量。--编写线程安全的代码最重要的原则就是，在Action类中只使用局部变量，不使用实例变量。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://sunjianbo.github.io/tag/TFyC70CLoSn/" class="tag">
+                    spring
+                  </a>
+                
+                  <a href="https://sunjianbo.github.io/tag/vHc1K7p4JQL/" class="tag">
+                    struts
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://sunjianbo.github.io/post/2015-04-23-thinking-about-rollback/">
+                  <h3 class="post-title">
+                    为什么尽量不回滚
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

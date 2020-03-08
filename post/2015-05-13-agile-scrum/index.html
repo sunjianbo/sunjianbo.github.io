@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>敏捷开发之Scrum扫盲篇 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://sunjianbo.github.io/favicon.ico?v=1583635963255">
+<link rel="stylesheet" href="https://sunjianbo.github.io/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="原文转自：http://www.cnblogs.com/taven/archive/2010/10/17/1853386.html
+
+  什么是敏捷开发？
+
+
+  敏捷开发(Agile Development)是一种以人为核心、迭代、循序渐..." />
+    <meta name="keywords" content="敏捷" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://sunjianbo.github.io">
+        <img src="https://sunjianbo.github.io/images/avatar.png?v=1583635963255" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://www.miitbeian.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://sunjianbo.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">敏捷开发之Scrum扫盲篇</h2>
+            <div class="post-date">2015-05-13</div>
+            
+            <div class="post-content" v-pre>
+              <p>原文转自：<a href="http://www.cnblogs.com/taven/archive/2010/10/17/1853386.html">http://www.cnblogs.com/taven/archive/2010/10/17/1853386.html</a></p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <strong>什么是敏捷开发？</strong>
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  敏捷开发(<span style="margin: 0px; padding: 0px; font-size: small;">Agile Development</span>)是一种以人为核心、迭代、循序渐进的开发方法。
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  怎么理解呢？首先，我们要理解它不是一门技术，它是一种开发方法，也就是一种软件开发的流程，它会指导我们用规定的环节去一步一步完成项目的开发；而这种开发方式的主要驱动核心是人；它采用的是迭代式开发；
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <strong>为什么说是以人为核心？</strong>
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  我们大部分人都学过瀑布开发模型，它是以文档为驱动的，为什么呢？因为在瀑布的整个开发过程中，要写大量的文档，把需求文档写出来后，开发人员都是根据文档进行开发的，一切以文档为依据；而敏捷开发它只写有必要的文档，或尽量少写文档，敏捷开发注重的是人与人之间，面对面的交流，所以它强调以人为核心。
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <strong>什么是迭代？</strong>
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  迭代是指把一个复杂且开发周期很长的开发任务，分解为很多小周期可完成的任务，这样的一个周期就是一次迭代的过程；同时每一次迭代都可以生产或开发出一个可以交付的软件产品。
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+   
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <strong style="margin: 0px; padding: 0px; font-size: 12px;">关于Scrum和XP</strong>
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  前面说了敏捷它是一种指导思想或开发方式，但是它没有明确告诉我们到底采用什么样的流程进行开发，而Scrum和XP就是敏捷开发的具体方式了，你可以采用Scrum方式也可以采用XP方式；Scrum和XP的区别是，<span style="margin: 0px; padding: 0px; font-family: 微软雅黑; font-size: small;">Scrum偏重于过程，XP则偏重于实践，但是实际中，两者是结合一起应用的，</span>这里我主要讲Scrum。
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <strong style="margin: 0px; padding: 0px; font-size: 12px;">什么是Scrum？</strong>
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  Scrum的英文意思是橄榄球运动的一个专业术语，表示“争球”的动作；把一个开发流程的名字取名为Scrum，我想你一定能想象出你的开发团队在开发一个项目时，大家像打橄榄球一样迅速、富有战斗激情、人人你争我抢地完成它，你一定会感到非常兴奋的。
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  而Scrum就是这样的一个开发流程，运用该流程，你就能看到你团队高效的工作。
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  【Scrum开发流程中的三大角色】
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <strong style="margin: 0px; padding: 0px; font-size: 12px;">产品负责人（Product Owner）</strong>
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  主要负责确定产品的功能和达到要求的标准，指定软件的发布日期和交付的内容，同时有权力接受或拒绝开发团队的工作成果。
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <strong style="margin: 0px; padding: 0px; font-size: 12px;">流程管理员（Scrum Master）</strong>
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  主要负责整个Scrum流程在项目中的顺利实施和进行，以及清除挡在客户和开发工作之间的沟通障碍，使得客户可以直接驱动开发。
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <strong style="margin: 0px; padding: 0px; font-size: 12px;">开发团队（Scrum Team）</strong>
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  主要负责软件产品在Scrum规定流程下进行开发工作，人数控制在5~10人左右，每个成员可能负责不同的技术方面，但要求每成员必须要有很强的自我管理能力，同时具有一定的表达能力；成员可以采用任何工作方式，只要能达到Sprint的目标。
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+    
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <strong style="margin: 0px; padding: 0px; font-size: 12px; color: red;">Scrum流程图</strong>
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <img style="margin: 0px 0px 20px; padding: 0px; border: 0px; width: 646px; height: 379px;" src="http://images.cnblogs.com/cnblogs_com/taven/201010/ScrumModel.jpg" alt="" width="646" height="379" border="0" />
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+   
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  //------------------------
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  下面，我们开始讲具体实施流程，但是在讲之前，我还要对一个英文单词进行讲解。
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <strong style="margin: 0px; padding: 0px; font-size: 12px;">什么是Sprint？</strong>
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  Sprint是短距离赛跑的意思，这里面指的是一次迭代，而一次迭代的周期是1个月时间（即4个星期），也就是我们要把一次迭代的开发内容以最快的速度完成它，这个过程我们称它为Sprint。
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+   
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <strong style="margin: 0px; padding: 0px; font-size: 12px;">如何进行Scrum开发？</strong>
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  1、我们首先需要确定一个Product Backlog（按优先顺序排列的一个产品需求列表），这个是由Product Owner 负责的；
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  2、Scrum Team根据Product Backlog列表，做工作量的预估和安排；
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  3、有了Product Backlog列表，我们需要通过 Sprint Planning Meeting（<span style="margin: 0px; padding: 0px; font-size: large;">Sprint计划会议</span>） 来从中挑选出一个Story作为本次迭代完成的目标，这个目标的时间周期是1~4个星期，然后把这个Story进行细化，形成一个Sprint Backlog；
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  4、Sprint Backlog是由Scrum Team去完成的，每个成员根据Sprint Backlog再细化成更小的任务（细到每个任务的工作量在2天内能完成）；
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  5、在Scrum Team完成计划会议上选出的Sprint Backlog过程中，需要进行 Daily Scrum Meeting（每日站立会议），每次会议控制在15分钟左右，每个人都必须发言，并且要向所有成员当面汇报你昨天完成了什么，并且向所有成员承诺你今天要完成什么，同时遇到不能解决的问题也可以提出，每个人回答完成后，要走到黑板前更新自己的 Sprint burn down（Sprint燃尽图）；
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  6、做到每日集成，也就是每天都要有一个可以成功编译、并且可以演示的版本；很多人可能还没有用过自动化的每日集成，其实TFS就有这个功能，它可以支持每次有成员进行签入操作的时候，在服务器上自动获取最新版本，然后在服务器中编译，如果通过则马上再执行单元测试代码，如果也全部通过，则将该版本发布，这时一次正式的签入操作才保存到TFS中，中间有任何失败，都会用邮件通知项目管理人员；
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  7、当一个Story完成，也就是Sprint Backlog被完成，也就表示一次Sprint完成，这时，我们要进行 Srpint Review Meeting（演示会议），也称为评审会议，产品负责人和客户都要参加（最好本公司老板也参加），每一个Scrum Team的成员都要向他们演示自己完成的软件产品（这个会议非常重要，一定不能取消）；
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  8、最后就是 Sprint Retrospective Meeting（回顾会议），也称为总结会议，以轮流发言方式进行，每个人都要发言，总结并讨论改进的地方，放入下一轮Sprint的产品需求中；
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+   
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  下面是运用Scrum开发流程中的一些场景图：
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <br style="margin: 0px; padding: 0px;" /><img style="margin: 0px 0px 20px; padding: 0px; border: 0px;" src="http://images.cnblogs.com/cnblogs_com/taven/201010/2010-10-17_202447.png" alt="" width="637" height="452" border="0" />
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  上图是一个 Product Backlog 的示例。
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+   
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <img style="margin: 0px 0px 20px; padding: 0px; border: 0px;" src="http://images.cnblogs.com/cnblogs_com/taven/201010/2010-10-17_202749.png" alt="" width="600" height="450" border="0" />
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  上图就是每日的站立会议了，参会人员可以随意姿势站立，任务看板要保证让每个人看到，当每个人发言完后，要走到任务版前更新自己的燃尽图。
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <br style="margin: 0px; padding: 0px;" /><br style="margin: 0px; padding: 0px;" /><img style="margin: 0px 0px 20px; padding: 0px; border: 0px;" src="http://images.cnblogs.com/cnblogs_com/taven/201010/2010-10-17_202812.png" alt="" width="620" height="433" border="0" />
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  任务看版包含 未完成、正在做、已完成 的工作状态，假设你今天把一个未完成的工作已经完成，那么你要把小卡片从未完成区域贴到已完成区域。
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <br style="margin: 0px; padding: 0px;" /> <img style="margin: 0px 0px 20px; padding: 0px; border: 0px;" src="http://images.cnblogs.com/cnblogs_com/taven/201010/2010-10-17_202832.png" alt="" border="0" />
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  每个人的工作进度和完成情况都是公开的，如果有一个人的工作任务在某一个位置放了好几天，大家都能发现他的工作进度出现了什么问题（成员人数最好是5~7个，这样每人可以使用一种专用颜色的标签纸，一眼就可以从任务版看出谁的工作进度快，谁的工作进度慢）
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+   
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+   
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  <img style="margin: 0px 0px 20px; padding: 0px; border: 0px;" src="http://images.cnblogs.com/cnblogs_com/taven/201010/2010-10-17_202709.png" alt="" width="644" height="428" border="0" />
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+   上图可不是扑克牌，它是计划纸牌，它的作用是防止项目在开发过程中，被某些人所领导。
+</p>
+<p style="margin: 10px auto; padding: 0px; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px; line-height: 19.5px;">
+  怎么用的呢？比如A程序员开发一个功能，需要5个小时，B程序员认为只需要半小时，那他们各自取相应的牌，藏在手中，最后摊牌，如果时间差距很大，那么A和B就可以讨论A为什么要5个小时...
+</p>
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://sunjianbo.github.io/tag/enPJ2DthTjH/" class="tag">
+                    敏捷
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://sunjianbo.github.io/post/2015-05-12-spring-singleton/">
+                  <h3 class="post-title">
+                    Spring框架中的单例Beans是线程安全的么
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

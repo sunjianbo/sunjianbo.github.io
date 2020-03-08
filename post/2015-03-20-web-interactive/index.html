@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>web数据交互方式 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://sunjianbo.github.io/favicon.ico?v=1583635963255">
+<link rel="stylesheet" href="https://sunjianbo.github.io/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="转自http://www.cnblogs.com/yupeng/archive/2012/03/04/2379641.html
+总结下web数据交互方式.
+web数据交互，简单的讲，是client与server端的数据交互，通过http协议..." />
+    <meta name="keywords" content="web" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://sunjianbo.github.io">
+        <img src="https://sunjianbo.github.io/images/avatar.png?v=1583635963255" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://www.miitbeian.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://sunjianbo.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">web数据交互方式</h2>
+            <div class="post-date">2015-03-20</div>
+            
+            <div class="post-content" v-pre>
+              <p>转自<a href="http://www.cnblogs.com/yupeng/archive/2012/03/04/2379641.html">http://www.cnblogs.com/yupeng/archive/2012/03/04/2379641.html</a></p>
+<p>总结下web数据交互方式.</p>
+<p>web数据交互，简单的讲，是client与server端的数据交互，通过http协议交互的。</p>
+<p>首先看一个传统的页面请求的生命周期：</p>
+<p style="text-align: justify;">
+   
+</p>
+<ol>
+<li>浏览器发送一个HTTP请求到Web服务器。</li>
+<li>Web服务器解析请求，然后读取数据存储层，制定一个HTML文件，并用一个HTTP响应把它发送到客户端。</li>
+<li>HTTP响应通过互联网传送到浏览器。</li>
+<li>浏览器解析Web服务器的响应，使用HTML文件构建了一个的DOM树，并且下载引用的CSS和JavaScript文件。</li>
+<li>CSS资源下载后，浏览器解析它们，并将它们应用到DOM树。</li>
+<li>JavaScript资源下载后，浏览器解析并执行它们。</li>
+</ol>
+<p></p>
+<p>上述6个步骤是一个web页面展现必不可少的，都要经历的步骤，每个步骤花的时间都会影响页面的展现的快慢的，以后会讲下性能优化，这里主要讲web交互方式，先略过。</p>
+<p>web数据交互，从server的角度讲：主要有pull，push两个,一个是拉，另外一个是推。</p>
+<p style="padding-left: 30px;">
+  1）pull 是拉，客户端向服务器端主动的拉取数据，采用的技术是ajax 和Xss（跨站脚本）<br /> 2）push 是服务器向客户端主动的推动数据，第一种方式是长连接，客户端与服务器之间一直保持着连接，如果有数据的更新，服务器向客户端推送数据，客户端接受服务器端的数据，可以理解为长轮询，客户端与服务器端必须一直是连接着的状态。另外还有一种是伪长链接的。有2种实现方式，一种是基于ajax的，它与传统的ajax的方式不同在于，服务器端会阻塞客户端的请求直到有数据传递或者超时才返回。客户端 JavaScript 响应处理函数会在处理完服务器返回的信息后，再次发出请求，重新建立连接。 当客户端处理接收的数据、重新建立连接时，服务器端可能有新的数据到达；这些信息会被服务器端保存直到客户端重新建立连接，客户端会一次把当前服务器端所有的信息取回。   
+</p>
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://sunjianbo.github.io/tag/n7fKCykOSBG/" class="tag">
+                    web
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://sunjianbo.github.io/post/2015-03-11-java-magic-number/">
+                  <h3 class="post-title">
+                    JAVA为什么使用魔法数字
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>wordpress防复制自动加版权代码的研究 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://sunjianbo.github.io/favicon.ico?v=1583635963255">
+<link rel="stylesheet" href="https://sunjianbo.github.io/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="今天我又小肚鸡肠了一下╮（﹀＿﹀）╭
+查看cnzz发现最近来源最多的是搜索关键词： “最下侧导航栏中第三个栏目Distribute下，第一个小栏目名称为：”，跳转过去，结果发现我排第4，第5的是个论坛，一字不差copy我那篇CSDN有奖任务..." />
+    <meta name="keywords" content="wordpress,版权" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://sunjianbo.github.io">
+        <img src="https://sunjianbo.github.io/images/avatar.png?v=1583635963255" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://www.miitbeian.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://sunjianbo.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">wordpress防复制自动加版权代码的研究</h2>
+            <div class="post-date">2015-04-17</div>
+            
+            <div class="post-content" v-pre>
+              <p>今天我又小肚鸡肠了一下╮（﹀＿﹀）╭</p>
+<p>查看cnzz发现最近来源最多的是搜索关键词： “最下侧导航栏中第三个栏目Distribute下，第一个小栏目名称为：”，跳转过去，结果发现我排第4，第5的是个论坛，一字不差copy我那篇<a href="http://www.sunjianbo.com/csdn-task-answers.html">CSDN有奖任务答案</a>，没有注明来源，当时挺气愤的，而且我刚把今天的新增的任务添加上去，没几分钟就在那里看到了，更是郁闷。</p>
+<p>于是想到在复制到剪切板的文字中插入版权信息，这种情况下再被删掉就是对方人品问题了，我也没办法。</p>
+<p>搜索了一下，卢松松博客给出了如下代码：</p>
+<pre><code class="php">&lt;script type="text/javascript"&gt;
+    document.body.oncopy=function(){
+        event.returnValue=false;
+        var t=document.selection.createRange().text;
+        var s="本文来源于&lt;?php bloginfo('name'); ?&gt; &lt;?php echo get_settings('home'); ?&gt; , 原文地址
+        ： &lt;?php the_permalink() ?&gt; ";
+        clipboardData.setData('Text','\r\n'+t+'\r\n'+s+'\r\n');
+    }
+&lt;/script&gt;
+</code></pre>
+<p>测试一下发现只适用于IE，chrome下没有document.selection，自己改了改用window.getSelection().toString()来读取选中信息，结果后来发现还是不行，chrome基本没法直接操作剪切板，搜索也多是使用Zero Clipboard这一插件或用flash去实现。</p>
+<pre><code class="js">&lt;script type="text/javascript"&gt;
+    document.body.oncopy=function(){
+        event.returnValue=false;
+        //t = window.getSelection ? window.getSelection().toString() : document.selection.createRange().text;
+        var t = null;
+        var s="本文来源于&lt;?php bloginfo('name'); ?&gt; &lt;?php echo get_settings('home'); ?&gt; , 原文地址： &lt;?php the_permalink() ?&gt; ";
+        //如果非ie
+        if (navigator.userAgent.indexOf("MSIE") == -1){
+            t = window.getSelection().toString();
+            //copy('\r\n'+t+'\r\n'+s+'\r\n');
+        }else{
+            t = document.selection.createRange().text;
+            clipboardData.setData('Text','\r\n'+t+'\r\n'+s+'\r\n');
+        }
+    }
+&lt;/script&gt;
+</code></pre>
+<p>在这个过程中无意中发现chrome控制台有个copy方法可以复制控制台内容到剪切板，相关看这里：<a href="http://www.sunjianbo.com">Chrome控制台console的用法（学了之后对于调试js可是大大有用的哦）</a> 算是意外之喜。</p>
+<p>后来晚上想起这事又去搜索一番，惊喜的发现居然还有办法，之前肿么没发现( -'`-; )</p>
+<p>转载自：<a href="http://www.v7v3.com/wpjiaocheng/201307185.html">wordpress小技巧：复制文章内容自动添加版权</a></p>
+<p>我自己只试用了方法一：复制下面的代码到主题的functions.php文件中</p>
+<pre><code class="php">function v7v3_copyright() { ?&gt;
+    &lt;script type='text/javascript'&gt;
+        function addLink() {
+            var body_element = document.getElementsByTagName('body')[0];
+            var selection;
+            selection = window.getSelection();
+            var pagelink = "&lt;br /&gt;&lt;br /&gt; 原文信息: &lt;?php if(is_single()){ the_title();}?&gt; 原文链接：&lt;a href='"+document.location.href+"'&gt;"+document.location.href+"&lt;/a&gt;";
+            var copy_text = selection + pagelink;
+            var new_div = document.createElement('div');
+            new_div.style.left='-99999px';
+            new_div.style.position='absolute';
+            body_element.appendChild(new_div );
+            new_div.innerHTML = copy_text ;
+            selection.selectAllChildren(new_div );
+            window.setTimeout(function() {
+                body_element.removeChild(new_div );
+            },0);
+        }
+        document.oncopy = addLink;
+    &lt;/script&gt;
+&lt;?php
+}
+add_action( 'wp_head', 'v7v3_copyright');
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://sunjianbo.github.io/tag/iGpvi15BaMr/" class="tag">
+                    wordpress
+                  </a>
+                
+                  <a href="https://sunjianbo.github.io/tag/MmupO28ejKH/" class="tag">
+                    版权
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://sunjianbo.github.io/post/2015-03-20-web-interactive/">
+                  <h3 class="post-title">
+                    web数据交互方式
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

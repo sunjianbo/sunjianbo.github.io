@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>WordPress迁移及遇到的问题 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://sunjianbo.github.io/favicon.ico?v=1583635963255">
+<link rel="stylesheet" href="https://sunjianbo.github.io/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="我是直接从openshift上把wp下载下来的，openshift上有一点坑爹就是她上面的插件啊、主题啊都不是放在wp-content下面的，而是在那里做了个超级链接，链接到wp上级目录的data目录下，还好文件结构没什么变化，放到对应的位..." />
+    <meta name="keywords" content="openshift,wordpress,404,godaddy,phpmyadmin,伪静态,固定链接,迁移" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://sunjianbo.github.io">
+        <img src="https://sunjianbo.github.io/images/avatar.png?v=1583635963255" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://www.miitbeian.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://sunjianbo.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">WordPress迁移及遇到的问题</h2>
+            <div class="post-date">2014-09-24</div>
+            
+            <div class="post-content" v-pre>
+              <p>我是直接从openshift上把wp下载下来的，openshift上有一点坑爹就是她上面的插件啊、主题啊都不是放在wp-content下面的，而是在那里做了个超级链接，链接到wp上级目录的data目录下，还好文件结构没什么变化，放到对应的位置就行，这个问题应该是我使用openshift提供的WordPress安装造成的，自行提交和安装的应该不会出现这个问题。</p>
+<p>好，言归正传，我先是下载全部的wp文件，然后备份数据库。</p>
+<p>回头把数据库导入，然后上传wp文件到服务器上，这时打开网页会报一些关于数据库或者其他的反正和wp-config.php文件相关的错。</p>
+<p>我这里举个例子，这是从openshift迁移过来的，因为里面有一些这样的特殊信息“openshift/openshift.inc”。</p>
+<blockquote>
+<p>Warning: require_once(.openshift/openshift.inc): failed to open stream: No such file or directory in /home/mylove/public_html/blog/wp-config.php on line 47</p>
+<p>Fatal error: require_once(): Failed opening required '.openshift/openshift.inc' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/mylove/public_html/blog/wp-config.php on line 47</p>
+</blockquote>
+<p>百度发现两种解决方案：1、修改该文件，把所有错误全都改了；2、删除该文件，重新配置。</p>
+<p>像我这种懒人当然是果断选择后者。删除后在刷新网页，会要求重新配置数据库信息，整个页面基本和重新安装差不多。</p>
+<img src="http://static.sunjianbo.com/move-wordpress/move-wordpress-1.jpg" alt="" width="738" height="491" />
+<img src="http://static.sunjianbo.com/move-wordpress/move-wordpress-2.jpg" alt="" width="706" height="438" />
+<p>配置数据库之后也可以直接点击“现在安装”，因为数据库里已经导入数据了，它会提示已经安装了，可以无视。</p>
+<img src="http://static.sunjianbo.com/move-wordpress/move-wordpress-3.jpg" alt="" width="720" height="131" />
+<img src="http://static.sunjianbo.com/move-wordpress/move-wordpress-4.jpg" alt="" width="565" height="153" />
+<p>接下来出现问题了，包括首页在内所有的WordPress路径全部出现404错误，百度一番无果，重装多次之后发现和数据库中的数据有关，打开备份的sql文件，发现其中存在着不少域名的链接，类似：</p>
+<pre><code>INSERT INTO wp_options VALUES(&quot;1&quot;,&quot;siteurl&quot;,&quot;http://www.sunjianbo.com&quot;,&quot;yes&quot;);
+</code></pre>
+<p>全部替换为新域名后成功打开页面。</p>
+<p>不过后来考虑应该是只需要修改wp_options表的第一条siteurl（也就是上面那条）就可以。</p>
+<p>然后又发现固定连接出现问题，主页能显示，其他内页都不能正常访问。</p>
+<p>百度说是伪静态.htaccess的问题，各种代码啊，修改啊什么的。</p>
+<p>我想了想，跑到设置-固定链接中，重新保存了一次，搞定！</p>
+<img src="http://static.sunjianbo.com/move-wordpress/move-wordpress-5.jpg" alt="" width="330" height="200" />
+<p>总结起来有以下三步：</p>
+<p>1、替换数据库sql文件中的域名为新地址，然后用phpMyAdmin等导入sql；</p>
+<p>2、上传wp文件，删除其中的wp-config.php文件，打开页面重新配置数据库连接；</p>
+<p>3、重新保存“设置-固定链接”的设置。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://sunjianbo.github.io/tag/ohGOVF-Rse/" class="tag">
+                    openshift
+                  </a>
+                
+                  <a href="https://sunjianbo.github.io/tag/iGpvi15BaMr/" class="tag">
+                    wordpress
+                  </a>
+                
+                  <a href="https://sunjianbo.github.io/tag/X9Sv5EWLS6G/" class="tag">
+                    404
+                  </a>
+                
+                  <a href="https://sunjianbo.github.io/tag/JPfE59EBuKF/" class="tag">
+                    godaddy
+                  </a>
+                
+                  <a href="https://sunjianbo.github.io/tag/A9Mf_1_bYMJ/" class="tag">
+                    phpmyadmin
+                  </a>
+                
+                  <a href="https://sunjianbo.github.io/tag/w7edKVgVz7n/" class="tag">
+                    伪静态
+                  </a>
+                
+                  <a href="https://sunjianbo.github.io/tag/n9mOjMTFJD4/" class="tag">
+                    固定链接
+                  </a>
+                
+                  <a href="https://sunjianbo.github.io/tag/qgu73QstgOz/" class="tag">
+                    迁移
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://sunjianbo.github.io/post/2014-09-24-webmail-select-2/">
+                  <h3 class="post-title">
+                    Horde、SquirrelMail和RoundCube
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>
