@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-03-10T04:39:21.383Z</updated>
+    <updated>2020-03-10T04:43:36.796Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -15,7 +15,7 @@
         <id>https://www.sunjianbo.com/post/wordpress-wen-zhang-dao-chu-qian-yi-dao-gridea/</id>
         <link href="https://www.sunjianbo.com/post/wordpress-wen-zhang-dao-chu-qian-yi-dao-gridea/">
         </link>
-        <updated>2020-03-09T09:12:05.000Z</updated>
+        <updated>2020-03-10T04:12:05.000Z</updated>
         <content type="html"><![CDATA[<ul>
 <li>
 <p><a href="https://gridea.dev/">Gridea</a>是一个静态博客写作客户端,类似hexo,hugo等,不过可以全面图形化操作,更简单,更方便.</p>
