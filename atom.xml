@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-03-08T03:45:40.098Z</updated>
+    <updated>2020-03-10T04:39:21.383Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -10,6 +10,75 @@
     <logo>https://www.sunjianbo.com/images/avatar.png</logo>
     <icon>https://www.sunjianbo.com/favicon.ico</icon>
     <rights>All rights reserved 2020, 孙建博的小站</rights>
+    <entry>
+        <title type="html"><![CDATA[WordPress文章导出迁移到Gridea]]></title>
+        <id>https://www.sunjianbo.com/post/wordpress-wen-zhang-dao-chu-qian-yi-dao-gridea/</id>
+        <link href="https://www.sunjianbo.com/post/wordpress-wen-zhang-dao-chu-qian-yi-dao-gridea/">
+        </link>
+        <updated>2020-03-09T09:12:05.000Z</updated>
+        <content type="html"><![CDATA[<ul>
+<li>
+<p><a href="https://gridea.dev/">Gridea</a>是一个静态博客写作客户端,类似hexo,hugo等,不过可以全面图形化操作,更简单,更方便.</p>
+</li>
+<li>
+<p>本次导出主要基于<a href="https://github.com/sunjianbo/WordPress-to-Gridea-Exporter">WordPress to Gridea Exporter</a>插件,是我根据<a href="https://github.com/SchumacherFM/wordpress-to-hugo-exporter/">WordPress to Hugo Exporter<br>
+</a>简单修改而来,感谢原作者(<sup>人</sup>)</p>
+</li>
+</ul>
+<blockquote>
+<p>注意:如果你使用了类似WP Database Backup等备份插件,记得去删除一些历史的备份文件,否则导出文件可能会很大</p>
+</blockquote>
+<h2 id="操作方法">操作方法</h2>
+<ol>
+<li>
+<p>登陆wordpress后台通过快速编辑将每一篇文章的别名修改为英文,否则导出的文章会出现乱码.虽然gridea能识别,但是链接也会变成乱码,看着闹挺.<br>
+<img src="http://static.sunjianbo.com/wordpress-to-gridea/alias.png" alt="alias" loading="lazy"></p>
+</li>
+<li>
+<p>下载WordPress to Gridea Exporter并安装到wordpress上,启用.<br>
+<a href="https://github.com/sunjianbo/WordPress-to-Gridea-Exporter/archive/master.zip">https://github.com/sunjianbo/WordPress-to-Gridea-Exporter/archive/master.zip</a></p>
+</li>
+<li>
+<p>点击后台管理菜单的工具--&gt;Export to Hugo然后浏览器会自动下载一个名为hugo-export.zip的文件,所需的东西都在里面了.<br>
+<img src="http://static.sunjianbo.com/wordpress-to-gridea/action.png" alt="action" loading="lazy"></p>
+</li>
+<li>
+<p>提取hugo-export.zip文件中的posts文件下的所有md文件到Documents\Gridea\posts目录下(如果不知道该目录在那,查看Gridea的设置)</p>
+</li>
+<li>
+<p>重启Gridea查看并预览是否已经读取到相关文章</p>
+</li>
+<li>
+<p>wordpress中隐藏的文章全部设为草稿了,如需发布自行编辑一下</p>
+</li>
+<li>
+<p>文章中的图片有可能需要重新处理一下,wp媒体库的图片在压缩包中wp-content/uploads目录中</p>
+</li>
+</ol>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Chrome开发者工具查看元素绑定的事件]]></title>
+        <id>https://www.sunjianbo.com/post/chrome-kai-fa-zhe-gong-ju-cha-kan-yuan-su-bang-ding-de-shi-jian/</id>
+        <link href="https://www.sunjianbo.com/post/chrome-kai-fa-zhe-gong-ju-cha-kan-yuan-su-bang-ding-de-shi-jian/">
+        </link>
+        <updated>2020-03-09T08:59:30.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="方法一">方法一</h2>
+<p>1.右键检查or手动打开开发者工具,选中对应元素<br>
+2.点击Event Listeners标签<br>
+<img src="http://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step1.1.png" alt="step1.1" loading="lazy"><br>
+3.取消勾选Ancestors All以筛选出指定选中元素对应的事件<br>
+<img src="http://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step1.2.png" alt="step1.2" loading="lazy"></p>
+<h2 id="方法二">方法二</h2>
+<p>有时会发生方法一无法看到对应的事件,取消勾选Ancestors All以后一片空白,可以试试方法二.<br>
+1.打开开发者工具,切换到Sources标签页<br>
+<img src="http://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step2.1.png" alt="step2.1" loading="lazy"><br>
+展开Event Listeners Breakpoints,寻找指定事件勾选(我这里用click事件举例),这里相当于对相关事件下了断点<br>
+<img src="http://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step2.2.png" alt="step2.2" loading="lazy"><br>
+3.然后去操作页面来触发事件,这时就会进入断点,逐步寻找到你需要的代码.比较麻烦,无奈之举.<br>
+<img src="http://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step2.3.png" alt="step2.3" loading="lazy"></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Gridea——github pages搭建个人博客利器]]></title>
         <id>https://www.sunjianbo.com/post/gridea-github-page-li-qi/</id>
@@ -220,62 +289,5 @@ ConvertUtils.register(bd, java.math.BigDecimal.class);
 </code></pre>
 <p>原文地址：http://www.bt.cn/bbs/thread-1172-1-1.html</p>
 ]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[OpenShift V2停止服务&备份他喵的太重要了啊]]></title>
-        <id>https://www.sunjianbo.com/post/2017-10-13-openshift-v2-stop/</id>
-        <link href="https://www.sunjianbo.com/post/2017-10-13-openshift-v2-stop/">
-        </link>
-        <updated>2017-10-12T23:16:59.000Z</updated>
-        <content type="html"><![CDATA[<p>OpenShift V2彻底停止服务了,刚巧在十一期间,我本人还在湖南湖北晃荡着.</p>
-<p>上面架设了两个应用,一个就是这个博客,另外一个是<a href="http://leanote.org">leanote</a>,一款笔记软件.</p>
-<p>这个博客还好,一直在用UpdraftPlus备份,数据在dropbox里,现在已经完全恢复了.</p>
-<p>leanote方面就有点崩溃了,十一回来之后也没注意服务器挂了,没有备份leanote数据,直接把自己电脑重做系统了,然后发现悲剧了.</p>
-<p>架在openshift上的leanote跪了,本地的数据也随着系统格式化了,现在唯一剩下的笔记数据就存在自己的手机里,手机没有导入导出功能.</p>
-<p>现在一边在电脑上用数据恢复软件试图恢复.</p>
-<p>另一边在想办法找到手机上leanote的userId(同服务器账户密码不能同步数据,推测是有个唯一的userId).</p>
-<p>期待好运吧〒▽〒</p>
-<p>PS:</p>
-<p>现在博客放到<a href="https://www.vultr.com/?ref=6829518">vultr</a> 2.5刀Miami机房,临时放一下,等到黑五看看有没有更好更实惠的选择.</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Apache修改AllowOverride all 导致error 403]]></title>
-        <id>https://www.sunjianbo.com/post/2017-07-28-apache-allowoverrideall-403/</id>
-        <link href="https://www.sunjianbo.com/post/2017-07-28-apache-allowoverrideall-403/">
-        </link>
-        <updated>2017-07-28T01:10:07.000Z</updated>
-        <content type="html"><![CDATA[<p>Apache 将conf中的<code>AllowOverride None</code>改为<code>AllowOverride All</code></p>
-<p>是设置伪静以读取.htaccess文件的必须步骤,不过改完之后也许会出现了<strong>403</strong>错误</p>
-<p>这时只需要注释掉Options这句就可以解决AllowOverride None改为AllowOverride All导致的403错误</p>
-<pre><code>&lt;VirtualHost *:80&gt;
-    ServerAdmin webmaster@xiaoshuo.com
-    DocumentRoot &quot;D:/www/xiaoshuo&quot;
-    ServerName www.xiaoshuo.com
-    ServerAlias xiaoshuo.com
-    ErrorLog &quot;logs/xiaoshuo.com-error.log&quot;
-    CustomLog &quot;logs/dxiaoshuo.com-access.log&quot; common
-    &lt;Directory &quot;D:/www/xiaoshuo&quot;&gt;
-        #Options None 
-        AllowOverride None
-        Order allow,deny
-        Allow from all
-    &lt;/Directory&gt;  
-&lt;/VirtualHost&gt;
-</code></pre>
-<pre class="lang:default mark:10 decode:true " >&lt;VirtualHost *:80&gt;
-    ServerAdmin webmaster@xiaoshuo.com
-    DocumentRoot "D:/www/xiaoshuo"
-    ServerName www.xiaoshuo.com
-    ServerAlias xiaoshuo.com
-    ErrorLog "logs/xiaoshuo.com-error.log"
-    CustomLog "logs/dxiaoshuo.com-access.log" common
-    &lt;Directory "D:/www/xiaoshuo"&gt;
-        #Options None 
-        AllowOverride None
-        Order allow,deny
-        Allow from all
-    &lt;/Directory&gt;  
-&lt;/VirtualHost&gt;</pre>]]></content>
     </entry>
 </feed>
