@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>Gomez Peer第一桶金 | 孙建博的小站</title>
+<title>WordPress文章导出迁移到Gridea | 孙建博的小站</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -33,9 +33,13 @@
 </script>
 
 
-    <meta name="description" content="Gomez Peer挂了好几个月了，终于收到了第一笔付款，这是两个月的挂机结果，接近一年域名钱了，开森o(*￣▽￣*)ゞ
-..." />
-    <meta name="keywords" content="Gomez Peer,挂机网赚" />
+    <meta name="description" content="
+
+Gridea是一个静态博客写作客户端,类似hexo,hugo等,不过可以全面图形化操作,更简单,更方便.
+
+
+本次导出主要基于WordPress to Gridea Exporter插件,是我根据WordPress to Hugo Ex..." />
+    <meta name="keywords" content="gridea,wordpress" />
   </head>
   <body>
     <div id="app" class="main">
@@ -133,22 +137,60 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">Gomez Peer第一桶金</h2>
-            <div class="post-date">2015-01-20</div>
+            <h2 class="post-title">WordPress文章导出迁移到Gridea</h2>
+            <div class="post-date">2020-03-10</div>
             
             <div class="post-content" v-pre>
-              <p>Gomez Peer挂了好几个月了，终于收到了第一笔付款，这是两个月的挂机结果，接近一年域名钱了，开森o(*￣▽￣*)ゞ</p>
-<img src="http://static.sunjianbo.com/paypal/paypal-gomezpeer.jpg" alt="" width="716" height="252" />
+              <ul>
+<li>
+<p><a href="https://gridea.dev/">Gridea</a>是一个静态博客写作客户端,类似hexo,hugo等,不过可以全面图形化操作,更简单,更方便.</p>
+</li>
+<li>
+<p>本次导出主要基于<a href="https://github.com/sunjianbo/WordPress-to-Gridea-Exporter">WordPress to Gridea Exporter</a>插件,是我根据<a href="https://github.com/SchumacherFM/wordpress-to-hugo-exporter/">WordPress to Hugo Exporter<br>
+</a>简单修改而来,感谢原作者(<sup>人</sup>)</p>
+</li>
+</ul>
+<blockquote>
+<p>注意:如果你使用了类似WP Database Backup等备份插件,记得去删除一些历史的备份文件,否则导出文件可能会很大</p>
+</blockquote>
+<h2 id="操作方法">操作方法</h2>
+<ol>
+<li>
+<p>登陆wordpress后台通过快速编辑将每一篇文章的别名修改为英文,否则导出的文章会出现乱码.虽然gridea能识别,但是链接也会变成乱码,看着闹挺.<br>
+<img src="http://static.sunjianbo.com/wordpress-to-gridea/alias.png" alt="alias" loading="lazy"></p>
+</li>
+<li>
+<p>下载WordPress to Gridea Exporter并安装到wordpress上,启用.<br>
+<a href="https://github.com/sunjianbo/WordPress-to-Gridea-Exporter/archive/master.zip">https://github.com/sunjianbo/WordPress-to-Gridea-Exporter/archive/master.zip</a></p>
+</li>
+<li>
+<p>点击后台管理菜单的工具--&gt;Export to Hugo然后浏览器会自动下载一个名为hugo-export.zip的文件,所需的东西都在里面了.<br>
+<img src="http://static.sunjianbo.com/wordpress-to-gridea/action.png" alt="action" loading="lazy"></p>
+</li>
+<li>
+<p>提取hugo-export.zip文件中的posts文件下的所有md文件到Documents\Gridea\posts目录下(如果不知道该目录在那,查看Gridea的设置)</p>
+</li>
+<li>
+<p>重启Gridea查看并预览是否已经读取到相关文章</p>
+</li>
+<li>
+<p>wordpress中隐藏的文章全部设为草稿了,如需发布自行编辑一下</p>
+</li>
+<li>
+<p>文章中的图片有可能需要重新处理一下,wp媒体库的图片在压缩包中wp-content/uploads目录中</p>
+</li>
+</ol>
+
             </div>
             
               <div class="tag-container">
                 
-                  <a href="https://www.sunjianbo.com/tag/hgkCZt-QyK3/" class="tag">
-                    Gomez Peer
+                  <a href="https://www.sunjianbo.com/tag/gB6ZLg4La/" class="tag">
+                    gridea
                   </a>
                 
-                  <a href="https://www.sunjianbo.com/tag/MLBXIm_5mwe/" class="tag">
-                    挂机网赚
+                  <a href="https://www.sunjianbo.com/tag/iGpvi15BaMr/" class="tag">
+                    wordpress
                   </a>
                 
               </div>
@@ -156,9 +198,9 @@
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://www.sunjianbo.com/post/2015-01-15-csdn-task-answers-1/">
+                <a href="https://www.sunjianbo.com/post/chrome-kai-fa-zhe-gong-ju-cha-kan-yuan-su-bang-ding-de-shi-jian/">
                   <h3 class="post-title">
-                    CSDN有奖任务答案-关注CSDN学院，即可获得2个下载积分
+                    Chrome开发者工具查看元素绑定的事件
                   </h3>
                 </a>
               </div>
