@@ -755,3 +755,8 @@ a {
   font-size: 16px;
   margin: 4px 8px;
 }
+.post-item .left .post-abstract a {
+  color: #4c6ef5;
+  border-bottom: 1px dotted #4c6ef5;
+  transition: all 0.3s;
+}
