@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>Spring框架中的单例Beans是线程安全的么 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1583914498136">
+<link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-160052000-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-160052000-1');
+</script>
+
+
+    <meta name="description" content="看到这样一个问题：Spring框架中的单例Beans是线程安全的么？
+Spring框架并没有对单例bean进行任何多线程的封装处理。关于单例bean的线程安全和并发问题需要开发者自行去搞定。但实际上，大部分的Spring bean并没有可变..." />
+    <meta name="keywords" content="多线程,java,spring,单例" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://www.sunjianbo.com">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1583914498136" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/sun_jianbo" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://weibo.com/u/1967178011" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/sun-jian-bo-59" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.facebook.com/profile.php?id=100011365915451" target="_blank">
+            <i class="fab fa-facebook"></i>
+          </a>
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://www.miitbeian.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://www.sunjianbo.com/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">Spring框架中的单例Beans是线程安全的么</h2>
+            <div class="post-date">2015-05-12</div>
+            
+            <div class="post-content" v-pre>
+              <p>看到这样一个问题：Spring框架中的单例Beans是线程安全的么？</p>
+<p>Spring框架并没有对单例bean进行任何多线程的封装处理。关于单例bean的线程安全和并发问题需要开发者自行去搞定。但实际上，大部分的Spring bean并没有可变的状态(比如Serview类和DAO类)，所以在某种程度上说Spring的单例bean是线程安全的。如果你的bean有多种状态的话（比如 View Model 对象），就需要自行保证线程安全。</p>
+<p>最浅显的解决办法就是将多态bean的作用域由“singleton”变更为“prototype”。</p>
+<p>没太看懂有状态和无状态的bean是什么意思，于是百度之，获益匪浅。</p>
+<p><span style="background-color: #c0c0c0;">以下内容转载自：<a href="http://blog.csdn.net/anyoneking/article/details/5182164"><span style="background-color: #c0c0c0;">懒散狂徒的专栏</span></a></span></p>
+<p>在Spring的Bean配置中，存在这样两种情况：</p>
+<pre><code>&lt;bean id=&quot;testManager&quot; class=&quot;com.sw.TestManagerImpl&quot; scope=&quot;singleton&quot; /&gt;  
+&lt;bean id=&quot;testManager&quot; class=&quot;com.sw.TestManagerImpl&quot; scope=&quot;prototype&quot; /&gt;  
+</code></pre>
+<p>当然，scope的值不止这两种，还包括了request,session 等。但用的最多的还是singleton单态，prototype多态。</p>
+<p>singleton表示该bean全局只有一个实例，Spring中bean的scope默认也是singleton.</p>
+<p>prototype表示该bean在每次被注入的时候，都要重新创建一个实例，这种情况适用于有状态的Bean.</p>
+<p>对于SSH架构的系统，很少关心这方面，因为我们用到的一般都是singleton. Bean的注入由Spring管理。</p>
+<p>对于有状态的Bean呢？</p>
+<p>下面是一个有状态的Bean</p>
+<pre><code class="language-java">package com.sw;  
+
+public class TestManagerImpl implements TestManager{  
+    private User user;    
+
+    public void deleteUser(User e) throws Exception {  
+        user = e ;           //1  
+        prepareData(e);  
+    }  
+
+    public void prepareData(User e) throws Exception {  
+        user = getUserByID(e.getId());            //2  
+        .....  
+        //使用user.getId();                       //3  
+        .....  
+        .....  
+    }     
+}  
+</code></pre>
+<p>如果该Bean配置为singleton,会出现什么样的状况呢？</p>
+<p>如果有2个用户访问，都调用到了该Bean.</p>
+<p>假定为user1,user2</p>
+<p>当user1 调用到程序中的1步骤的时候，该Bean的私有变量user被付值为user1</p>
+<p>当user1的程序走到2步骤的时候，该Bean的私有变量user被重新付值为user1_create</p>
+<p>理想的状况，当user1走到3步骤的时候，私有变量user应该为user1_create;</p>
+<p>但如果在user1调用到3步骤之前，user2开始运行到了1步骤了，由于单态的资源共享，则私有变量user被修改为user2</p>
+<p>这种情况下，user1的步骤3用到的user.getId()实际用到是user2的对象。</p>
+<p>而如果是prototype的话，就不会出现资源共享的问题。</p>
+<p>对于SSH来说，Bean的配置是没错的，配置为singleton ;实际应该是这个例子不应该用私有变量。这样就使得这个Bean</p>
+<p>由无状态变成了有状态Bean.还是应该尽量使用无状态Bean.如果在程序中出现私有变量，尽量替换为参数。<br>
+对于每个访问私有变量的方法增加变量传入或者通过ThreadLocal来获取也是不错的方法。</p>
+<p>真正出现上面代码问题的也是少数，出现的时候，一般是为了图方便，一个很多方法都要用到的变量，如果都需要用参数的</p>
+<p>方式传递多麻烦呀，这样私有变量多好，不用参数那样丑陋。但是丑陋并不代表不好，以对的，自己习惯的方式编程，才能</p>
+<p>尽量避免问题的发生。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://www.sunjianbo.com/tag/lo68nmzNwCX/" class="tag">
+                    多线程
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/0tmsVkBYC52/" class="tag">
+                    java
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/TFyC70CLoSn/" class="tag">
+                    spring
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/2S21c5Lw3Sk/" class="tag">
+                    单例
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://www.sunjianbo.com/extjs-cmp-el-dom/">
+                  <h3 class="post-title">
+                    理解Html DOM、Ext Element及Component
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

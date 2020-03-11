@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-03-11T07:04:54.044Z</updated>
+    <updated>2020-03-11T08:16:20.434Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -12,8 +12,8 @@
     <rights>All rights reserved 2020, 孙建博的小站</rights>
     <entry>
         <title type="html"><![CDATA[Gridea主题修改之自动摘要]]></title>
-        <id>https://www.sunjianbo.com/post/gridea-auto-excerpt/</id>
-        <link href="https://www.sunjianbo.com/post/gridea-auto-excerpt/">
+        <id>https://www.sunjianbo.com/gridea-auto-excerpt/</id>
+        <link href="https://www.sunjianbo.com/gridea-auto-excerpt/">
         </link>
         <updated>2020-03-11T06:42:55.000Z</updated>
         <summary type="html"><![CDATA[<p>Gridea的部分主题并不带有自动摘要功能,如果需要摘要得先在文章中手动插入<code>&lt;!--more--&gt;</code>标记.否则首页就是光溜溜的一片标题,看起来很不舒服.</p>
@@ -86,8 +86,8 @@
     </entry>
     <entry>
         <title type="html"><![CDATA[WordPress文章导出迁移到Gridea]]></title>
-        <id>https://www.sunjianbo.com/post/wordpress-to-gridea/</id>
-        <link href="https://www.sunjianbo.com/post/wordpress-to-gridea/">
+        <id>https://www.sunjianbo.com/wordpress-to-gridea/</id>
+        <link href="https://www.sunjianbo.com/wordpress-to-gridea/">
         </link>
         <updated>2020-03-10T04:12:05.000Z</updated>
         <summary type="html"><![CDATA[<ul>
@@ -144,8 +144,8 @@
     </entry>
     <entry>
         <title type="html"><![CDATA[Chrome开发者工具查看元素绑定的事件]]></title>
-        <id>https://www.sunjianbo.com/post/chrome-kai-fa-zhe-gong-ju-cha-kan-yuan-su-bang-ding-de-shi-jian/</id>
-        <link href="https://www.sunjianbo.com/post/chrome-kai-fa-zhe-gong-ju-cha-kan-yuan-su-bang-ding-de-shi-jian/">
+        <id>https://www.sunjianbo.com/chrome-kai-fa-zhe-gong-ju-cha-kan-yuan-su-bang-ding-de-shi-jian/</id>
+        <link href="https://www.sunjianbo.com/chrome-kai-fa-zhe-gong-ju-cha-kan-yuan-su-bang-ding-de-shi-jian/">
         </link>
         <updated>2020-03-09T08:59:30.000Z</updated>
         <content type="html"><![CDATA[<h2 id="方法一">方法一</h2>
@@ -166,8 +166,8 @@
     </entry>
     <entry>
         <title type="html"><![CDATA[Gridea——github pages搭建个人博客利器]]></title>
-        <id>https://www.sunjianbo.com/post/gridea-github-page-li-qi/</id>
-        <link href="https://www.sunjianbo.com/post/gridea-github-page-li-qi/">
+        <id>https://www.sunjianbo.com/gridea-github-page-li-qi/</id>
+        <link href="https://www.sunjianbo.com/gridea-github-page-li-qi/">
         </link>
         <updated>2020-02-25T07:42:55.000Z</updated>
         <content type="html"><![CDATA[<p>以前也想过搞github pages做博客,但是一搜教程看着那一步步超级麻烦的操作步骤,无奈放弃.<br>
@@ -184,8 +184,8 @@
     </entry>
     <entry>
         <title type="html"><![CDATA[springboot通过java -jar运行实现ApplicationContextAware接口报空指针NUllPointerException]]></title>
-        <id>https://www.sunjianbo.com/post/2019-07-22-springboot-applicationcontextaware-nullpointerexception/</id>
-        <link href="https://www.sunjianbo.com/post/2019-07-22-springboot-applicationcontextaware-nullpointerexception/">
+        <id>https://www.sunjianbo.com/springboot-applicationcontextaware-nullpointerexception/</id>
+        <link href="https://www.sunjianbo.com/springboot-applicationcontextaware-nullpointerexception/">
         </link>
         <updated>2019-07-22T00:06:58.000Z</updated>
         <content type="html"><![CDATA[<h2 id="先描述背景">先描述背景：</h2>
@@ -210,8 +210,8 @@ at com.ceair.b2t.messagecenter.SpringContextUtil.getBean(SpringContextUtil.java:
     </entry>
     <entry>
         <title type="html"><![CDATA[FileZilla支持Windows XP版本官方下载地址]]></title>
-        <id>https://www.sunjianbo.com/post/2019-04-10-filezilla-for-windows-xp-download/</id>
-        <link href="https://www.sunjianbo.com/post/2019-04-10-filezilla-for-windows-xp-download/">
+        <id>https://www.sunjianbo.com/filezilla-for-windows-xp-download/</id>
+        <link href="https://www.sunjianbo.com/filezilla-for-windows-xp-download/">
         </link>
         <updated>2019-04-09T17:59:04.000Z</updated>
         <content type="html"><![CDATA[<p>FileZilla很早就已经不支持xp系统了</p>
@@ -226,8 +226,8 @@ at com.ceair.b2t.messagecenter.SpringContextUtil.getBean(SpringContextUtil.java:
     </entry>
     <entry>
         <title type="html"><![CDATA[最简单解决linux解压缩乱码问题]]></title>
-        <id>https://www.sunjianbo.com/post/2018-12-26-the-easiest-solution-to-linux-decompression-garbled/</id>
-        <link href="https://www.sunjianbo.com/post/2018-12-26-the-easiest-solution-to-linux-decompression-garbled/">
+        <id>https://www.sunjianbo.com/the-easiest-solution-to-linux-decompression-garbled/</id>
+        <link href="https://www.sunjianbo.com/the-easiest-solution-to-linux-decompression-garbled/">
         </link>
         <updated>2018-12-25T18:07:26.000Z</updated>
         <content type="html"><![CDATA[<p>因为在windows下压缩的文件是使用(gbk,gb18030)编码的，所以在linux(utf-8)下面直接解压有编码问题</p>
@@ -242,8 +242,8 @@ at com.ceair.b2t.messagecenter.SpringContextUtil.getBean(SpringContextUtil.java:
     </entry>
     <entry>
         <title type="html"><![CDATA[No value specified for 'BigDecimal']]></title>
-        <id>https://www.sunjianbo.com/post/2018-07-24-no-value-specified-for-bigdecimal/</id>
-        <link href="https://www.sunjianbo.com/post/2018-07-24-no-value-specified-for-bigdecimal/">
+        <id>https://www.sunjianbo.com/no-value-specified-for-bigdecimal/</id>
+        <link href="https://www.sunjianbo.com/no-value-specified-for-bigdecimal/">
         </link>
         <updated>2018-07-24T01:52:34.000Z</updated>
         <content type="html"><![CDATA[<p>使用<strong>org.apache.commons.beanutils.BeanUtils</strong>进行对象拷贝时，遇到BigDecimal的属性会报错</p>
@@ -260,8 +260,8 @@ ConvertUtils.register(bd, java.math.BigDecimal.class);
     </entry>
     <entry>
         <title type="html"><![CDATA[Web大规模高并发请求和抢购的解决方案]]></title>
-        <id>https://www.sunjianbo.com/post/2018-07-10-high-concurrency-requests-and-snap-up/</id>
-        <link href="https://www.sunjianbo.com/post/2018-07-10-high-concurrency-requests-and-snap-up/">
+        <id>https://www.sunjianbo.com/high-concurrency-requests-and-snap-up/</id>
+        <link href="https://www.sunjianbo.com/high-concurrency-requests-and-snap-up/">
         </link>
         <updated>2018-07-09T22:12:16.000Z</updated>
         <content type="html"><![CDATA[<p>转载的,我看得地方也是转载的,所以就不贴原文地址了,文章写得很细致,可以一看.</p>
@@ -342,8 +342,8 @@ ConvertUtils.register(bd, java.math.BigDecimal.class);
     </entry>
     <entry>
         <title type="html"><![CDATA[本站启用了SSL（HTTPS）]]></title>
-        <id>https://www.sunjianbo.com/post/2018-01-31-https/</id>
-        <link href="https://www.sunjianbo.com/post/2018-01-31-https/">
+        <id>https://www.sunjianbo.com/https/</id>
+        <link href="https://www.sunjianbo.com/https/">
         </link>
         <updated>2018-01-30T23:41:22.000Z</updated>
         <content type="html"><![CDATA[<p>今天给网站www.sunjianbo.com和note.sunjianbo.com启用了ssl，全程使用宝塔面板操作，简直不要太简单。</p>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>让WordPress评论时可以只写姓名不写邮箱(转载) | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1583914498136">
+<link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-160052000-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-160052000-1');
+</script>
+
+
+    <meta name="description" content="转载自：http://www.slyar.com/blog/wordpress-only-name.html
+WordPress的评论默认有2种方式，一种是姓名和邮箱全写，另一种是姓名和邮箱全不写。全写吧，很多访客都没有邮箱或者不喜欢写邮箱..." />
+    <meta name="keywords" content="wordpress" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://www.sunjianbo.com">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1583914498136" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/sun_jianbo" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://weibo.com/u/1967178011" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/sun-jian-bo-59" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.facebook.com/profile.php?id=100011365915451" target="_blank">
+            <i class="fab fa-facebook"></i>
+          </a>
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://www.miitbeian.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://www.sunjianbo.com/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">让WordPress评论时可以只写姓名不写邮箱(转载)</h2>
+            <div class="post-date">2014-09-25</div>
+            
+            <div class="post-content" v-pre>
+              <p>转载自：<a href="http://www.slyar.com/blog/wordpress-only-name.html">http://www.slyar.com/blog/wordpress-only-name.html</a></p>
+<p>WordPress的评论默认有2种方式，一种是姓名和邮箱全写，另一种是姓名和邮箱全不写。全写吧，很多访客都没有邮箱或者不喜欢写邮箱，这样就导致评论减少；全不写吧，又会有很多垃圾评论。。。这时有人提出：能不能让访客必写姓名又可以不写邮箱呢？</p>
+<p>答案是肯定的。首先我们来分析一下评论提交时的php文件，位于Wordpress根目录下的wp-comments-post.php，看这一段：</p>
+<pre><code class="language-js">if ( get&lt;em&gt;option('require&lt;/em&gt;name&lt;em&gt;email') &amp;&amp; !$user-&gt;ID ) {
+   	if ( 6 &gt; strlen($comment&lt;/em&gt;author&lt;em&gt;email) || '' == $comment&lt;/em&gt;author )
+   		wp&lt;em&gt;die( ('Error: please fill the required fields (name, email).') );
+   	elseif ( !is&lt;em&gt;email($comment&lt;/em&gt;author&lt;em&gt;email))
+   		wp&lt;/em&gt;die( _&lt;/em&gt;('Error: please enter a valid email address.') );
+}
+   
+</code></pre>
+<p>我们看到这是一段嵌套if判断，Wordpress首先判断后台的评论选项是否要求填写姓名和邮箱，如果要求，则先检查评论者的姓名和邮箱的长度(姓名不能为空，邮箱长度不能小于6)；如果姓名为空或者邮箱长度小于6，则提示<code>Error: please fill the required fields (name, email)</code>，若此项检查符合要求，那么继续检查邮箱是否符合格式，若格式不正确则提示<code>Error: please enter a valid email address</code>，若邮箱格式也符合要求，评论才会成功发出。</p>
+<p>一开始为了简单，就把第二个if判断删除了，试验后发现不可行。。。换思路。。。</p>
+<p>因为它是嵌套if，所以必须二个条件都符合才行，那么我们可以将其中一个嵌套提出来单独判断。最后的判断方式是：首先判断姓名是否为空，若为空则弹出错误提示，不为空继续检查邮箱地址，如果邮箱地址为空则继续，不为空则判断邮箱地址格式是否正确，格式不正确弹出错误提示，格式正确则完成评论。</p>
+<p>那么实现的代码为(我小小汉化了一下)：</p>
+<pre><code class="language-js">if ( get&lt;em&gt;option('require&lt;/em&gt;name&lt;em&gt;email') &amp;&amp; !$user-&gt;ID ) {
+   if ( '' == $comment&lt;/em&gt;author )
+   		wp&lt;em&gt;die(&lt;strong&gt;('Slyar说:名字你都不写？想当火星人？'));
+   if ( &quot;&quot; != $comment&lt;/strong&gt;&lt;/em&gt;author&lt;em&gt;email) {
+	   if ( !is&lt;/em&gt;email($comment&lt;em&gt;author&lt;/em&gt;email))
+	   		wp_die(('Slyar说:拜托，要写邮箱写对成不？') );
+   }
+}
+</code></pre>
+<p>在实际测试的时候发现还是会出现Alert错误提示，而php代码里没有Alert，那么应该是模板或者插件自带的判断，经过分析查找最后得到结论是&quot;Wordpress Thread Comment&quot;这个插件内部含有评论判断语句，修改的方法也大同小异，我就不说了。</p>
+<p>如果没有插件干扰，那么经过修改就可以成功实现Wordpress评论时只写姓名不写邮箱了。</p>
+<p>PS.要使用这个功能，后台设置-评论中的&quot;评论者必须输入姓名及电子邮箱&quot;一定要打钩！</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://www.sunjianbo.com/tag/iGpvi15BaMr/" class="tag">
+                    wordpress
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://www.sunjianbo.com/style-img-width-auto/">
+                  <h3 class="post-title">
+                    修改图片宽度自适应使文字图片分开并一目了然
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

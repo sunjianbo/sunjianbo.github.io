@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>eclipse使用subclipse报错failed to load javahl library | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1583914498136">
+<link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-160052000-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-160052000-1');
+</script>
+
+
+    <meta name="description" content="在Eclipse中安装svn的插件，出现如下提示
+
+主要原因是找不到JAVAHL
+解决方案全部步骤整理如下：
+1、安装subclipse，这是出这个错误前提就不用说了，可忽略
+2、安装Subversion(系统应该自带，在终端使用svn -..." />
+    <meta name="keywords" content="eclipse,svn,javahl,subcclipse" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://www.sunjianbo.com">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1583914498136" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/sun_jianbo" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://weibo.com/u/1967178011" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/sun-jian-bo-59" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.facebook.com/profile.php?id=100011365915451" target="_blank">
+            <i class="fab fa-facebook"></i>
+          </a>
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://www.miitbeian.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://www.sunjianbo.com/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">eclipse使用subclipse报错failed to load javahl library</h2>
+            <div class="post-date">2014-09-03</div>
+            
+            <div class="post-content" v-pre>
+              <p>在Eclipse中安装svn的插件，出现如下提示</p>
+<img class="alignnone" src="http://static.sunjianbo.com/failed-to-load-javahl-library-1.png" alt="" width="546" height="554" />
+<p>主要原因是找不到JAVAHL</p>
+<p>解决方案全部步骤整理如下：</p>
+<p>1、安装subclipse，这是出这个错误前提就不用说了，可忽略</p>
+<p>2、安装Subversion(系统应该自带，在终端使用svn --version查看一下试试)</p>
+<p><a href="http://www.collab.net/downloads/subversion">http://www.collab.net/downloads/subversion</a></p>
+<p>需要注册登陆，一堆必填项神烦啊，选择“Community Binaries”后下个最新版</p>
+<p>3、安装macports</p>
+<p><a href="http://www.macports.org/install.php">http://www.macports.org/install.php</a></p>
+<p>吐槽下，安装虽然显示不到1分钟，但不知道为毛神慢，我等接近半小时才完成</p>
+<p>安装完成macports后，执行命令：</p>
+<pre><code>sudo port -v selfupdate 更新下
+</code></pre>
+<p>4、安装xcode和command line tools（如已安装请忽略）</p>
+<p>xcode不用说了，clt这么安装：</p>
+<p>打开Xcode–》偏好设置–》download–》install command line tools</p>
+<p>也可以打开终端，输入命令：<code>xcode-select --install</code> 按提示安装</p>
+<p>5、安装javaHL</p>
+<p>控制台执行命令：</p>
+<pre><code>sudo port install subversion-javahlbindings +no_bdb +universal
+</code></pre>
+<p>如果执行后出现</p>
+<p>Error: Port subversion-javahlbindings not found错误，参考第三条进行更新，之后再次运行javaHL安装命令，就可以顺利执行了。</p>
+<p>以上步骤完成之后，即可重新启动eclipse，此时subclipse即可使用了。</p>
+<p>补充：</p>
+<p>①macports应该是可以用HomeBrew替换，不过我没有尝试，如果是安装的HomeBrew这时运行的命令是：</p>
+<pre><code>brew install --universal --java subversion
+</code></pre>
+<p>②这里是JavaHL FAQ：</p>
+<p><a href="http://subclipse.tigris.org/wiki/JavaHL">http://subclipse.tigris.org/wiki/JavaHL</a> 安装命令就在这里有说明</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://www.sunjianbo.com/tag/_-KLnCT1q5O/" class="tag">
+                    eclipse
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/OG06UKg1pYF/" class="tag">
+                    svn
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/cLMZm7mLXz7/" class="tag">
+                    javahl
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/cdX0EnaFCt8/" class="tag">
+                    subcclipse
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://www.sunjianbo.com/about-buy-gamemachine-wii/">
+                  <h3 class="post-title">
+                    入手人生第一台家用机Wii及一些感想
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>
