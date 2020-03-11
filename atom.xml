@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-03-11T06:47:37.455Z</updated>
+    <updated>2020-03-11T07:04:54.044Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -44,10 +44,10 @@
 </code></pre>
 <p>就完成了主题的页面设置功能,自动摘要选取的行数可以自定义</p>
 <p>效果图:</p>
-<figure data-type="image" tabindex="1"><img src="C:%5CUsers%5Clove%5CPictures%5Cqiniu%5Ctypora%5Cimage-20200311142153575.png" alt="image-20200311142153575" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="http://static.sunjianbo.com/gridea-auto-excerpt/image-20200311142153575.png" alt="image-20200311142153575" loading="lazy"></figure>
 <h2 id="2首页编写自动摘要功能">2.首页编写自动摘要功能</h2>
 <p>编辑文件<code>%Gridea%\themes\simple\templates\index.ejs</code>在如图所示位置添加代码:</p>
-<figure data-type="image" tabindex="2"><img src="C:%5CUsers%5Clove%5CPictures%5Cqiniu%5Ctypora%5Cimage-20200311142947299.png" alt="image-20200311142947299" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="http://static.sunjianbo.com/gridea-auto-excerpt/image-20200311142947299.png" alt="image-20200311142947299" loading="lazy"></figure>
 <pre><code class="language-js">&lt;% if (post.abstract) { %&gt;
 	&lt;!-- 有手动摘要则加个more链接 --&gt;
 	&lt;a href=&quot;&lt;%= post.link %&gt;&quot;&gt;more →&lt;/a&gt;
@@ -80,6 +80,8 @@
   transition: all 0.3s;
 }
 </code></pre>
+<p>效果图</p>
+<figure data-type="image" tabindex="3"><img src="http://static.sunjianbo.com/gridea-auto-excerpt/image-20200311150147647.png" alt="image-20200311150147647" loading="lazy"></figure>
 ]]></content>
     </entry>
     <entry>
