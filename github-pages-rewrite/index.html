@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>github pages url重定向的变相解决方法 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1583981271256">
+<link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-160052000-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-160052000-1');
+</script>
+
+
+    <meta name="description" content="这也是从WordPress迁移到Gridea&amp;github pages的后遗症之一.
+我在WP那边的url格式是https://www.sunjianbo.com/xxx.html,而弄好Gridea之后发现url格式是https:..." />
+    <meta name="keywords" content="github pages,htaccess,rewrite,gridea" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://www.sunjianbo.com">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1583981271256" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/sun_jianbo" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://weibo.com/u/1967178011" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/sun-jian-bo-59" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.facebook.com/profile.php?id=100011365915451" target="_blank">
+            <i class="fab fa-facebook"></i>
+          </a>
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://www.miitbeian.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://www.sunjianbo.com/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">github pages url重定向的变相解决方法</h2>
+            <div class="post-date">2020-03-12</div>
+            
+            <div class="post-content" v-pre>
+              <p>这也是从WordPress迁移到Gridea&amp;github pages的后遗症之一.</p>
+<p>我在WP那边的url格式是https://www.sunjianbo.com/xxx.html,而弄好Gridea之后发现url格式是https://www.sunjianbo.com/post/xxx/.因为是老站嘛,搜索引擎还是有一些关键词可以搜到的,所以昨天发现了问题,从搜索引擎那边链接打开的页面都会404.</p>
+<p>我第一个想法就是通过.htaccess做url的rewrite,但是搜索一下发现github pages并不支持这种方式.</p>
+<p>好在还知道<code>&lt;meta http-equiv=&quot;refresh&quot; content=&quot;2; url='/'&quot;&gt;</code>标签可以做页面的定时跳转和刷新,再结合使用<code>&lt;link rel=&quot;canonical&quot; href=&quot;&quot; /&gt;</code>标签来告诉搜索引擎新的规范链接地址.</p>
+<p>思路说完了,那么以下是详细步骤:</p>
+<h2 id="1修改gridea主题设置">1.修改Gridea主题设置</h2>
+<p>开启,精简url模式这是为了去掉url中的/post/,不用gridea的可以无视.<img src="http://static.sunjianbo.com/20200312102504.png" alt="gridea" loading="lazy"></p>
+<h2 id="2批量创建html文件">2.批量创建html文件</h2>
+<p>我这里通过Python代码遍历post目录下所有文章,提取文件名,替换后缀名,在指定目录生成.html文件.</p>
+<p>代码如下:</p>
+<pre><code class="language-Python">#conding=utf8
+import os
+g = os.walk(&quot;D:\IDE\Gridea\Documents\Gridea\posts&quot;)
+out = &quot;D:\IDE\Gridea\Documents\Gridea\output\&quot;
+for path,dir_list,file_list in g:
+    print(len(file_list))
+    for file_name in file_list:
+        # print(os.path.join(path, file_name) )
+
+        print(os.path.splitext(file_name)[0])
+        outName = os.path.splitext(file_name)[0] + &quot;.html&quot;
+        with open(out + outName, 'w') as f:  # open()函数可以判断文件是否存在，如果不存在，则创建文件
+            myurl = &quot;www.sunjianbo.com/&quot; +os.path.splitext(file_name)[0]
+            message = &quot;&quot;&quot;&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv=&quot;refresh&quot; content=&quot;0; url=https://myurl/&quot;&gt;
+    &lt;link rel=&quot;canonical&quot; href=&quot;https://myurl/&quot; /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;/body&gt;
+&lt;/html&gt;&quot;&quot;&quot;
+            message = message.replace(&quot;myurl&quot;,myurl)
+            f.write(message)
+</code></pre>
+<h2 id="3上传到github">3.上传到github</h2>
+<p>打开.html查看是否没有问题,删除多余的没用文件,比如我这里还生成了一个<code>.DS_Store.html</code>*´∀`)</p>
+<p>然后手动上传到github,不能通过Gridea上传因为他会清空output目录自己再生成一遍文章,我们的html文件会在同步前被删除.</p>
+<p>到output目录打开终端</p>
+<pre><code class="language-git">git add .
+git commit -m &quot;for rewrite&quot;
+git push origin master
+</code></pre>
+<p>当然网页上传也可以,不过上传文件限制一次100,文章多的话更麻烦一点.</p>
+<h2 id="4最后到搜索引擎搜索关键字测试一下吧">4.最后到搜索引擎搜索关键字测试一下吧.</h2>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://www.sunjianbo.com/tag/JbWX_NXlL/" class="tag">
+                    github pages
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/FmTOG16ppd/" class="tag">
+                    htaccess
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/yagYlgvAzF/" class="tag">
+                    rewrite
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/gB6ZLg4La/" class="tag">
+                    gridea
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://www.sunjianbo.com/gridea-auto-excerpt/">
+                  <h3 class="post-title">
+                    Gridea主题修改之自动摘要
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

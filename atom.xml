@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-03-11T11:16:37.367Z</updated>
+    <updated>2020-03-12T02:48:17.046Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -10,6 +10,58 @@
     <logo>https://www.sunjianbo.com/images/avatar.png</logo>
     <icon>https://www.sunjianbo.com/favicon.ico</icon>
     <rights>All rights reserved 2020, 孙建博的小站</rights>
+    <entry>
+        <title type="html"><![CDATA[github pages url重定向的变相解决方法]]></title>
+        <id>https://www.sunjianbo.com/github-pages-rewrite/</id>
+        <link href="https://www.sunjianbo.com/github-pages-rewrite/">
+        </link>
+        <updated>2020-03-12T02:07:10.000Z</updated>
+        <content type="html"><![CDATA[<p>这也是从WordPress迁移到Gridea&amp;github pages的后遗症之一.</p>
+<p>我在WP那边的url格式是https://www.sunjianbo.com/xxx.html,而弄好Gridea之后发现url格式是https://www.sunjianbo.com/post/xxx/.因为是老站嘛,搜索引擎还是有一些关键词可以搜到的,所以昨天发现了问题,从搜索引擎那边链接打开的页面都会404.</p>
+<p>我第一个想法就是通过.htaccess做url的rewrite,但是搜索一下发现github pages并不支持这种方式.</p>
+<p>好在还知道<code>&lt;meta http-equiv=&quot;refresh&quot; content=&quot;2; url='/'&quot;&gt;</code>标签可以做页面的定时跳转和刷新,再结合使用<code>&lt;link rel=&quot;canonical&quot; href=&quot;&quot; /&gt;</code>标签来告诉搜索引擎新的规范链接地址.</p>
+<p>思路说完了,那么以下是详细步骤:</p>
+<h2 id="1修改gridea主题设置">1.修改Gridea主题设置</h2>
+<p>开启,精简url模式这是为了去掉url中的/post/,不用gridea的可以无视.<img src="http://static.sunjianbo.com/20200312102504.png" alt="gridea" loading="lazy"></p>
+<h2 id="2批量创建html文件">2.批量创建html文件</h2>
+<p>我这里通过Python代码遍历post目录下所有文章,提取文件名,替换后缀名,在指定目录生成.html文件.</p>
+<p>代码如下:</p>
+<pre><code class="language-Python">#conding=utf8
+import os
+g = os.walk(&quot;D:\IDE\Gridea\Documents\Gridea\posts&quot;)
+out = &quot;D:\IDE\Gridea\Documents\Gridea\output\&quot;
+for path,dir_list,file_list in g:
+    print(len(file_list))
+    for file_name in file_list:
+        # print(os.path.join(path, file_name) )
+
+        print(os.path.splitext(file_name)[0])
+        outName = os.path.splitext(file_name)[0] + &quot;.html&quot;
+        with open(out + outName, 'w') as f:  # open()函数可以判断文件是否存在，如果不存在，则创建文件
+            myurl = &quot;www.sunjianbo.com/&quot; +os.path.splitext(file_name)[0]
+            message = &quot;&quot;&quot;&lt;html&gt;
+&lt;head&gt;
+    &lt;meta http-equiv=&quot;refresh&quot; content=&quot;0; url=https://myurl/&quot;&gt;
+    &lt;link rel=&quot;canonical&quot; href=&quot;https://myurl/&quot; /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;/body&gt;
+&lt;/html&gt;&quot;&quot;&quot;
+            message = message.replace(&quot;myurl&quot;,myurl)
+            f.write(message)
+</code></pre>
+<h2 id="3上传到github">3.上传到github</h2>
+<p>打开.html查看是否没有问题,删除多余的没用文件,比如我这里还生成了一个<code>.DS_Store.html</code>*´∀`)</p>
+<p>然后手动上传到github,不能通过Gridea上传因为他会清空output目录自己再生成一遍文章,我们的html文件会在同步前被删除.</p>
+<p>到output目录打开终端</p>
+<pre><code class="language-git">git add .
+git commit -m &quot;for rewrite&quot;
+git push origin master
+</code></pre>
+<p>当然网页上传也可以,不过上传文件限制一次100,文章多的话更麻烦一点.</p>
+<h2 id="4最后到搜索引擎搜索关键字测试一下吧">4.最后到搜索引擎搜索关键字测试一下吧.</h2>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Gridea主题修改之自动摘要]]></title>
         <id>https://www.sunjianbo.com/gridea-auto-excerpt/</id>
@@ -338,17 +390,6 @@ ConvertUtils.register(bd, java.math.BigDecimal.class);
 <p>有很多软件和服务都“乐观锁”功能的支持，例如Redis中的watch就是其中之一。通过这个实现，我们保证了数据的安全。</p>
 <h2 id="四-小结">四、小结</h2>
 <p>互联网正在高速发展，使用互联网服务的用户越多，高并发的场景也变得越来越多。电商秒杀和抢购，是两个比较典型的互联网高并发场景。虽然我们解决问题的具体技术方案可能千差万别，但是遇到的挑战却是相似的，因此解决问题的思路也异曲同工。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[本站启用了SSL（HTTPS）]]></title>
-        <id>https://www.sunjianbo.com/https/</id>
-        <link href="https://www.sunjianbo.com/https/">
-        </link>
-        <updated>2018-01-30T23:41:22.000Z</updated>
-        <content type="html"><![CDATA[<p>今天给网站www.sunjianbo.com和note.sunjianbo.com启用了ssl，全程使用宝塔面板操作，简直不要太简单。</p>
-<p>唯一值得一说的是申请证书时候要文件验证,而leanote是使用反向代理本地的9000端口提供web服务的，找了半天也没有找到应该把验证文件放在什么位置，最后一怒之下，先关了反向代理,验证通过之后在重新启用。</p>
-<p>两个站都全部开启了强制https，同样是在宝塔面板操作的，这玩意用起来还是挺爽了，简化了很多操作，也不用总是ssh到服务器了，不过还是要注意安全。</p>
 ]]></content>
     </entry>
 </feed>

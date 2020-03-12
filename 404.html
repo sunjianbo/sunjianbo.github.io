@@ -82,14 +82,14 @@
     Powered by <a href="https://gridea.dev" target="_blank">Gridea</a>
   </footer>
   <script>
-    var url = location.href;
-	if(url.indexOf(".html")){
-		url = url.substring(0, url.indexOf(".html")) + "/"
-		location.href = url;
-	}else{
+//    var url = location.href;
+//	if(url.indexOf(".html")){
+//		url = url.substring(0, url.indexOf(".html")) + "/"
+//		location.href = url;
+//	}else{
 		var back = document.getElementById('back')
 		back.onclick = function() { console.log('run...'); history.back() }
-	}
+//	}
   </script>
 </body>
 </html>
