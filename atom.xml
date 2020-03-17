@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-03-12T02:48:17.046Z</updated>
+    <updated>2020-03-17T03:07:34.245Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -56,10 +56,11 @@ for path,dir_list,file_list in g:
 <p>到output目录打开终端</p>
 <pre><code class="language-git">git add .
 git commit -m &quot;for rewrite&quot;
-git push origin master
+git pustt
 </code></pre>
 <p>当然网页上传也可以,不过上传文件限制一次100,文章多的话更麻烦一点.</p>
 <h2 id="4最后到搜索引擎搜索关键字测试一下吧">4.最后到搜索引擎搜索关键字测试一下吧.</h2>
+<h2 id="ps可以将html文件上传github的不同目录来满足不同url格式的支持">PS:可以将.html文件上传github的不同目录来满足不同url格式的支持.</h2>
 ]]></content>
     </entry>
     <entry>
