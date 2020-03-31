@@ -7,14 +7,17 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
+<link href="https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css" rel="stylesheet">
+<!--
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1584512890222">
+-->
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1585648078969">
 <link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
 
 
 
 <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
 
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-160052000-1"></script>
@@ -37,7 +40,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://www.sunjianbo.com">
-        <img src="https://www.sunjianbo.com/images/avatar.png?v=1584512890222" class="site-logo">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1585648078969" class="site-logo">
         <h1 class="site-title">孙建博的小站</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -133,6 +136,84 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://www.sunjianbo.com/no-value-specified-for-bigdecimal/">
+                  <h2 class="post-title">No value specified for &#39;BigDecimal&#39;</h2>
+                </a>
+                <div class="post-date">
+                  2018-07-24
+                </div>
+                <div class="post-abstract">
+					
+					
+						<!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 -->
+						
+						
+							
+							
+						
+							
+							
+						
+							
+							
+						
+						
+							<p><p>使用<strong>org.apache.commons.beanutils.BeanUtils</strong>进行对象拷贝时，遇到BigDecimal的属性会报错</p>
+<blockquote>
+<p>No value specified for 'BigDecimal'</p>
+
+								
+							<p>
+							<!-- 加个more链接 -->
+							<a href="https://www.sunjianbo.com/no-value-specified-for-bigdecimal/">more →</a>
+						
+					
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://www.sunjianbo.com/high-concurrency-requests-and-snap-up/">
+                  <h2 class="post-title">Web大规模高并发请求和抢购的解决方案</h2>
+                </a>
+                <div class="post-date">
+                  2018-07-10
+                </div>
+                <div class="post-abstract">
+					
+					
+						<!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 -->
+						
+						
+							
+							
+						
+							
+							
+						
+							
+							
+						
+						
+							<p><p>转载的,我看得地方也是转载的,所以就不贴原文地址了,文章写得很细致,可以一看.</p>
+<p>电商的秒杀和抢购，对我们来说，都不是一个陌生的东西。然而，从技术的角度来说，这对于Web系统是一个巨大的考验。当一个Web系统，在一秒钟内收到数以万计甚至更多请求时，系统的优化和稳定至关重要。这次我们会关注秒杀和抢购的技术实现和优化，同时，从技术层面揭开，为什么我们总是不容易抢到火车票的原因？</p>
+<h2 id="一-大规模并发带来的挑战">一、大规模并发带来的挑战</h2>
+
+								
+							<p>
+							<!-- 加个more链接 -->
+							<a href="https://www.sunjianbo.com/high-concurrency-requests-and-snap-up/">more →</a>
+						
+					
+                </div>
+              </div>
+              
+            </article>
           
             <article class="post-item">
               <div class="left">
@@ -451,87 +532,6 @@
 							<p>
 							<!-- 加个more链接 -->
 							<a href="https://www.sunjianbo.com/chrome-preserve-log/">more →</a>
-						
-					
-                </div>
-              </div>
-              
-            </article>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://www.sunjianbo.com/mdnsresponder-discoveryd/">
-                  <h2 class="post-title">mDNSResponder和discoveryd 挂了导致苹果电脑不能上网和CPU100%</h2>
-                </a>
-                <div class="post-date">
-                  2016-08-12
-                </div>
-                <div class="post-abstract">
-					
-					
-						<!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 -->
-						
-						
-							
-							
-						
-							
-							
-						
-							
-							
-						
-						
-							<p><p>最近发现苹果电脑在休眠之后经常会出现上不去网的情况。因为在公司是使用Proxifier代理上网，Proxifier报错：</p>
-<pre><code>[08.15 12:24:18] Kernel log : sf\_connect\_out : QQ(15257,502): already connected
-[08.15 12:24:18] Kernel log : sf\_connect\_out : Mail(15646,502): already connected
-
-								
-									<!-- 自动摘要出来的内容有<code则补上结尾,防止格式错误 -->
-									</code></pre>
-								
-							<p>
-							<!-- 加个more链接 -->
-							<a href="https://www.sunjianbo.com/mdnsresponder-discoveryd/">more →</a>
-						
-					
-                </div>
-              </div>
-              
-            </article>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://www.sunjianbo.com/intellij-keymap-mac/">
-                  <h2 class="post-title">IntelliJ IDEA两种keymap快捷键方案Mac OS X和Mac OS X 10.5+的区别</h2>
-                </a>
-                <div class="post-date">
-                  2016-06-27
-                </div>
-                <div class="post-abstract">
-					
-					
-						<!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 -->
-						
-						
-							
-							
-						
-							
-							
-						
-							
-							
-						
-						
-							<p><p>IntelliJ IDEA针对Mac OS有两种快捷键方案(keymap)，就是Mac OS X和Mac OS X 10.5+，安装后默认的方案是Mac OS X。</p>
-<p>那么很容易就会产生一个疑问，这两种有什么区别，哪一种好一点呢？</p>
-<p>stackoverflow上有大神做出了回答：</p>
-
-								
-							<p>
-							<!-- 加个more链接 -->
-							<a href="https://www.sunjianbo.com/intellij-keymap-mac/">more →</a>
 						
 					
                 </div>

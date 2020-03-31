@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>telegram频道发布增加点赞评论等反馈功能 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link href="https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css" rel="stylesheet">
+<!--
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+-->
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1585648078969">
+<link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-160052000-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-160052000-1');
+</script>
+
+
+    <meta name="description" content="我自己经营了一个telegram的订阅频道:有点意思@alittlefun用来分享一些有意思的图片什么的.
+之前看到别人的订阅频道有emojies的点赞功能,觉得很好,类似这样:
+
+所以想要放到自己频道来用,但是上网找了一圈只找到一个@li..." />
+    <meta name="keywords" content="telegram,bot" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://www.sunjianbo.com">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1585648078969" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/sun_jianbo" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://weibo.com/u/1967178011" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/sun-jian-bo-59" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.facebook.com/profile.php?id=100011365915451" target="_blank">
+            <i class="fab fa-facebook"></i>
+          </a>
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://beian.miit.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://www.sunjianbo.com/atom.xml" target="_blank">RSS</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			又拍云提供网络及存储支持
+		</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			<img height="35px" width="90px" src="https://img.juemuren4449.com/4ff5b7d3ed727d330fcdda17165de906.png">
+		</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">telegram频道发布增加点赞评论等反馈功能</h2>
+            <div class="post-date">2020-04-01</div>
+            
+            <div class="post-content" v-pre>
+              <p>我自己经营了一个telegram的订阅频道:<a href="https://t.me/alittlefun">有点意思@alittlefun</a>用来分享一些有意思的图片什么的.</p>
+<p>之前看到别人的订阅频道有emojies的点赞功能,觉得很好,类似这样:</p>
+<figure data-type="image" tabindex="1"><img src="http://static.sunjianbo.com/20200331110800.png" alt="" loading="lazy"></figure>
+<p>所以想要放到自己频道来用,但是上网找了一圈只找到一个@like机器人可以满足我的要求,原文:http://x.2129.n8.nabble.com/Telegram-td30.html</p>
+<p>但是它有一个问题,就是发出来的内容是通过转发方式出来的,这样就会在上面有个标志:</p>
+<figure data-type="image" tabindex="2"><img src="http://static.sunjianbo.com/20200331111030.png" alt="" loading="lazy"></figure>
+<p>处女座的我哪受得了这个啊.于是绞尽脑汁一顿折腾,终于找到了方法(＾－＾)V</p>
+<h2 id="1使用botfather创建一个发布bot">1.使用@BotFather创建一个发布bot</h2>
+<p>搜索到@BotFather --&gt; <code>/start</code> --&gt; <code>/newbot</code> --&gt; 输入自定义id --&gt; 输入自定义username</p>
+<figure data-type="image" tabindex="3"><img src="http://static.sunjianbo.com/20200331111841.png" alt="step1" loading="lazy"></figure>
+<h2 id="2使用controllerbot-新增并管理频道">2.使用@ControllerBot 新增并管理频道</h2>
+<h3 id="21搜索到controllerbot-start-addchannel-复制上图标红位置的在botfather创建的token到controllerbot-粘贴">2.1搜索到@ControllerBot --&gt; <code>/start</code> --&gt; <code>/addchannel</code>--&gt; 复制上图标红位置的在BotFather创建的token到ControllerBot 粘贴</h3>
+<figure data-type="image" tabindex="4"><img src="http://static.sunjianbo.com/20200331112452.png" alt="addchannel" loading="lazy"></figure>
+<figure data-type="image" tabindex="5"><img src="http://static.sunjianbo.com/20200331112830.png" alt="token" loading="lazy"></figure>
+<h3 id="22按照提示到自己的频道去把刚刚创建的bot增加为管理员">2.2按照提示到自己的频道去把刚刚创建的bot增加为管理员</h3>
+<p>自己频道右上角Manage Channel --&gt; 点击Administrators --&gt; 点击左下角ADD ADMINISTRATOR --&gt; 搜索刚刚创建的bot(eg:alittlefun_bot)--&gt;完成管理员添加</p>
+<h3 id="23转发一条自己频道的信息给controllerbot">2.3转发一条自己频道的信息给@ControllerBot</h3>
+<h3 id="24输入城市名来确定时区直接输入shanghai">2.4输入城市名来确定时区,直接输入<code>shanghai</code></h3>
+<figure data-type="image" tabindex="6"><img src="http://static.sunjianbo.com/20200331113549.png" alt="" loading="lazy"></figure>
+<h3 id="25设置完成">2.5设置完成</h3>
+<h2 id="3发布内容">3.发布内容</h2>
+<h3 id="31点击上图create-post按钮或者手动打开之前创建的机器人alittlefun_bot-start-发送内容">3.1点击上图<strong>Create Post</strong>按钮或者手动打开之前创建的机器人(@alittlefun_bot) --&gt; <code>/start</code> --&gt; 发送内容</h3>
+<figure data-type="image" tabindex="7"><img src="http://static.sunjianbo.com/20200331131340.png" alt="" loading="lazy"></figure>
+<h3 id="32点击add-reactions按钮发送需要的emoji表情过去">3.2点击<strong>Add Reactions</strong>按钮,发送需要的emoji表情过去</h3>
+<h3 id="33最后点击文本框下面send按钮设定发送时机参考图片">3.3最后点击文本框下面Send按钮,设定发送时机(参考图片)</h3>
+<figure data-type="image" tabindex="8"><img src="http://static.sunjianbo.com/20200331132137.png" alt="" loading="lazy"></figure>
+<h2 id="4总结">4.总结</h2>
+<p>经过以上步骤即可实现在自己的频道发布带emoji点赞反馈的内容.</p>
+<p>步骤可以简单归纳为</p>
+<ol>
+<li>
+<p>@BotFather创建自定义bot</p>
+</li>
+<li>
+<p>@ControllerBot绑定自定义bot和频道</p>
+</li>
+<li>
+<p>在自定义bot发布内容</p>
+</li>
+</ol>
+<p>同时细心的小伙伴一定也发现了通过这个bot还可以实现<strong>附加媒体</strong>,<strong>增加评论</strong>,<strong>附加URL</strong>以及<strong>定时发送</strong>的功能,都可以自行研究一下.</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://www.sunjianbo.com/tag/t7Ef2X358/" class="tag">
+                    telegram
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/BkDNtRR8pl/" class="tag">
+                    bot
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://www.sunjianbo.com/typora-file-sort/">
+                  <h3 class="post-title">
+                    Typora侧边栏文件列表排序-按修改时间
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>
