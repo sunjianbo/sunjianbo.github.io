@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-03-31T09:54:32.364Z</updated>
+    <updated>2020-03-31T09:57:42.134Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -10,55 +10,6 @@
     <logo>https://www.sunjianbo.com/images/avatar.png</logo>
     <icon>https://www.sunjianbo.com/favicon.ico</icon>
     <rights>All rights reserved 2020, 孙建博的小站</rights>
-    <entry>
-        <title type="html"><![CDATA[telegram频道发布增加点赞评论等反馈功能]]></title>
-        <id>https://www.sunjianbo.com/telegram-add-reactions/</id>
-        <link href="https://www.sunjianbo.com/telegram-add-reactions/">
-        </link>
-        <updated>2020-04-01T02:57:10.000Z</updated>
-        <content type="html"><![CDATA[<p>我自己经营了一个telegram的订阅频道:<a href="https://t.me/alittlefun">有点意思@alittlefun</a>用来分享一些有意思的图片什么的.</p>
-<p>之前看到别人的订阅频道有emojies的点赞功能,觉得很好,类似这样:</p>
-<figure data-type="image" tabindex="1"><img src="http://static.sunjianbo.com/20200331110800.png" alt="" loading="lazy"></figure>
-<p>所以想要放到自己频道来用,但是上网找了一圈只找到一个@like机器人可以满足我的要求,原文:http://x.2129.n8.nabble.com/Telegram-td30.html</p>
-<p>但是它有一个问题,就是发出来的内容是通过转发方式出来的,这样就会在上面有个标志:</p>
-<figure data-type="image" tabindex="2"><img src="http://static.sunjianbo.com/20200331111030.png" alt="" loading="lazy"></figure>
-<p>处女座的我哪受得了这个啊.于是绞尽脑汁一顿折腾,终于找到了方法(＾－＾)V</p>
-<h2 id="1使用botfather创建一个发布bot">1.使用@BotFather创建一个发布bot</h2>
-<p>搜索到@BotFather --&gt; <code>/start</code> --&gt; <code>/newbot</code> --&gt; 输入自定义id --&gt; 输入自定义username</p>
-<figure data-type="image" tabindex="3"><img src="http://static.sunjianbo.com/20200331111841.png" alt="step1" loading="lazy"></figure>
-<h2 id="2使用controllerbot-新增并管理频道">2.使用@ControllerBot 新增并管理频道</h2>
-<h3 id="21搜索到controllerbot-start-addchannel-复制上图标红位置的在botfather创建的token到controllerbot-粘贴">2.1搜索到@ControllerBot --&gt; <code>/start</code> --&gt; <code>/addchannel</code>--&gt; 复制上图标红位置的在BotFather创建的token到ControllerBot 粘贴</h3>
-<figure data-type="image" tabindex="4"><img src="http://static.sunjianbo.com/20200331112452.png" alt="addchannel" loading="lazy"></figure>
-<figure data-type="image" tabindex="5"><img src="http://static.sunjianbo.com/20200331112830.png" alt="token" loading="lazy"></figure>
-<h3 id="22按照提示到自己的频道去把刚刚创建的bot增加为管理员">2.2按照提示到自己的频道去把刚刚创建的bot增加为管理员</h3>
-<p>自己频道右上角Manage Channel --&gt; 点击Administrators --&gt; 点击左下角ADD ADMINISTRATOR --&gt; 搜索刚刚创建的bot(eg:alittlefun_bot)--&gt;完成管理员添加</p>
-<h3 id="23转发一条自己频道的信息给controllerbot">2.3转发一条自己频道的信息给@ControllerBot</h3>
-<h3 id="24输入城市名来确定时区直接输入shanghai">2.4输入城市名来确定时区,直接输入<code>shanghai</code></h3>
-<figure data-type="image" tabindex="6"><img src="http://static.sunjianbo.com/20200331113549.png" alt="" loading="lazy"></figure>
-<h3 id="25设置完成">2.5设置完成</h3>
-<h2 id="3发布内容">3.发布内容</h2>
-<h3 id="31点击上图create-post按钮或者手动打开之前创建的机器人alittlefun_bot-start-发送内容">3.1点击上图<strong>Create Post</strong>按钮或者手动打开之前创建的机器人(@alittlefun_bot) --&gt; <code>/start</code> --&gt; 发送内容</h3>
-<figure data-type="image" tabindex="7"><img src="http://static.sunjianbo.com/20200331131340.png" alt="" loading="lazy"></figure>
-<h3 id="32点击add-reactions按钮发送需要的emoji表情过去">3.2点击<strong>Add Reactions</strong>按钮,发送需要的emoji表情过去</h3>
-<h3 id="33最后点击文本框下面send按钮设定发送时机参考图片">3.3最后点击文本框下面Send按钮,设定发送时机(参考图片)</h3>
-<figure data-type="image" tabindex="8"><img src="http://static.sunjianbo.com/20200331132137.png" alt="" loading="lazy"></figure>
-<h2 id="4总结">4.总结</h2>
-<p>经过以上步骤即可实现在自己的频道发布带emoji点赞反馈的内容.</p>
-<p>步骤可以简单归纳为</p>
-<ol>
-<li>
-<p>@BotFather创建自定义bot</p>
-</li>
-<li>
-<p>@ControllerBot绑定自定义bot和频道</p>
-</li>
-<li>
-<p>在自定义bot发布内容</p>
-</li>
-</ol>
-<p>同时细心的小伙伴一定也发现了通过这个bot还可以实现<strong>附加媒体</strong>,<strong>增加评论</strong>,<strong>附加URL</strong>以及<strong>定时发送</strong>的功能,都可以自行研究一下.</p>
-]]></content>
-    </entry>
     <entry>
         <title type="html"><![CDATA[Typora侧边栏文件列表排序-按修改时间]]></title>
         <id>https://www.sunjianbo.com/typora-file-sort/</id>
@@ -355,6 +306,24 @@ at com.ceair.b2t.messagecenter.SpringContextUtil.getBean(SpringContextUtil.java:
 #unzip-natspec 与 unzip 有冲突。删除 unzip 吗？ [y/N]y
 </code></pre>
 <p>unzip-natspec可以自动识别文件编码，用法和unzip一样，直接&quot;unzip xxx.zip&quot;即可，非常方便！</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[No value specified for 'BigDecimal']]></title>
+        <id>https://www.sunjianbo.com/no-value-specified-for-bigdecimal/</id>
+        <link href="https://www.sunjianbo.com/no-value-specified-for-bigdecimal/">
+        </link>
+        <updated>2018-07-24T01:52:34.000Z</updated>
+        <content type="html"><![CDATA[<p>使用<strong>org.apache.commons.beanutils.BeanUtils</strong>进行对象拷贝时，遇到BigDecimal的属性会报错</p>
+<blockquote>
+<p>No value specified for 'BigDecimal'</p>
+</blockquote>
+<p>这时候定义自己的转换器即可</p>
+<pre><code>// 这里一定要注册默认值，使用null也可以    
+BigDecimalConverter bd = new BigDecimalConverter(BigDecimal.ZERO);    
+ConvertUtils.register(bd, java.math.BigDecimal.class);
+</code></pre>
+<p>还有一些其他类型可能也需要如此处理，简单一点的，使用<strong>org.springframework.beans.BeanUtils</strong>则不会有这样的问题</p>
 ]]></content>
     </entry>
 </feed>
