@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-04-01T06:48:46.592Z</updated>
+    <updated>2020-04-01T07:09:34.767Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -19,7 +19,7 @@
         <content type="html"><![CDATA[<p>我自己经营了一个telegram的订阅频道:<a href="https://t.me/alittlefun">有点意思@alittlefun</a>用来分享一些有意思的图片什么的.</p>
 <p>之前看到别人的订阅频道有emojies的点赞功能,觉得很好,类似这样:</p>
 <figure data-type="image" tabindex="1"><img src="http://static.sunjianbo.com/20200331110800.png" alt="" loading="lazy"></figure>
-<p>所以想要放到自己频道来用,但是上网找了一圈只找到一个@like机器人可以满足我的要求,原文:http://x.2129.n8.nabble.com/Telegram-td30.html</p>
+<p>所以想要放到自己频道来用,但是上网找了一圈只找到一个@like机器人可以满足我的要求,原文:<a href="http://x.2129.n8.nabble.com/Telegram-td30.html">http://x.2129.n8.nabble.com/Telegram-td30.html</a></p>
 <p>但是它有一个问题,就是发出来的内容是通过转发方式出来的,这样就会在上面有个标志:</p>
 <figure data-type="image" tabindex="2"><img src="http://static.sunjianbo.com/20200331111030.png" alt="" loading="lazy"></figure>
 <p>处女座的我哪受得了这个啊.于是绞尽脑汁一顿折腾,终于找到了方法(＾－＾)V</p>
