@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-04-01T07:09:34.767Z</updated>
+    <updated>2020-04-16T11:11:57.725Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -11,6 +11,91 @@
     <icon>https://www.sunjianbo.com/favicon.ico</icon>
     <rights>All rights reserved 2020, 孙建博的小站</rights>
     <entry>
+        <title type="html"><![CDATA[手动修改xxl-job-admin以支持Oracle数据库]]></title>
+        <id>https://www.sunjianbo.com/xxl-job-oracle/</id>
+        <link href="https://www.sunjianbo.com/xxl-job-oracle/">
+        </link>
+        <updated>2020-04-14T08:31:33.000Z</updated>
+        <content type="html"><![CDATA[<blockquote>
+<p>基于xxl-job-2.1.2.Release</p>
+</blockquote>
+<p>直接使用:<a href="https://github.com/sunjianbo/xxl-job/tree/2.1.2">https://github.com/sunjianbo/xxl-job/tree/2.1.2</a></p>
+<h2 id="docdbtables_xxl_jobsql">doc/db/tables_xxl_job.sql</h2>
+<p>根据文件内容将其中的mysql语法修改为oracle</p>
+<p>这里是我已改好的2.1.2版本对应的oracle文件:<a href="https://static.sunjianbo.com/code/sql/tables_xxl_job_oracle.sql">下载</a></p>
+<h2 id="pomxml">/pom.xml</h2>
+<p>注释</p>
+<pre><code class="language-xml">&lt;!-- mysql --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;mysql&lt;/groupId&gt;
+    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+    &lt;version&gt;${mysql-connector-java.version}&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>替换为</p>
+<pre><code class="language-xml">&lt;!-- oracle --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.oracle&lt;/groupId&gt;
+    &lt;artifactId&gt;ojdbc6&lt;/artifactId&gt;
+    &lt;version&gt;11.2.0.3&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>根据自己的oracle本版选择对应的jdbc</p>
+<blockquote>
+<p>查看本版SQL:	<code>select version from v$instance;</code></p>
+</blockquote>
+<h2 id="srcmainresourcesapplicationproperties">/src/main/resources/application.properties</h2>
+<p>注释</p>
+<pre><code>#spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_job?Unicode=true&amp;characterEncoding=UTF-8
+#spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+#spring.datasource.tomcat.validation-query=SELECT 1
+</code></pre>
+<p>替换为</p>
+<pre><code>spring.datasource.url=jdbc:oracle:thin:@127.0.0.1:3306:1521/xxl_job
+spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
+spring.datasource.tomcat.validation-query=SELECT 1 FROM DUAL
+</code></pre>
+<h2 id="srcmainresourcesmybatis-mapper">/src/main/resources/mybatis-mapper</h2>
+<ul>
+<li>查找mybatis-mapper目录下的所有</li>
+</ul>
+<pre><code>`
+</code></pre>
+<p>符号,替换为空</p>
+<ul>
+<li>查找</li>
+</ul>
+<pre><code>AS t
+</code></pre>
+<p>替换为t,搜索AS大写区分或者words</p>
+<ul>
+<li>查找</li>
+</ul>
+<pre><code>;
+</code></pre>
+<p>符号,替换为空</p>
+<h2 id="srcmainresourcesmybatis-mapperxxljobgroupmapperxml">/src/main/resources/mybatis-mapper/XxlJobGroupMapper.xml</h2>
+<p>将其中</p>
+<pre><code>t.`order`
+</code></pre>
+<p>以及</p>
+<pre><code>t.order
+</code></pre>
+<p>替换为</p>
+<pre><code>t.&quot;ORDER&quot;
+</code></pre>
+<p>ORDER必须大写</p>
+<h2 id="其他mapperxml">其他Mapper.xml</h2>
+<ul>
+<li>save的自增id修改为oracle格式</li>
+<li>LIMIT的修改为oracle的rownum</li>
+<li>增加jdbcType以防空值报错</li>
+</ul>
+<p><strong>注意:</strong></p>
+<p>如果加jdbcType的话,XxlJobInfoMapper.xml中有两个属性写的是<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>e</mi><mi>x</mi><mi>e</mi><mi>c</mi><mi>u</mi><mi>t</mi><mi>o</mi><mi>r</mi><mi>T</mi><mi>i</mi><mi>m</mi><mi>e</mi><mi>o</mi><mi>u</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">{executorTimeout}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="mord mathdefault">x</span><span class="mord mathdefault">e</span><span class="mord mathdefault">c</span><span class="mord mathdefault">u</span><span class="mord mathdefault">t</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault">i</span><span class="mord mathdefault">m</span><span class="mord mathdefault">e</span><span class="mord mathdefault">o</span><span class="mord mathdefault">u</span><span class="mord mathdefault">t</span></span></span></span></span>{executorFailRetryCount},注意改成#{}</p>
+]]></content>
+    </entry>
+    <entry>
         <title type="html"><![CDATA[telegram频道发布增加点赞评论等反馈功能]]></title>
         <id>https://www.sunjianbo.com/telegram-add-reactions/</id>
         <link href="https://www.sunjianbo.com/telegram-add-reactions/">
@@ -18,30 +103,30 @@
         <updated>2020-04-01T02:57:10.000Z</updated>
         <content type="html"><![CDATA[<p>我自己经营了一个telegram的订阅频道:<a href="https://t.me/alittlefun">有点意思@alittlefun</a>用来分享一些有意思的图片什么的.</p>
 <p>之前看到别人的订阅频道有emojies的点赞功能,觉得很好,类似这样:</p>
-<figure data-type="image" tabindex="1"><img src="http://static.sunjianbo.com/20200331110800.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/20200331110800.png" alt="" loading="lazy"></figure>
 <p>所以想要放到自己频道来用,但是上网找了一圈只找到一个@like机器人可以满足我的要求,原文:<a href="http://x.2129.n8.nabble.com/Telegram-td30.html">http://x.2129.n8.nabble.com/Telegram-td30.html</a></p>
 <p>但是它有一个问题,就是发出来的内容是通过转发方式出来的,这样就会在上面有个标志:</p>
-<figure data-type="image" tabindex="2"><img src="http://static.sunjianbo.com/20200331111030.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/20200331111030.png" alt="" loading="lazy"></figure>
 <p>处女座的我哪受得了这个啊.于是绞尽脑汁一顿折腾,终于找到了方法(＾－＾)V</p>
 <h2 id="1使用botfather创建一个发布bot">1.使用@BotFather创建一个发布bot</h2>
 <p>搜索到@BotFather --&gt; <code>/start</code> --&gt; <code>/newbot</code> --&gt; 输入自定义id --&gt; 输入自定义username</p>
-<figure data-type="image" tabindex="3"><img src="http://static.sunjianbo.com/20200331111841.png" alt="step1" loading="lazy"></figure>
+<figure data-type="image" tabindex="3"><img src="https://static.sunjianbo.com/20200331111841.png" alt="step1" loading="lazy"></figure>
 <h2 id="2使用controllerbot-新增并管理频道">2.使用@ControllerBot 新增并管理频道</h2>
 <h3 id="21搜索到controllerbot-start-addchannel-复制上图标红位置的在botfather创建的token到controllerbot-粘贴">2.1搜索到@ControllerBot --&gt; <code>/start</code> --&gt; <code>/addchannel</code>--&gt; 复制上图标红位置的在BotFather创建的token到ControllerBot 粘贴</h3>
-<figure data-type="image" tabindex="4"><img src="http://static.sunjianbo.com/20200331112452.png" alt="addchannel" loading="lazy"></figure>
-<figure data-type="image" tabindex="5"><img src="http://static.sunjianbo.com/20200331112830.png" alt="token" loading="lazy"></figure>
+<figure data-type="image" tabindex="4"><img src="https://static.sunjianbo.com/20200331112452.png" alt="addchannel" loading="lazy"></figure>
+<figure data-type="image" tabindex="5"><img src="https://static.sunjianbo.com/20200331112830.png" alt="token" loading="lazy"></figure>
 <h3 id="22按照提示到自己的频道去把刚刚创建的bot增加为管理员">2.2按照提示到自己的频道去把刚刚创建的bot增加为管理员</h3>
 <p>自己频道右上角Manage Channel --&gt; 点击Administrators --&gt; 点击左下角ADD ADMINISTRATOR --&gt; 搜索刚刚创建的bot(eg:alittlefun_bot)--&gt;完成管理员添加</p>
 <h3 id="23转发一条自己频道的信息给controllerbot">2.3转发一条自己频道的信息给@ControllerBot</h3>
 <h3 id="24输入城市名来确定时区直接输入shanghai">2.4输入城市名来确定时区,直接输入<code>shanghai</code></h3>
-<figure data-type="image" tabindex="6"><img src="http://static.sunjianbo.com/20200331113549.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="6"><img src="https://static.sunjianbo.com/20200331113549.png" alt="" loading="lazy"></figure>
 <h3 id="25设置完成">2.5设置完成</h3>
 <h2 id="3发布内容">3.发布内容</h2>
 <h3 id="31点击上图create-post按钮或者手动打开之前创建的机器人alittlefun_bot-start-发送内容">3.1点击上图<strong>Create Post</strong>按钮或者手动打开之前创建的机器人(@alittlefun_bot) --&gt; <code>/start</code> --&gt; 发送内容</h3>
-<figure data-type="image" tabindex="7"><img src="http://static.sunjianbo.com/20200331131340.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="7"><img src="https://static.sunjianbo.com/20200331131340.png" alt="" loading="lazy"></figure>
 <h3 id="32点击add-reactions按钮发送需要的emoji表情过去">3.2点击<strong>Add Reactions</strong>按钮,发送需要的emoji表情过去</h3>
 <h3 id="33最后点击文本框下面send按钮设定发送时机参考图片">3.3最后点击文本框下面Send按钮,设定发送时机(参考图片)</h3>
-<figure data-type="image" tabindex="8"><img src="http://static.sunjianbo.com/20200331132137.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="8"><img src="https://static.sunjianbo.com/20200331132137.png" alt="" loading="lazy"></figure>
 <h2 id="4总结">4.总结</h2>
 <p>经过以上步骤即可实现在自己的频道发布带emoji点赞反馈的内容.</p>
 <p>步骤可以简单归纳为</p>
@@ -70,8 +155,8 @@
 <p>所以想要按照修改时间倒序,这样新建的文件就在最上面了.</p>
 <p>一开始右键菜单里找了半天没找到,后来才发现<strong>在列表的最下面</strong>.</p>
 <p>非常简单如图操作,<strong>切换升序降序只需要再多点击一次图标就行</strong>:</p>
-<figure data-type="image" tabindex="1"><img src="http://static.sunjianbo.com/20200331104630.png" alt="click" loading="lazy"></figure>
-<figure data-type="image" tabindex="2"><img src="http://static.sunjianbo.com/20200331104806.png" alt="sort" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/20200331104630.png" alt="click" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/20200331104806.png" alt="sort" loading="lazy"></figure>
 ]]></content>
     </entry>
     <entry>
@@ -86,7 +171,7 @@
 <p>好在还知道<code>&lt;meta http-equiv=&quot;refresh&quot; content=&quot;2; url='/'&quot;&gt;</code>标签可以做页面的定时跳转和刷新,再结合使用<code>&lt;link rel=&quot;canonical&quot; href=&quot;&quot; /&gt;</code>标签来告诉搜索引擎新的规范链接地址.</p>
 <p>思路说完了,那么以下是详细步骤:</p>
 <h2 id="1修改gridea主题设置">1.修改Gridea主题设置</h2>
-<p>开启,精简url模式这是为了去掉url中的/post/,不用gridea的可以无视.<img src="http://static.sunjianbo.com/20200312102504.png" alt="gridea" loading="lazy"></p>
+<p>开启,精简url模式这是为了去掉url中的/post/,不用gridea的可以无视.<img src="https://static.sunjianbo.com/20200312102504.png" alt="gridea" loading="lazy"></p>
 <h2 id="2批量创建html文件">2.批量创建html文件</h2>
 <p>我这里通过Python代码遍历post目录下所有文章,提取文件名,替换后缀名,在指定目录生成.html文件.</p>
 <p>代码如下:</p>
@@ -161,10 +246,10 @@ git pustt
 </code></pre>
 <p>就完成了主题的页面设置功能,自动摘要选取的行数可以自定义</p>
 <p>效果图:</p>
-<figure data-type="image" tabindex="1"><img src="http://static.sunjianbo.com/gridea-auto-excerpt/image-20200311142153575.png" alt="image-20200311142153575" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/gridea-auto-excerpt/image-20200311142153575.png" alt="image-20200311142153575" loading="lazy"></figure>
 <h2 id="2首页编写自动摘要功能">2.首页编写自动摘要功能</h2>
 <p>编辑文件<code>%Gridea%\themes\simple\templates\index.ejs</code>在如图所示位置添加代码:</p>
-<figure data-type="image" tabindex="2"><img src="http://static.sunjianbo.com/gridea-auto-excerpt/image-20200311142947299.png" alt="image-20200311142947299" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/gridea-auto-excerpt/image-20200311142947299.png" alt="image-20200311142947299" loading="lazy"></figure>
 <pre><code class="language-js">&lt;% if (post.abstract) { %&gt;
 	&lt;!-- 有手动摘要则加个more链接 --&gt;
 	&lt;a href=&quot;&lt;%= post.link %&gt;&quot;&gt;more →&lt;/a&gt;
@@ -198,7 +283,7 @@ git pustt
 }
 </code></pre>
 <p>效果图</p>
-<figure data-type="image" tabindex="3"><img src="http://static.sunjianbo.com/gridea-auto-excerpt/image-20200311150147647.png" alt="image-20200311150147647" loading="lazy"></figure>
+<figure data-type="image" tabindex="3"><img src="https://static.sunjianbo.com/gridea-auto-excerpt/image-20200311150147647.png" alt="image-20200311150147647" loading="lazy"></figure>
 ]]></content>
     </entry>
     <entry>
@@ -234,7 +319,7 @@ git pustt
 <ol>
 <li>
 <p>登陆wordpress后台通过快速编辑将每一篇文章的别名修改为英文,否则导出的文章会出现乱码.虽然gridea能识别,但是链接也会变成乱码,看着闹挺.<br>
-<img src="http://static.sunjianbo.com/wordpress-to-gridea/alias.png" alt="alias" loading="lazy"></p>
+<img src="https://static.sunjianbo.com/wordpress-to-gridea/alias.png" alt="alias" loading="lazy"></p>
 </li>
 <li>
 <p>下载WordPress to Gridea Exporter并安装到wordpress上,启用.<br>
@@ -242,7 +327,7 @@ git pustt
 </li>
 <li>
 <p>点击后台管理菜单的工具--&gt;Export to Hugo然后浏览器会自动下载一个名为hugo-export.zip的文件,所需的东西都在里面了.<br>
-<img src="http://static.sunjianbo.com/wordpress-to-gridea/action.png" alt="action" loading="lazy"></p>
+<img src="https://static.sunjianbo.com/wordpress-to-gridea/action.png" alt="action" loading="lazy"></p>
 </li>
 <li>
 <p>提取hugo-export.zip文件中的posts文件下的所有md文件到Documents\Gridea\posts目录下(如果不知道该目录在那,查看Gridea的设置)</p>
@@ -268,17 +353,17 @@ git pustt
         <content type="html"><![CDATA[<h2 id="方法一">方法一</h2>
 <p>1.右键检查or手动打开开发者工具,选中对应元素<br>
 2.点击Event Listeners标签<br>
-<img src="http://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step1.1.png" alt="step1.1" loading="lazy"><br>
+<img src="https://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step1.1.png" alt="step1.1" loading="lazy"><br>
 3.取消勾选Ancestors All以筛选出指定选中元素对应的事件<br>
-<img src="http://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step1.2.png" alt="step1.2" loading="lazy"></p>
+<img src="https://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step1.2.png" alt="step1.2" loading="lazy"></p>
 <h2 id="方法二">方法二</h2>
 <p>有时会发生方法一无法看到对应的事件,取消勾选Ancestors All以后一片空白,可以试试方法二.<br>
 1.打开开发者工具,切换到Sources标签页<br>
-<img src="http://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step2.1.png" alt="step2.1" loading="lazy"><br>
+<img src="https://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step2.1.png" alt="step2.1" loading="lazy"><br>
 展开Event Listeners Breakpoints,寻找指定事件勾选(我这里用click事件举例),这里相当于对相关事件下了断点<br>
-<img src="http://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step2.2.png" alt="step2.2" loading="lazy"><br>
+<img src="https://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step2.2.png" alt="step2.2" loading="lazy"><br>
 3.然后去操作页面来触发事件,这时就会进入断点,逐步寻找到你需要的代码.比较麻烦,无奈之举.<br>
-<img src="http://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step2.3.png" alt="step2.3" loading="lazy"></p>
+<img src="https://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step2.3.png" alt="step2.3" loading="lazy"></p>
 ]]></content>
     </entry>
     <entry>
@@ -339,22 +424,6 @@ at com.ceair.b2t.messagecenter.SpringContextUtil.getBean(SpringContextUtil.java:
 <p><a href="https://download.filezilla-project.org/client/FileZilla_3.9.0.1_win32-setup.exe?nowrap">https://download.filezilla-project.org/client/FileZilla_3.9.0.1_win32-setup.exe?nowrap</a></p>
 <p>备注：</p>
 <p>安装时会提示不支持，可以忽略，能够正常使用，查看更新日志，应该是在3.8以后停止支持的，但是后面还兼容了一段时间。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[最简单解决linux解压缩乱码问题]]></title>
-        <id>https://www.sunjianbo.com/the-easiest-solution-to-linux-decompression-garbled/</id>
-        <link href="https://www.sunjianbo.com/the-easiest-solution-to-linux-decompression-garbled/">
-        </link>
-        <updated>2018-12-25T18:07:26.000Z</updated>
-        <content type="html"><![CDATA[<p>因为在windows下压缩的文件是使用(gbk,gb18030)编码的，所以在linux(utf-8)下面直接解压有编码问题</p>
-<p>网上说的unzip -O之类的都不太靠谱</p>
-<p>后来终于找到一个最简单的方法，几乎没什么成本。</p>
-<p>就是安装<code>unzip-natspec</code>来替换<code>unzip</code></p>
-<pre><code>yay -Ss unzip-natspec
-#unzip-natspec 与 unzip 有冲突。删除 unzip 吗？ [y/N]y
-</code></pre>
-<p>unzip-natspec可以自动识别文件编码，用法和unzip一样，直接&quot;unzip xxx.zip&quot;即可，非常方便！</p>
 ]]></content>
     </entry>
 </feed>

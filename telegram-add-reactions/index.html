@@ -11,7 +11,7 @@
 <!--
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 -->
-<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1585724963686">
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1587035484800">
 <link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
 
 
@@ -49,7 +49,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://www.sunjianbo.com">
-        <img src="https://www.sunjianbo.com/images/avatar.png?v=1585724963686" class="site-logo">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1587035484800" class="site-logo">
         <h1 class="site-title">孙建博的小站</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -152,30 +152,30 @@
             <div class="post-content" v-pre>
               <p>我自己经营了一个telegram的订阅频道:<a href="https://t.me/alittlefun">有点意思@alittlefun</a>用来分享一些有意思的图片什么的.</p>
 <p>之前看到别人的订阅频道有emojies的点赞功能,觉得很好,类似这样:</p>
-<figure data-type="image" tabindex="1"><img src="http://static.sunjianbo.com/20200331110800.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/20200331110800.png" alt="" loading="lazy"></figure>
 <p>所以想要放到自己频道来用,但是上网找了一圈只找到一个@like机器人可以满足我的要求,原文:<a href="http://x.2129.n8.nabble.com/Telegram-td30.html">http://x.2129.n8.nabble.com/Telegram-td30.html</a></p>
 <p>但是它有一个问题,就是发出来的内容是通过转发方式出来的,这样就会在上面有个标志:</p>
-<figure data-type="image" tabindex="2"><img src="http://static.sunjianbo.com/20200331111030.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/20200331111030.png" alt="" loading="lazy"></figure>
 <p>处女座的我哪受得了这个啊.于是绞尽脑汁一顿折腾,终于找到了方法(＾－＾)V</p>
 <h2 id="1使用botfather创建一个发布bot">1.使用@BotFather创建一个发布bot</h2>
 <p>搜索到@BotFather --&gt; <code>/start</code> --&gt; <code>/newbot</code> --&gt; 输入自定义id --&gt; 输入自定义username</p>
-<figure data-type="image" tabindex="3"><img src="http://static.sunjianbo.com/20200331111841.png" alt="step1" loading="lazy"></figure>
+<figure data-type="image" tabindex="3"><img src="https://static.sunjianbo.com/20200331111841.png" alt="step1" loading="lazy"></figure>
 <h2 id="2使用controllerbot-新增并管理频道">2.使用@ControllerBot 新增并管理频道</h2>
 <h3 id="21搜索到controllerbot-start-addchannel-复制上图标红位置的在botfather创建的token到controllerbot-粘贴">2.1搜索到@ControllerBot --&gt; <code>/start</code> --&gt; <code>/addchannel</code>--&gt; 复制上图标红位置的在BotFather创建的token到ControllerBot 粘贴</h3>
-<figure data-type="image" tabindex="4"><img src="http://static.sunjianbo.com/20200331112452.png" alt="addchannel" loading="lazy"></figure>
-<figure data-type="image" tabindex="5"><img src="http://static.sunjianbo.com/20200331112830.png" alt="token" loading="lazy"></figure>
+<figure data-type="image" tabindex="4"><img src="https://static.sunjianbo.com/20200331112452.png" alt="addchannel" loading="lazy"></figure>
+<figure data-type="image" tabindex="5"><img src="https://static.sunjianbo.com/20200331112830.png" alt="token" loading="lazy"></figure>
 <h3 id="22按照提示到自己的频道去把刚刚创建的bot增加为管理员">2.2按照提示到自己的频道去把刚刚创建的bot增加为管理员</h3>
 <p>自己频道右上角Manage Channel --&gt; 点击Administrators --&gt; 点击左下角ADD ADMINISTRATOR --&gt; 搜索刚刚创建的bot(eg:alittlefun_bot)--&gt;完成管理员添加</p>
 <h3 id="23转发一条自己频道的信息给controllerbot">2.3转发一条自己频道的信息给@ControllerBot</h3>
 <h3 id="24输入城市名来确定时区直接输入shanghai">2.4输入城市名来确定时区,直接输入<code>shanghai</code></h3>
-<figure data-type="image" tabindex="6"><img src="http://static.sunjianbo.com/20200331113549.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="6"><img src="https://static.sunjianbo.com/20200331113549.png" alt="" loading="lazy"></figure>
 <h3 id="25设置完成">2.5设置完成</h3>
 <h2 id="3发布内容">3.发布内容</h2>
 <h3 id="31点击上图create-post按钮或者手动打开之前创建的机器人alittlefun_bot-start-发送内容">3.1点击上图<strong>Create Post</strong>按钮或者手动打开之前创建的机器人(@alittlefun_bot) --&gt; <code>/start</code> --&gt; 发送内容</h3>
-<figure data-type="image" tabindex="7"><img src="http://static.sunjianbo.com/20200331131340.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="7"><img src="https://static.sunjianbo.com/20200331131340.png" alt="" loading="lazy"></figure>
 <h3 id="32点击add-reactions按钮发送需要的emoji表情过去">3.2点击<strong>Add Reactions</strong>按钮,发送需要的emoji表情过去</h3>
 <h3 id="33最后点击文本框下面send按钮设定发送时机参考图片">3.3最后点击文本框下面Send按钮,设定发送时机(参考图片)</h3>
-<figure data-type="image" tabindex="8"><img src="http://static.sunjianbo.com/20200331132137.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="8"><img src="https://static.sunjianbo.com/20200331132137.png" alt="" loading="lazy"></figure>
 <h2 id="4总结">4.总结</h2>
 <p>经过以上步骤即可实现在自己的频道发布带emoji点赞反馈的内容.</p>
 <p>步骤可以简单归纳为</p>

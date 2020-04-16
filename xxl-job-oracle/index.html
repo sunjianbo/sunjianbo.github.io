@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>手动修改xxl-job-admin以支持Oracle数据库 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link href="https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css" rel="stylesheet">
+<!--
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+-->
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1587035484800">
+<link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-160052000-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-160052000-1');
+</script>
+
+
+    <meta name="description" content="
+基于xxl-job-2.1.2.Release
+
+直接使用:https://github.com/sunjianbo/xxl-job/tree/2.1.2
+doc/db/tables_xxl_job.sql
+根据文件内容将其中的mysql..." />
+    <meta name="keywords" content="xxl-job,oracle,计划任务" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://www.sunjianbo.com">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1587035484800" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/sun_jianbo" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://weibo.com/u/1967178011" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/sun-jian-bo-59" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.facebook.com/profile.php?id=100011365915451" target="_blank">
+            <i class="fab fa-facebook"></i>
+          </a>
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://beian.miit.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://www.sunjianbo.com/atom.xml" target="_blank">RSS</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			又拍云提供网络及存储支持
+		</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			<img height="35px" width="90px" src="https://img.juemuren4449.com/4ff5b7d3ed727d330fcdda17165de906.png">
+		</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">手动修改xxl-job-admin以支持Oracle数据库</h2>
+            <div class="post-date">2020-04-14</div>
+            
+            <div class="post-content" v-pre>
+              <blockquote>
+<p>基于xxl-job-2.1.2.Release</p>
+</blockquote>
+<p>直接使用:<a href="https://github.com/sunjianbo/xxl-job/tree/2.1.2">https://github.com/sunjianbo/xxl-job/tree/2.1.2</a></p>
+<h2 id="docdbtables_xxl_jobsql">doc/db/tables_xxl_job.sql</h2>
+<p>根据文件内容将其中的mysql语法修改为oracle</p>
+<p>这里是我已改好的2.1.2版本对应的oracle文件:<a href="https://static.sunjianbo.com/code/sql/tables_xxl_job_oracle.sql">下载</a></p>
+<h2 id="pomxml">/pom.xml</h2>
+<p>注释</p>
+<pre><code class="language-xml">&lt;!-- mysql --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;mysql&lt;/groupId&gt;
+    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+    &lt;version&gt;${mysql-connector-java.version}&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>替换为</p>
+<pre><code class="language-xml">&lt;!-- oracle --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.oracle&lt;/groupId&gt;
+    &lt;artifactId&gt;ojdbc6&lt;/artifactId&gt;
+    &lt;version&gt;11.2.0.3&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>根据自己的oracle本版选择对应的jdbc</p>
+<blockquote>
+<p>查看本版SQL:	<code>select version from v$instance;</code></p>
+</blockquote>
+<h2 id="srcmainresourcesapplicationproperties">/src/main/resources/application.properties</h2>
+<p>注释</p>
+<pre><code>#spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_job?Unicode=true&amp;characterEncoding=UTF-8
+#spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+#spring.datasource.tomcat.validation-query=SELECT 1
+</code></pre>
+<p>替换为</p>
+<pre><code>spring.datasource.url=jdbc:oracle:thin:@127.0.0.1:3306:1521/xxl_job
+spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
+spring.datasource.tomcat.validation-query=SELECT 1 FROM DUAL
+</code></pre>
+<h2 id="srcmainresourcesmybatis-mapper">/src/main/resources/mybatis-mapper</h2>
+<ul>
+<li>查找mybatis-mapper目录下的所有</li>
+</ul>
+<pre><code>`
+</code></pre>
+<p>符号,替换为空</p>
+<ul>
+<li>查找</li>
+</ul>
+<pre><code>AS t
+</code></pre>
+<p>替换为t,搜索AS大写区分或者words</p>
+<ul>
+<li>查找</li>
+</ul>
+<pre><code>;
+</code></pre>
+<p>符号,替换为空</p>
+<h2 id="srcmainresourcesmybatis-mapperxxljobgroupmapperxml">/src/main/resources/mybatis-mapper/XxlJobGroupMapper.xml</h2>
+<p>将其中</p>
+<pre><code>t.`order`
+</code></pre>
+<p>以及</p>
+<pre><code>t.order
+</code></pre>
+<p>替换为</p>
+<pre><code>t.&quot;ORDER&quot;
+</code></pre>
+<p>ORDER必须大写</p>
+<h2 id="其他mapperxml">其他Mapper.xml</h2>
+<ul>
+<li>save的自增id修改为oracle格式</li>
+<li>LIMIT的修改为oracle的rownum</li>
+<li>增加jdbcType以防空值报错</li>
+</ul>
+<p><strong>注意:</strong></p>
+<p>如果加jdbcType的话,XxlJobInfoMapper.xml中有两个属性写的是<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>e</mi><mi>x</mi><mi>e</mi><mi>c</mi><mi>u</mi><mi>t</mi><mi>o</mi><mi>r</mi><mi>T</mi><mi>i</mi><mi>m</mi><mi>e</mi><mi>o</mi><mi>u</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">{executorTimeout}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="mord mathdefault">x</span><span class="mord mathdefault">e</span><span class="mord mathdefault">c</span><span class="mord mathdefault">u</span><span class="mord mathdefault">t</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault">i</span><span class="mord mathdefault">m</span><span class="mord mathdefault">e</span><span class="mord mathdefault">o</span><span class="mord mathdefault">u</span><span class="mord mathdefault">t</span></span></span></span></span>{executorFailRetryCount},注意改成#{}</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://www.sunjianbo.com/tag/lR6Y76bNt7/" class="tag">
+                    xxl-job
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/LfnDs2xSgb/" class="tag">
+                    oracle
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/yKaJO3cVGv/" class="tag">
+                    计划任务
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://www.sunjianbo.com/telegram-add-reactions/">
+                  <h3 class="post-title">
+                    telegram频道发布增加点赞评论等反馈功能
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

@@ -11,7 +11,7 @@
 <!--
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 -->
-<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1585724963686">
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1587035484800">
 <link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
 
 
@@ -46,7 +46,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://www.sunjianbo.com">
-        <img src="https://www.sunjianbo.com/images/avatar.png?v=1585724963686" class="site-logo">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1587035484800" class="site-logo">
         <h1 class="site-title">孙建博的小站</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -157,11 +157,11 @@
 </blockquote>
 <p>百度发现两种解决方案：1、修改该文件，把所有错误全都改了；2、删除该文件，重新配置。</p>
 <p>像我这种懒人当然是果断选择后者。删除后在刷新网页，会要求重新配置数据库信息，整个页面基本和重新安装差不多。</p>
-<img src="http://static.sunjianbo.com/move-wordpress/move-wordpress-1.jpg" alt="" width="738" height="491" />
-<img src="http://static.sunjianbo.com/move-wordpress/move-wordpress-2.jpg" alt="" width="706" height="438" />
+<img src="https://static.sunjianbo.com/move-wordpress/move-wordpress-1.jpg" alt="" width="738" height="491" />
+<img src="https://static.sunjianbo.com/move-wordpress/move-wordpress-2.jpg" alt="" width="706" height="438" />
 <p>配置数据库之后也可以直接点击“现在安装”，因为数据库里已经导入数据了，它会提示已经安装了，可以无视。</p>
-<img src="http://static.sunjianbo.com/move-wordpress/move-wordpress-3.jpg" alt="" width="720" height="131" />
-<img src="http://static.sunjianbo.com/move-wordpress/move-wordpress-4.jpg" alt="" width="565" height="153" />
+<img src="https://static.sunjianbo.com/move-wordpress/move-wordpress-3.jpg" alt="" width="720" height="131" />
+<img src="https://static.sunjianbo.com/move-wordpress/move-wordpress-4.jpg" alt="" width="565" height="153" />
 <p>接下来出现问题了，包括首页在内所有的WordPress路径全部出现404错误，百度一番无果，重装多次之后发现和数据库中的数据有关，打开备份的sql文件，发现其中存在着不少域名的链接，类似：</p>
 <pre><code>INSERT INTO wp_options VALUES(&quot;1&quot;,&quot;siteurl&quot;,&quot;http://www.sunjianbo.com&quot;,&quot;yes&quot;);
 </code></pre>
@@ -170,7 +170,7 @@
 <p>然后又发现固定连接出现问题，主页能显示，其他内页都不能正常访问。</p>
 <p>百度说是伪静态.htaccess的问题，各种代码啊，修改啊什么的。</p>
 <p>我想了想，跑到设置-固定链接中，重新保存了一次，搞定！</p>
-<img src="http://static.sunjianbo.com/move-wordpress/move-wordpress-5.jpg" alt="" width="330" height="200" />
+<img src="https://static.sunjianbo.com/move-wordpress/move-wordpress-5.jpg" alt="" width="330" height="200" />
 <p>总结起来有以下三步：</p>
 <p>1、替换数据库sql文件中的域名为新地址，然后用phpMyAdmin等导入sql；</p>
 <p>2、上传wp文件，删除其中的wp-config.php文件，打开页面重新配置数据库连接；</p>
