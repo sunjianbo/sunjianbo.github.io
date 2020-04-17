@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-04-16T11:11:57.725Z</updated>
+    <updated>2020-04-17T05:39:34.454Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -10,6 +10,37 @@
     <logo>https://www.sunjianbo.com/images/avatar.png</logo>
     <icon>https://www.sunjianbo.com/favicon.ico</icon>
     <rights>All rights reserved 2020, 孙建博的小站</rights>
+    <entry>
+        <title type="html"><![CDATA[git push error dst refspec "XXX" matches more than one]]></title>
+        <id>https://www.sunjianbo.com/git-push-matches-more-than-one/</id>
+        <link href="https://www.sunjianbo.com/git-push-matches-more-than-one/">
+        </link>
+        <updated>2020-04-15T04:36:08.000Z</updated>
+        <content type="html"><![CDATA[<p>今天在2.1.2分支上修改完xxl-job的数据库为oracle之后想要提交,结果报错</p>
+<h3 id="报错信息">报错信息</h3>
+<blockquote>
+<p>Failed with error: HttpRequestException encountered. dst refspec 2.1.2 matches more than one. failed to push some refs to 'https://github.com/sunjianbo/xxl-job.git'</p>
+</blockquote>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/1586921186771_17.png" alt="error" loading="lazy"></figure>
+<h3 id="原因">原因</h3>
+<p>翻译一下就是你想要提交到的目标不只存在一个,git不知道你要提交到哪一个了<br>
+那么分支名称肯定是不会出现重复的,那就只可能是分支名和tag名冲突了</p>
+<pre><code>$ git tag
+</code></pre>
+<p>查看发现果然也存在一个叫做2.1.2的tag</p>
+<h3 id="解决方案">解决方案</h3>
+<p>删除本地标签</p>
+<pre><code>$ git tag -d 2.1.2
+</code></pre>
+<p>删除远程标签</p>
+<pre><code>$ git push origin :refs/tags/2.1.2
+</code></pre>
+<p>顺利提交<br>
+<img src="https://static.sunjianbo.com/1586921495457_18.png" alt="pushed" loading="lazy"></p>
+<p>附git tag常用操作速查:</p>
+<p><a href="https://blog.csdn.net/happycxz/article/details/78893690">https://blog.csdn.net/happycxz/article/details/78893690</a></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[手动修改xxl-job-admin以支持Oracle数据库]]></title>
         <id>https://www.sunjianbo.com/xxl-job-oracle/</id>
@@ -408,22 +439,6 @@ at com.ceair.b2t.messagecenter.SpringContextUtil.getBean(SpringContextUtil.java:
 <p>该注解用于声明当前bean依赖于另外一个bean。所依赖的bean会被容器确保在当前bean实例化之前被实例化。</p>
 <p>题外话：</p>
 <p>这样看来两种run项目方式至少在类加载顺序上是有区别的</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[FileZilla支持Windows XP版本官方下载地址]]></title>
-        <id>https://www.sunjianbo.com/filezilla-for-windows-xp-download/</id>
-        <link href="https://www.sunjianbo.com/filezilla-for-windows-xp-download/">
-        </link>
-        <updated>2019-04-09T17:59:04.000Z</updated>
-        <content type="html"><![CDATA[<p>FileZilla很早就已经不支持xp系统了</p>
-<p>3.9.0.1是最后一个支持的版本</p>
-<p>网上不太好找官方的下载地址，都是第三方的，安全性无法保证。</p>
-<p>所以为了方便一些特殊用户，我找到以后写了出来</p>
-<p>下面是官方下载地址：</p>
-<p><a href="https://download.filezilla-project.org/client/FileZilla_3.9.0.1_win32-setup.exe?nowrap">https://download.filezilla-project.org/client/FileZilla_3.9.0.1_win32-setup.exe?nowrap</a></p>
-<p>备注：</p>
-<p>安装时会提示不支持，可以忽略，能够正常使用，查看更新日志，应该是在3.8以后停止支持的，但是后面还兼容了一段时间。</p>
 ]]></content>
     </entry>
 </feed>
