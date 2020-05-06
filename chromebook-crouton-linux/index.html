@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>hp chromebook 11 G1通过crouton安装及使用Debian | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link href="https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css" rel="stylesheet">
+<!--
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+-->
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1588755198975">
+<link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-160052000-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-160052000-1');
+</script>
+
+
+    <meta name="description" content="一.关于备份
+在操作之前本来应该是备份的,但是考虑到官方提供救砖的方法(https://support.google.com/chromebook/answer/1080595?hl=zh-Hans),也就先放心的直接上手安装了.(主要原因..." />
+    <meta name="keywords" content="chromebook,crouton,Debian,linux" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://www.sunjianbo.com">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1588755198975" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/sun_jianbo" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://weibo.com/u/1967178011" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/sun-jian-bo-59" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.facebook.com/profile.php?id=100011365915451" target="_blank">
+            <i class="fab fa-facebook"></i>
+          </a>
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://beian.miit.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://www.sunjianbo.com/atom.xml" target="_blank">RSS</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			又拍云提供网络及存储支持
+		</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			<img height="35px" width="90px" src="https://img.juemuren4449.com/4ff5b7d3ed727d330fcdda17165de906.png">
+		</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">hp chromebook 11 G1通过crouton安装及使用Debian</h2>
+            <div class="post-date">2020-04-24</div>
+            
+            <div class="post-content" v-pre>
+              <h2 id="一关于备份">一.关于备份</h2>
+<p>在操作之前本来应该是备份的,但是考虑到官方提供救砖的方法(<a href="https://support.google.com/chromebook/answer/1080595?hl=zh-Hans">https://support.google.com/chromebook/answer/1080595?hl=zh-Hans</a>),也就先放心的直接上手安装了.(主要原因其实是没有u盘(◔◡◔))</p>
+<h2 id="二进入开发者模式">二.进入开发者模式</h2>
+<p>同时按住<code>esc + refresh + power</code></p>
+<p>然后自动重启,提示你系统已经损坏,好了结束了,可以卖破烂了(◔◡◔)</p>
+<p>当然不会这样,再按一下<code>ctrl+D</code>提示关闭系统验证,再按Enter,提示验证已关闭,继续<code>ctrl+D</code>*2</p>
+<p>最后系统开始为了进入开发者模式准备一些东西,需要等待几分钟.</p>
+<p>准备完成重启之后,就始终需要按<code>ctrl+D</code>来进入chromeOS了</p>
+<h2 id="三下载crouton">三.下载crouton</h2>
+<p>crouton项目的github:<a href="https://github.com/dnschneid/crouton">https://github.com/dnschneid/crouton</a></p>
+<p>在Usage内容下有个下载地址,这里直接贴出来了:<a href="https://goo.gl/fd3zc">https://goo.gl/fd3zc</a></p>
+<p>下载下来应该默认存储在</p>
+<h2 id="四打开shell">四.打开shell</h2>
+<p><code>ctrl+alt+t</code>打开一个命令行,这是chrome的crosh,再输入<code>shell</code>回车进入linux shell</p>
+<h2 id="五安装linux">五.安装linux</h2>
+<p>因为配置垃圾,所以选择了debian buster+lxde桌面,在这之前我查看了一下剩余空间<strong>9.2G</strong></p>
+<pre><code class="language-shell">sudo sh crouton -r buster -t lxde -P http://127.0.0.1:7890
+</code></pre>
+<p><code>-P</code> 参数是用来指定翻墙代理的,下面命令可以查看所有可安装的linux</p>
+<pre><code class="language-shell">sudo sh crouton -t list -P http://127.0.0.1:7890
+</code></pre>
+<h3 id="中间因为网络问题失败了一次再次安装会报错">中间因为网络问题失败了一次,再次安装会报错:</h3>
+<blockquote>
+<p>/usr/local/chroots/buster already has stuff in it!<br>
+Either delete it, specify a different name (-n), or specify -u to update it.</p>
+</blockquote>
+<p>根据提示使用以下命令才能继续</p>
+<pre><code>sudo sh crouton -u -n buster -t lxde -P http://127.0.0.1:7890
+</code></pre>
+<h3 id="安装耗时1410-1701接近三小时公司垃圾网下载速度不到100下载文件500m左右安装完成后第一次启动后剩余空间76g即占用16g">安装耗时14.10-17.01接近三小时,公司垃圾网下载速度不到100,下载文件500M左右,安装完成后第一次启动后剩余空间7.6G,即占用1.6G</h3>
+<h3 id="启动linux">启动linux</h3>
+<pre><code>sudo startlxde
+</code></pre>
+<h2 id="六备份回复删除系">六.备份/回复/删除系</h2>
+<p>备份命令:</p>
+<pre><code>sudo edit-chroot -b buster -f ~/Downloads/buster-backup.bak
+</code></pre>
+<p>恢复:</p>
+<pre><code>sudo sh -e ~/Downloads/crouton -f ~/Downloads/buster-backup.bak
+</code></pre>
+<p>删除</p>
+<pre><code>sudo delete-chroot buster
+</code></pre>
+<p>或者</p>
+<pre><code>sudo edit-chroot -d buster
+</code></pre>
+<h2 id="七使用">七.使用:</h2>
+<h3 id="1不启动整个linux只启动其shell">1.不启动整个linux只启动其shell:</h3>
+<pre><code>sudo enter-chroot
+</code></pre>
+<h3 id="2系统任意切换">2.系统任意切换</h3>
+<blockquote>
+<p>shift+ctrl+alt+前进键(F2)/后退键(F1)</p>
+</blockquote>
+<p>不是说后退切换过去然后前进切换回来,而是只要用一个组合键就可以来回切换,按一下切换再按一下切换回来</p>
+<h3 id="3安装后系统配置">3.安装后系统配置</h3>
+<p>参考这篇文章:<a href="https://frapples.github.io/articles/2017-05-11-e6dc.html">https://frapples.github.io/articles/2017-05-11-e6dc.html</a></p>
+<h3 id="4安装clash">4.安装clash</h3>
+<p>chrome的shadowsocks插件比较老,很多新的加密协议都不支持,所以我之前都是走局域网的代理,装好clash就可以自给自足了</p>
+<p>完整教程:<a href="https://ssu.tw/index.php/archives/37/">https://ssu.tw/index.php/archives/37/</a></p>
+<pre><code>cd ~
+sudo mkdir clash //创建目录
+cd clash //切换至此目录
+sudo wget https://github.com/Dreamacro/clash/releases/download/v0.19.0/clash-linux-armv7-v0.19.0.gz //下载D大预编译好的包
+sudo gunzip clash-linux-armv7-v0.19.0.gz //解压，记得可以使用Tab键补全，得到clash的二进制
+sudo mv clash-linux-armv7-v0.19.0 /usr/local/bin/clash //移动并重命名，简短方便使用
+sudo chmod +x /usr/local/bin/clash //赋予此文件可执行权限
+</code></pre>
+<p>下载配置文件样例</p>
+<pre><code>sudo wget https://raw.githubusercontent.com/ConnersHua/Profiles/master/Clash/Pro.yaml //下载范例配置文件
+sudo mv Pro.yaml config.yaml //重命名
+</code></pre>
+<p>修改配置文件</p>
+<pre><code>sudo vim config.yaml //编辑此配置文件
+
+# 这里建议从false改为true，允许局域网共享
+allow-lan: true
+
+# 下面这行，建议取消前面#注释符号
+bind-address: &quot;*&quot;
+
+# RESTful API for clash
+# 修改外部控制，将127.0.0.1改为0.0.0.0
+external-controller: 0.0.0.0:9090
+</code></pre>
+<p>启动clash</p>
+<pre><code>clash -d ~/clash
+</code></pre>
+<p>clash启动之后，你可以用局域网的设备访问<code>http://clash.razord.top</code>， 然后Host填写你树莓派在局域网中的IP地址，端口填写上面设置的9090，即可访问成功。</p>
+<h3 id="5安装typora失败">5.安装Typora(失败)</h3>
+<p>因为本来搞个chromebook定位就是用来写文档的,所以安装自己用习惯的md编辑器Typora,方法参考<a href="https://support.typora.io/Typora-on-Linux/">官方文档</a></p>
+<pre><code class="language-shell">wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
+sudo add-apt-repository 'deb https://typora.io/linux ./'
+# 若报错 add-apt-repository: command not found则先执行:sudo apt-get install software-properties-common
+sudo apt-get update
+sudo apt-get install typora
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://www.sunjianbo.com/tag/-Db-q-gKoi/" class="tag">
+                    chromebook
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/jvbsf09zGo/" class="tag">
+                    crouton
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/Eu9TZL4_3l/" class="tag">
+                    Debian
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/5zamCssJz/" class="tag">
+                    linux
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://www.sunjianbo.com/git-push-matches-more-than-one/">
+                  <h3 class="post-title">
+                    git push error dst refspec &#34;XXX&#34; matches more than one
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

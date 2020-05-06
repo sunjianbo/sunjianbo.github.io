@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-04-17T05:39:57.857Z</updated>
+    <updated>2020-05-06T08:54:17.956Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -10,6 +10,159 @@
     <logo>https://www.sunjianbo.com/images/avatar.png</logo>
     <icon>https://www.sunjianbo.com/favicon.ico</icon>
     <rights>All rights reserved 2020, 孙建博的小站</rights>
+    <entry>
+        <title type="html"><![CDATA[activemq启动报错Failed to connect to the Wrapper at port 32000]]></title>
+        <id>https://www.sunjianbo.com/activemq-wrapper-error/</id>
+        <link href="https://www.sunjianbo.com/activemq-wrapper-error/">
+        </link>
+        <updated>2020-05-06T08:36:28.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="环境">环境</h2>
+<blockquote>
+<p>win7 x64</p>
+<p>java1.8.0_20</p>
+<p>activemq:5.15.12(当前最新)</p>
+</blockquote>
+<h2 id="报错信息">报错信息</h2>
+<p>运行<code>apache-activemq\bin\win64\activemq.bat</code>报如下错误:</p>
+<pre><code>jvm 1    | Failed to connect to the Wrapper at port 32000.
+jvm 1    | java.net.ConnectException: connect: Address is invalid on local machine, or port is not valid on remote machine
+jvm 1    | Exiting JVM...
+</code></pre>
+<p>编辑<code>win64</code>目录下<code>wrapper.conf</code>文件,取消注释</p>
+<pre><code># wrapper.debug=TRUE
+</code></pre>
+<hr>
+<p>title: 'activemq启动报错Failed to connect to the Wrapper at port 32000'<br>
+date: 2020-05-06 16:36:28<br>
+tags: [activemq,wrapper,报错]<br>
+published: true<br>
+hideInList: false<br>
+feature:<br>
+isTop: false</p>
+<hr>
+<pre><code>INFO   | jvm 1    | 2020/05/06 16:26:52 | Load native library.  One or more attempts may fail if platform specific libraries do not exist.
+INFO   | jvm 1    | 2020/05/06 16:26:52 | Loading native library failed: wrapper-windows-x86-64.dll  Cause: java.lang.UnsatisfiedLinkError: no wrapper-windows-x86-64 in java.library.path
+</code></pre>
+<h2 id="试图解决">试图解决</h2>
+<p>根据以上两个关键信息进行Google,然而崩溃的是股沟了好久没有找到解决方法</p>
+<p>期间尝试了网上说的修改<code>conf/activemq.xml</code>与<code>conf/jetty.xml</code>配置文件中的ip<code>0.0.0.0</code>改为<code>127.0.0.1</code></p>
+<p>修改<code>wrapper.conf</code>文件中的<code>wrapper.java.command=java</code>为指定<code>jdkpath\bin\java</code></p>
+<p>均无效,最后放弃这种启动方式,改为下面方式启动.没有报错</p>
+<h2 id="最终解决方案">最终解决方案</h2>
+<p>双击运行<code>apache-activemq\bin\win6\InstallService.bat</code>以安装服务</p>
+<p><code>win+r</code>启动<code>cmd</code>输入:</p>
+<pre><code>net start activemq
+</code></pre>
+<p>完全没报错,顺利启动</p>
+<p>浏览器打开<a href="http://127.0.0.1:8161">http://127.0.0.1:8161</a></p>
+<p>成功访问</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[hp chromebook 11 G1通过crouton安装及使用Debian]]></title>
+        <id>https://www.sunjianbo.com/chromebook-crouton-linux/</id>
+        <link href="https://www.sunjianbo.com/chromebook-crouton-linux/">
+        </link>
+        <updated>2020-04-24T06:31:03.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="一关于备份">一.关于备份</h2>
+<p>在操作之前本来应该是备份的,但是考虑到官方提供救砖的方法(<a href="https://support.google.com/chromebook/answer/1080595?hl=zh-Hans">https://support.google.com/chromebook/answer/1080595?hl=zh-Hans</a>),也就先放心的直接上手安装了.(主要原因其实是没有u盘(◔◡◔))</p>
+<h2 id="二进入开发者模式">二.进入开发者模式</h2>
+<p>同时按住<code>esc + refresh + power</code></p>
+<p>然后自动重启,提示你系统已经损坏,好了结束了,可以卖破烂了(◔◡◔)</p>
+<p>当然不会这样,再按一下<code>ctrl+D</code>提示关闭系统验证,再按Enter,提示验证已关闭,继续<code>ctrl+D</code>*2</p>
+<p>最后系统开始为了进入开发者模式准备一些东西,需要等待几分钟.</p>
+<p>准备完成重启之后,就始终需要按<code>ctrl+D</code>来进入chromeOS了</p>
+<h2 id="三下载crouton">三.下载crouton</h2>
+<p>crouton项目的github:<a href="https://github.com/dnschneid/crouton">https://github.com/dnschneid/crouton</a></p>
+<p>在Usage内容下有个下载地址,这里直接贴出来了:<a href="https://goo.gl/fd3zc">https://goo.gl/fd3zc</a></p>
+<p>下载下来应该默认存储在</p>
+<h2 id="四打开shell">四.打开shell</h2>
+<p><code>ctrl+alt+t</code>打开一个命令行,这是chrome的crosh,再输入<code>shell</code>回车进入linux shell</p>
+<h2 id="五安装linux">五.安装linux</h2>
+<p>因为配置垃圾,所以选择了debian buster+lxde桌面,在这之前我查看了一下剩余空间<strong>9.2G</strong></p>
+<pre><code class="language-shell">sudo sh crouton -r buster -t lxde -P http://127.0.0.1:7890
+</code></pre>
+<p><code>-P</code> 参数是用来指定翻墙代理的,下面命令可以查看所有可安装的linux</p>
+<pre><code class="language-shell">sudo sh crouton -t list -P http://127.0.0.1:7890
+</code></pre>
+<h3 id="中间因为网络问题失败了一次再次安装会报错">中间因为网络问题失败了一次,再次安装会报错:</h3>
+<blockquote>
+<p>/usr/local/chroots/buster already has stuff in it!<br>
+Either delete it, specify a different name (-n), or specify -u to update it.</p>
+</blockquote>
+<p>根据提示使用以下命令才能继续</p>
+<pre><code>sudo sh crouton -u -n buster -t lxde -P http://127.0.0.1:7890
+</code></pre>
+<h3 id="安装耗时1410-1701接近三小时公司垃圾网下载速度不到100下载文件500m左右安装完成后第一次启动后剩余空间76g即占用16g">安装耗时14.10-17.01接近三小时,公司垃圾网下载速度不到100,下载文件500M左右,安装完成后第一次启动后剩余空间7.6G,即占用1.6G</h3>
+<h3 id="启动linux">启动linux</h3>
+<pre><code>sudo startlxde
+</code></pre>
+<h2 id="六备份回复删除系">六.备份/回复/删除系</h2>
+<p>备份命令:</p>
+<pre><code>sudo edit-chroot -b buster -f ~/Downloads/buster-backup.bak
+</code></pre>
+<p>恢复:</p>
+<pre><code>sudo sh -e ~/Downloads/crouton -f ~/Downloads/buster-backup.bak
+</code></pre>
+<p>删除</p>
+<pre><code>sudo delete-chroot buster
+</code></pre>
+<p>或者</p>
+<pre><code>sudo edit-chroot -d buster
+</code></pre>
+<h2 id="七使用">七.使用:</h2>
+<h3 id="1不启动整个linux只启动其shell">1.不启动整个linux只启动其shell:</h3>
+<pre><code>sudo enter-chroot
+</code></pre>
+<h3 id="2系统任意切换">2.系统任意切换</h3>
+<blockquote>
+<p>shift+ctrl+alt+前进键(F2)/后退键(F1)</p>
+</blockquote>
+<p>不是说后退切换过去然后前进切换回来,而是只要用一个组合键就可以来回切换,按一下切换再按一下切换回来</p>
+<h3 id="3安装后系统配置">3.安装后系统配置</h3>
+<p>参考这篇文章:<a href="https://frapples.github.io/articles/2017-05-11-e6dc.html">https://frapples.github.io/articles/2017-05-11-e6dc.html</a></p>
+<h3 id="4安装clash">4.安装clash</h3>
+<p>chrome的shadowsocks插件比较老,很多新的加密协议都不支持,所以我之前都是走局域网的代理,装好clash就可以自给自足了</p>
+<p>完整教程:<a href="https://ssu.tw/index.php/archives/37/">https://ssu.tw/index.php/archives/37/</a></p>
+<pre><code>cd ~
+sudo mkdir clash //创建目录
+cd clash //切换至此目录
+sudo wget https://github.com/Dreamacro/clash/releases/download/v0.19.0/clash-linux-armv7-v0.19.0.gz //下载D大预编译好的包
+sudo gunzip clash-linux-armv7-v0.19.0.gz //解压，记得可以使用Tab键补全，得到clash的二进制
+sudo mv clash-linux-armv7-v0.19.0 /usr/local/bin/clash //移动并重命名，简短方便使用
+sudo chmod +x /usr/local/bin/clash //赋予此文件可执行权限
+</code></pre>
+<p>下载配置文件样例</p>
+<pre><code>sudo wget https://raw.githubusercontent.com/ConnersHua/Profiles/master/Clash/Pro.yaml //下载范例配置文件
+sudo mv Pro.yaml config.yaml //重命名
+</code></pre>
+<p>修改配置文件</p>
+<pre><code>sudo vim config.yaml //编辑此配置文件
+
+# 这里建议从false改为true，允许局域网共享
+allow-lan: true
+
+# 下面这行，建议取消前面#注释符号
+bind-address: &quot;*&quot;
+
+# RESTful API for clash
+# 修改外部控制，将127.0.0.1改为0.0.0.0
+external-controller: 0.0.0.0:9090
+</code></pre>
+<p>启动clash</p>
+<pre><code>clash -d ~/clash
+</code></pre>
+<p>clash启动之后，你可以用局域网的设备访问<code>http://clash.razord.top</code>， 然后Host填写你树莓派在局域网中的IP地址，端口填写上面设置的9090，即可访问成功。</p>
+<h3 id="5安装typora失败">5.安装Typora(失败)</h3>
+<p>因为本来搞个chromebook定位就是用来写文档的,所以安装自己用习惯的md编辑器Typora,方法参考<a href="https://support.typora.io/Typora-on-Linux/">官方文档</a></p>
+<pre><code class="language-shell">wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
+sudo add-apt-repository 'deb https://typora.io/linux ./'
+# 若报错 add-apt-repository: command not found则先执行:sudo apt-get install software-properties-common
+sudo apt-get update
+sudo apt-get install typora
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[git push error dst refspec "XXX" matches more than one]]></title>
         <id>https://www.sunjianbo.com/git-push-matches-more-than-one/</id>
@@ -395,50 +548,6 @@ git pustt
 <img src="https://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step2.2.png" alt="step2.2" loading="lazy"><br>
 3.然后去操作页面来触发事件,这时就会进入断点,逐步寻找到你需要的代码.比较麻烦,无奈之举.<br>
 <img src="https://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step2.3.png" alt="step2.3" loading="lazy"></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Gridea——github pages搭建个人博客利器]]></title>
-        <id>https://www.sunjianbo.com/gridea-github-page-li-qi/</id>
-        <link href="https://www.sunjianbo.com/gridea-github-page-li-qi/">
-        </link>
-        <updated>2020-02-25T07:42:55.000Z</updated>
-        <content type="html"><![CDATA[<p>以前也想过搞github pages做博客,但是一搜教程看着那一步步超级麻烦的操作步骤,无奈放弃.<br>
-今天浏览网站时无意中发现了Gridea,顿时惊为天人.<br>
-它提供一个美观方便的客户端工具,以此简化了github pages的操作方法.使小白也能简简单单搭建一个个人博客了.<br>
-同时还支持MarkDown,简直不能再妙!</p>
-<h2 id="官方网站">官方网站:</h2>
-<p><a href="https://gridea.dev/">https://gridea.dev/</a></p>
-<h2 id="github主页">github主页:</h2>
-<p><a href="https://github.com/getgridea/gridea">https://github.com/getgridea/gridea</a></p>
-<h2 id="简单教程">简单教程:</h2>
-<p><a href="https://fehey.com/post/hve-notes-start/">https://fehey.com/post/hve-notes-start/</a></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[springboot通过java -jar运行实现ApplicationContextAware接口报空指针NUllPointerException]]></title>
-        <id>https://www.sunjianbo.com/springboot-applicationcontextaware-nullpointerexception/</id>
-        <link href="https://www.sunjianbo.com/springboot-applicationcontextaware-nullpointerexception/">
-        </link>
-        <updated>2019-07-22T00:06:58.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="先描述背景">先描述背景：</h2>
-<p>自定义了一个实现ApplicationContextAware的自定义类，之前测试都是用IDE的run as application方式启动项目，没有错误。</p>
-<p>后来打包成jar文件通过java -jar运行即报空指针异常</p>
-<blockquote>
-<p>Caused by: java.lang.NullPointerException: null<br>
-at com.ceair.b2t.messagecenter.SpringContextUtil.getBean(SpringContextUtil.java:41) ~[classes!/:na]</p>
-</blockquote>
-<h2 id="原因">原因:</h2>
-<p>直接原因是applicationContext为空，即没有注入</p>
-<p>背后的原因是实现ApplicationContextAware的自定义类和使用applicationContext的类加载顺序问题。</p>
-<p><strong>一定要把定义的ApplicationContextAware工具类加载顺序放到调用类的前面</strong></p>
-<h2 id="解决方案">解决方案:</h2>
-<p>就是在调用类上添加注解</p>
-<pre><code>@DependsOn(&quot;springContextUtil&quot;)
-</code></pre>
-<p>该注解用于声明当前bean依赖于另外一个bean。所依赖的bean会被容器确保在当前bean实例化之前被实例化。</p>
-<p>题外话：</p>
-<p>这样看来两种run项目方式至少在类加载顺序上是有区别的</p>
 ]]></content>
     </entry>
 </feed>
