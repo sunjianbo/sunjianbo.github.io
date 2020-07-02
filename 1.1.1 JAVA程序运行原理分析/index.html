@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>1.1.1 JAVA程序运行原理分析 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link href="https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css" rel="stylesheet">
+<!--
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+-->
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1593659776345">
+<link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-160052000-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-160052000-1');
+</script>
+
+
+    <meta name="description" content="我的理解JVM内存结构就是程序由字节码文件读入到jvm中解析存储到执行所需要的一些东西
+class文件内容
+class文件包含JAVA程序执行的字节码;数据严格按照格式紧凑排列在class文件中的二进制流,中间无任何分隔符;文件开头有一个0..." />
+    <meta name="keywords" content="高性能编程专题,java" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://www.sunjianbo.com">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1593659776345" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/sun_jianbo" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://weibo.com/u/1967178011" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/sun-jian-bo-59" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.facebook.com/profile.php?id=100011365915451" target="_blank">
+            <i class="fab fa-facebook"></i>
+          </a>
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://beian.miit.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://www.sunjianbo.com/atom.xml" target="_blank">RSS</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			又拍云提供网络及存储支持
+		</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			<img height="35px" width="90px" src="https://img.juemuren4449.com/4ff5b7d3ed727d330fcdda17165de906.png">
+		</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">1.1.1 JAVA程序运行原理分析</h2>
+            <div class="post-date">2020-07-02</div>
+            
+            <div class="post-content" v-pre>
+              <p>我的理解JVM内存结构就是程序由字节码文件读入到jvm中解析存储到执行所需要的一些东西</p>
+<h2 id="class文件内容">class文件内容</h2>
+<p>class文件包含JAVA程序执行的字节码;数据严格按照格式紧凑排列在class文件中的二进制流,中间无任何分隔符;文件开头有一个0xcafebabe(16进制)特殊的一个标志.</p>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/image-20200610134740885.png" alt="class" loading="lazy"></figure>
+<p>class文件内存储的是指令码</p>
+<h2 id="jvm运行时数据区">JVM运行时数据区</h2>
+<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/image-20200610141943161.png" alt="jvm" loading="lazy"></figure>
+<h3 id="线程共享">线程共享</h3>
+<h4 id="方法区">方法区</h4>
+<p>jvm用来存储加载的类信息,常量,静态变量,编译后的代码等数据.</p>
+<p>这是虚拟机中的一个逻辑区划,具体实现根据不同虚拟机来实现.</p>
+<p>如:oracle的HotSpot在java7中方法区放在永久代,java8放在元数据空间,并且通过GC机制对这个区域进行管理</p>
+<h4 id="堆内存">堆内存</h4>
+<p>堆内存是VM启动时创建,用于存放对象的实例.</p>
+<p>还可以细分为:老年代,新生代(Eden,From Survivor,To Survivor).</p>
+<p>垃圾回收器主要就是管理堆内存.</p>
+<p>如果满了,就会出现OutOfMemoryError</p>
+<h2 id="线程独享">线程独享</h2>
+<h4 id="虚拟机栈">虚拟机栈</h4>
+<p>每个线程都在这个空间又一个私有的空间.</p>
+<p>线程栈由多个栈帧组成.</p>
+<p>一个线程会执行一个或多个方法,一个方法对应一个栈帧.</p>
+<p><strong>栈帧内容包含:局部变量表,操作数栈,动态链接,方法返回地址,附加信息等.</strong></p>
+<p>栈内存默认最大是<strong>1M</strong>.超出则抛出StackOverFlowError</p>
+<h4 id="本地方法栈">本地方法栈</h4>
+<p>和虚拟机栈功能类似,不同的是虚拟机栈是为虚拟机执行java方法而准备的,本地方法栈是为虚拟机使用Native本地方法而准备的.</p>
+<p>虚拟机规范没有规定具体的实现,由不同的虚拟机厂商去实现.</p>
+<p>HotSpot虚拟机中的虚拟机栈和本地方法栈的实现是一样的.同样,超出大小以后也会抛出StackOverFlowError</p>
+<h4 id="程序计数器program-counter-register">程序计数器(Program Counter Register)</h4>
+<p>记录当前线程执行字节码的位置,存储的是字节码指令地址.</p>
+<p>如果执行Native方法,则计数器值为空.</p>
+<p>每个线程都在这个空间有一个私有的空间,占用内存空间很少.</p>
+<p>CPU同一时间只会执行一条线程中的指令.JVM多线程会轮流切换并分配CPU执行时间.在线程切换后,需要通过程序计数器来恢复正确的执行位置.</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://www.sunjianbo.com/tag/0-v5Z7UgP/" class="tag">
+                    高性能编程专题
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/0tmsVkBYC52/" class="tag">
+                    java
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://www.sunjianbo.com/activemq-wrapper-error/">
+                  <h3 class="post-title">
+                    activemq启动报错Failed to connect to the Wrapper at port 32000
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

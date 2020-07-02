@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-05-06T08:54:17.956Z</updated>
+    <updated>2020-07-02T03:17:36.128Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -10,6 +10,47 @@
     <logo>https://www.sunjianbo.com/images/avatar.png</logo>
     <icon>https://www.sunjianbo.com/favicon.ico</icon>
     <rights>All rights reserved 2020, 孙建博的小站</rights>
+    <entry>
+        <title type="html"><![CDATA[1.1.1 JAVA程序运行原理分析]]></title>
+        <id>https://www.sunjianbo.com/1.1.1 JAVA程序运行原理分析/</id>
+        <link href="https://www.sunjianbo.com/1.1.1 JAVA程序运行原理分析/">
+        </link>
+        <updated>2020-07-02T03:08:07.000Z</updated>
+        <content type="html"><![CDATA[<p>我的理解JVM内存结构就是程序由字节码文件读入到jvm中解析存储到执行所需要的一些东西</p>
+<h2 id="class文件内容">class文件内容</h2>
+<p>class文件包含JAVA程序执行的字节码;数据严格按照格式紧凑排列在class文件中的二进制流,中间无任何分隔符;文件开头有一个0xcafebabe(16进制)特殊的一个标志.</p>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/image-20200610134740885.png" alt="class" loading="lazy"></figure>
+<p>class文件内存储的是指令码</p>
+<h2 id="jvm运行时数据区">JVM运行时数据区</h2>
+<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/image-20200610141943161.png" alt="jvm" loading="lazy"></figure>
+<h3 id="线程共享">线程共享</h3>
+<h4 id="方法区">方法区</h4>
+<p>jvm用来存储加载的类信息,常量,静态变量,编译后的代码等数据.</p>
+<p>这是虚拟机中的一个逻辑区划,具体实现根据不同虚拟机来实现.</p>
+<p>如:oracle的HotSpot在java7中方法区放在永久代,java8放在元数据空间,并且通过GC机制对这个区域进行管理</p>
+<h4 id="堆内存">堆内存</h4>
+<p>堆内存是VM启动时创建,用于存放对象的实例.</p>
+<p>还可以细分为:老年代,新生代(Eden,From Survivor,To Survivor).</p>
+<p>垃圾回收器主要就是管理堆内存.</p>
+<p>如果满了,就会出现OutOfMemoryError</p>
+<h2 id="线程独享">线程独享</h2>
+<h4 id="虚拟机栈">虚拟机栈</h4>
+<p>每个线程都在这个空间又一个私有的空间.</p>
+<p>线程栈由多个栈帧组成.</p>
+<p>一个线程会执行一个或多个方法,一个方法对应一个栈帧.</p>
+<p><strong>栈帧内容包含:局部变量表,操作数栈,动态链接,方法返回地址,附加信息等.</strong></p>
+<p>栈内存默认最大是<strong>1M</strong>.超出则抛出StackOverFlowError</p>
+<h4 id="本地方法栈">本地方法栈</h4>
+<p>和虚拟机栈功能类似,不同的是虚拟机栈是为虚拟机执行java方法而准备的,本地方法栈是为虚拟机使用Native本地方法而准备的.</p>
+<p>虚拟机规范没有规定具体的实现,由不同的虚拟机厂商去实现.</p>
+<p>HotSpot虚拟机中的虚拟机栈和本地方法栈的实现是一样的.同样,超出大小以后也会抛出StackOverFlowError</p>
+<h4 id="程序计数器program-counter-register">程序计数器(Program Counter Register)</h4>
+<p>记录当前线程执行字节码的位置,存储的是字节码指令地址.</p>
+<p>如果执行Native方法,则计数器值为空.</p>
+<p>每个线程都在这个空间有一个私有的空间,占用内存空间很少.</p>
+<p>CPU同一时间只会执行一条线程中的指令.JVM多线程会轮流切换并分配CPU执行时间.在线程切换后,需要通过程序计数器来恢复正确的执行位置.</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[activemq启动报错Failed to connect to the Wrapper at port 32000]]></title>
         <id>https://www.sunjianbo.com/activemq-wrapper-error/</id>
@@ -269,6 +310,20 @@ spring.datasource.tomcat.validation-query=SELECT 1 FROM DUAL
 <pre><code>t.&quot;ORDER&quot;
 </code></pre>
 <p>ORDER必须大写</p>
+<h2 id="srcmainresourcesmybatis-mapperxxljobloggluemapperxml">/src/main/resources/mybatis-mapper/XxlJobLogGlueMapper.xml</h2>
+<p>去掉select 出的<code>,rownum rn</code>将<code>where rn</code>改为<code>where rownum</code></p>
+<p>修改后的代码:</p>
+<pre><code>&lt;delete id=&quot;removeOld&quot; &gt;
+   DELETE FROM xxl_job_logglue
+   WHERE id NOT in(
+      SELECT id FROM(
+         SELECT id FROM xxl_job_logglue
+         WHERE job_id = #{jobId}
+         ORDER BY update_time desc
+      ) t1 where rownum  &lt;![CDATA[ &lt;= ]]&gt;  #{limit}
+   ) AND job_id = #{jobId}
+&lt;/delete&gt;
+</code></pre>
 <h2 id="其他mapperxml">其他Mapper.xml</h2>
 <ul>
 <li>save的自增id修改为oracle格式</li>
@@ -526,28 +581,6 @@ git pustt
 <p>文章中的图片有可能需要重新处理一下,wp媒体库的图片在压缩包中wp-content/uploads目录中</p>
 </li>
 </ol>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Chrome开发者工具查看元素绑定的事件]]></title>
-        <id>https://www.sunjianbo.com/chrome-kai-fa-zhe-gong-ju-cha-kan-yuan-su-bang-ding-de-shi-jian/</id>
-        <link href="https://www.sunjianbo.com/chrome-kai-fa-zhe-gong-ju-cha-kan-yuan-su-bang-ding-de-shi-jian/">
-        </link>
-        <updated>2020-03-09T08:59:30.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="方法一">方法一</h2>
-<p>1.右键检查or手动打开开发者工具,选中对应元素<br>
-2.点击Event Listeners标签<br>
-<img src="https://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step1.1.png" alt="step1.1" loading="lazy"><br>
-3.取消勾选Ancestors All以筛选出指定选中元素对应的事件<br>
-<img src="https://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step1.2.png" alt="step1.2" loading="lazy"></p>
-<h2 id="方法二">方法二</h2>
-<p>有时会发生方法一无法看到对应的事件,取消勾选Ancestors All以后一片空白,可以试试方法二.<br>
-1.打开开发者工具,切换到Sources标签页<br>
-<img src="https://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step2.1.png" alt="step2.1" loading="lazy"><br>
-展开Event Listeners Breakpoints,寻找指定事件勾选(我这里用click事件举例),这里相当于对相关事件下了断点<br>
-<img src="https://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step2.2.png" alt="step2.2" loading="lazy"><br>
-3.然后去操作页面来触发事件,这时就会进入断点,逐步寻找到你需要的代码.比较麻烦,无奈之举.<br>
-<img src="https://static.sunjianbo.com/Chrome%20Developer%20Tools%20view%20Listeners/step2.3.png" alt="step2.3" loading="lazy"></p>
 ]]></content>
     </entry>
 </feed>
