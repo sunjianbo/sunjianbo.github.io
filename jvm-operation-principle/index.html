@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>入手人生第一台家用机Wii及一些感想 | 孙建博的小站</title>
+<title>1.1.1 JAVA程序运行原理分析 | 孙建博的小站</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -36,10 +36,10 @@
 </script>
 
 
-    <meta name="description" content="最近总是惦念着想买一台游戏机，大概是猎天使魔女2和怪物猎人3g催的，天使是从1代开始就一直惦记着的游戏，无奈彼时上学期间，数千的软妹币终究不是一个学生党承受的。
-现如今工作一年了，5月之前穷的尿血，这几个月终于攒了些钱，就又想起这茬来了。
-..." />
-    <meta name="keywords" content="wii,wiiu,xbox360,家用机,游戏" />
+    <meta name="description" content="我的理解JVM内存结构就是程序由字节码文件读入到jvm中解析存储到执行所需要的一些东西
+class文件内容
+class文件包含JAVA程序执行的字节码;数据严格按照格式紧凑排列在class文件中的二进制流,中间无任何分隔符;文件开头有一个0..." />
+    <meta name="keywords" content="高性能编程专题,java" />
   </head>
   <body>
     <div id="app" class="main">
@@ -145,49 +145,54 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">入手人生第一台家用机Wii及一些感想</h2>
-            <div class="post-date">2014-08-22</div>
+            <h2 class="post-title">1.1.1 JAVA程序运行原理分析</h2>
+            <div class="post-date">2020-07-02</div>
             
             <div class="post-content" v-pre>
-              <p>最近总是惦念着想买一台游戏机，大概是猎天使魔女2和怪物猎人3g催的，天使是从1代开始就一直惦记着的游戏，无奈彼时上学期间，数千的软妹币终究不是一个学生党承受的。</p>
-<p>现如今工作一年了，5月之前穷的尿血，这几个月终于攒了些钱，就又想起这茬来了。</p>
-<p>从最近相对不错的3ds看起，4.5系统以下已经可以破解，加个GW卡900左右能收一二手，其实价位挺好的，新作也是不少，不过想起我玩PSP时候明的脸色还是算了。</p>
-<p>于是果断想要拉她下水，那么wiiu就是相对不错的选择了，我想玩的天使和怪猎都有，价格最便宜的8g版1800多点，二手的价格不是很低，感觉平均在1500，很多都比较高，大概是因为机子比较新吧。无奈未破，从正压力山大，天使2就450大洋，虽说可以等二手，国内屌丝的观念总是版不过来，钱包君也抗议了下。</p>
-<p>过程中又去看了看xbox360，车枪球的神机上面也有很多心动的游戏，比如古墓丽影、黑暗之魂，二手机500-1000，加个体感400左右，比wiiu便宜多了。但是也没狠下心来。</p>
-<p>终于，终于，用了最少的代价满足了自己购买主机的愿望，一台二手wii，刚刚下单，610块淘宝销量排下来靠前的某JS。</p>
-<p>鄙视自己的是，回头又上二手淘宝、贴吧里看着那些最多不超过500的wii，心里又不得劲了。</p>
-<p>有些矛盾，一方面是扣得要死，一分钱也要算计着的自己想要变得大方些，另一方面又是想着挣钱不容易，老爸累死累活一天挣不了50，老妈伺候着别人一个月下来1000块，这样的我有什么资格去挥霍。</p>
-<p>不只是这一次，一直都是这样的想着，安慰着自己，攒点钱好，于是心安理得的承受着别人的恩惠。</p>
-<p>算了，这种事情慢慢去想法解决吧，还是那句话，别太认真了，因为别人也未必在意呢。</p>
-<blockquote>
-<p>石火光中争长竞短 几何光阴</p>
-</blockquote>
-<blockquote>
-<p>蜗牛角上较雌论雄 许大世界</p>
-</blockquote>
+              <p>我的理解JVM内存结构就是程序由字节码文件读入到jvm中解析存储到执行所需要的一些东西</p>
+<h2 id="class文件内容">class文件内容</h2>
+<p>class文件包含JAVA程序执行的字节码;数据严格按照格式紧凑排列在class文件中的二进制流,中间无任何分隔符;文件开头有一个0xcafebabe(16进制)特殊的一个标志.</p>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/image-20200610134740885.png" alt="class" loading="lazy"></figure>
+<p>class文件内存储的是指令码</p>
+<h2 id="jvm运行时数据区">JVM运行时数据区</h2>
+<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/image-20200610141943161.png" alt="jvm" loading="lazy"></figure>
+<h3 id="线程共享">线程共享</h3>
+<h4 id="方法区">方法区</h4>
+<p>jvm用来存储加载的类信息,常量,静态变量,编译后的代码等数据.</p>
+<p>这是虚拟机中的一个逻辑区划,具体实现根据不同虚拟机来实现.</p>
+<p>如:oracle的HotSpot在java7中方法区放在永久代,java8放在元数据空间,并且通过GC机制对这个区域进行管理</p>
+<h4 id="堆内存">堆内存</h4>
+<p>堆内存是VM启动时创建,用于存放对象的实例.</p>
+<p>还可以细分为:老年代,新生代(Eden,From Survivor,To Survivor).</p>
+<p>垃圾回收器主要就是管理堆内存.</p>
+<p>如果满了,就会出现OutOfMemoryError</p>
+<h2 id="线程独享">线程独享</h2>
+<h4 id="虚拟机栈">虚拟机栈</h4>
+<p>每个线程都在这个空间又一个私有的空间.</p>
+<p>线程栈由多个栈帧组成.</p>
+<p>一个线程会执行一个或多个方法,一个方法对应一个栈帧.</p>
+<p><strong>栈帧内容包含:局部变量表,操作数栈,动态链接,方法返回地址,附加信息等.</strong></p>
+<p>栈内存默认最大是<strong>1M</strong>.超出则抛出StackOverFlowError</p>
+<h4 id="本地方法栈">本地方法栈</h4>
+<p>和虚拟机栈功能类似,不同的是虚拟机栈是为虚拟机执行java方法而准备的,本地方法栈是为虚拟机使用Native本地方法而准备的.</p>
+<p>虚拟机规范没有规定具体的实现,由不同的虚拟机厂商去实现.</p>
+<p>HotSpot虚拟机中的虚拟机栈和本地方法栈的实现是一样的.同样,超出大小以后也会抛出StackOverFlowError</p>
+<h4 id="程序计数器program-counter-register">程序计数器(Program Counter Register)</h4>
+<p>记录当前线程执行字节码的位置,存储的是字节码指令地址.</p>
+<p>如果执行Native方法,则计数器值为空.</p>
+<p>每个线程都在这个空间有一个私有的空间,占用内存空间很少.</p>
+<p>CPU同一时间只会执行一条线程中的指令.JVM多线程会轮流切换并分配CPU执行时间.在线程切换后,需要通过程序计数器来恢复正确的执行位置.</p>
 
             </div>
             
               <div class="tag-container">
                 
-                  <a href="https://www.sunjianbo.com/tag/l6yz6EazRV2/" class="tag">
-                    wii
+                  <a href="https://www.sunjianbo.com/tag/0-v5Z7UgP/" class="tag">
+                    高性能编程专题
                   </a>
                 
-                  <a href="https://www.sunjianbo.com/tag/rI6uQgttSXf/" class="tag">
-                    wiiu
-                  </a>
-                
-                  <a href="https://www.sunjianbo.com/tag/D4aepKTCx6b/" class="tag">
-                    xbox360
-                  </a>
-                
-                  <a href="https://www.sunjianbo.com/tag/BxWaQlzb2eO/" class="tag">
-                    家用机
-                  </a>
-                
-                  <a href="https://www.sunjianbo.com/tag/kvIshbLpi3I/" class="tag">
-                    游戏
+                  <a href="https://www.sunjianbo.com/tag/0tmsVkBYC52/" class="tag">
+                    java
                   </a>
                 
               </div>
@@ -195,9 +200,9 @@
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://www.sunjianbo.com/theme-share-purelove/">
+                <a href="https://www.sunjianbo.com/activemq-wrapper-error/">
                   <h3 class="post-title">
-                    主题分享-purelove
+                    activemq启动报错Failed to connect to the Wrapper at port 32000
                   </h3>
                 </a>
               </div>
