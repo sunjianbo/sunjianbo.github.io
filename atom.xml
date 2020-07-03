@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-07-02T03:33:46.731Z</updated>
+    <updated>2020-07-03T01:49:55.484Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -10,6 +10,119 @@
     <logo>https://www.sunjianbo.com/images/avatar.png</logo>
     <icon>https://www.sunjianbo.com/favicon.ico</icon>
     <rights>All rights reserved 2020, 孙建博的小站</rights>
+    <entry>
+        <title type="html"><![CDATA[1.1.2 线程状态]]></title>
+        <id>https://www.sunjianbo.com/thread-state/</id>
+        <link href="https://www.sunjianbo.com/thread-state/">
+        </link>
+        <updated>2020-07-03T01:47:48.000Z</updated>
+        <content type="html"><![CDATA[<p>线程有6个状态,可以查看java.lang.Thread.State</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>New</td>
+<td>尚未启动的线程的线程状态</td>
+</tr>
+<tr>
+<td>Runnable</td>
+<td>可运行线程的线程状态,等待CPU调度</td>
+</tr>
+<tr>
+<td>Blocked</td>
+<td>线程阻塞等待监视器锁定的线程状态</td>
+</tr>
+<tr>
+<td>Waiting</td>
+<td>等待线程的线程状态.下列不带超时的方式:<code>Object.wait</code>,<code>Thread.join</code>,<code>LockSupport.park</code></td>
+</tr>
+<tr>
+<td>Timed Waiting</td>
+<td>具有制定等待时间的等待线程的线程状态.下列带超时的方式:<code>Thread.sleep</code>,<code>Object.wait</code>,<code>Thread.join</code>,<code>LockSupport.parkNanos</code>,<code>LockSupport.parkUntil</code></td>
+</tr>
+<tr>
+<td>Terminated</td>
+<td>终止线程的线程状态,线程正常完成执行或者出现异常</td>
+</tr>
+</tbody>
+</table>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/image-20200611094432936.png" alt="states" loading="lazy"></figure>
+<pre><code class="language-java">/**
+ * 多线程运行状态切换示例 &lt;br/&gt;
+ */
+public class Demo2 {
+	public static Thread thread1;
+	public static Demo2 obj;
+
+	public static void main(String[] args) throws Exception {
+		// 第一种状态切换 - 新建 -&gt; 运行 -&gt; 终止
+		System.out.println(&quot;#######第一种状态切换  - 新建 -&gt; 运行 -&gt; 终止################################&quot;);
+		Thread thread1 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				System.out.println(&quot;thread1当前状态：&quot; + Thread.currentThread().getState().toString());
+				System.out.println(&quot;thread1 执行了&quot;);
+			}
+		});
+		System.out.println(&quot;没调用start方法，thread1当前状态：&quot; + thread1.getState().toString());
+		thread1.start();
+		Thread.sleep(2000L); // 等待thread1执行结束，再看状态
+		System.out.println(&quot;等待两秒，再看thread1当前状态：&quot; + thread1.getState().toString());
+		// thread1.start(); TODO 注意，线程终止之后，再进行调用，会抛出IllegalThreadStateException异常
+
+		System.out.println();
+		System.out.println(&quot;############第二种：新建 -&gt; 运行 -&gt; 等待 -&gt; 运行 -&gt; 终止(sleep方式)###########################&quot;);
+		Thread thread2 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {// 将线程2移动到等待状态，1500后自动唤醒
+					Thread.sleep(1500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				System.out.println(&quot;thread2当前状态：&quot; + Thread.currentThread().getState().toString());
+				System.out.println(&quot;thread2 执行了&quot;);
+			}
+		});
+		System.out.println(&quot;没调用start方法，thread2当前状态：&quot; + thread2.getState().toString());
+		thread2.start();
+		System.out.println(&quot;调用start方法，thread2当前状态：&quot; + thread2.getState().toString());
+		Thread.sleep(200L); // 等待200毫秒，再看状态
+		System.out.println(&quot;等待200毫秒，再看thread2当前状态：&quot; + thread2.getState().toString());
+		Thread.sleep(3000L); // 再等待3秒，让thread2执行完毕，再看状态
+		System.out.println(&quot;等待3秒，再看thread2当前状态：&quot; + thread2.getState().toString());
+
+		System.out.println();
+		System.out.println(&quot;############第三种：新建 -&gt; 运行 -&gt; 阻塞 -&gt; 运行 -&gt; 终止###########################&quot;);
+		Thread thread3 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (Demo2.class) {
+					System.out.println(&quot;thread3当前状态：&quot; + Thread.currentThread().getState().toString());
+					System.out.println(&quot;thread3 执行了&quot;);
+				}
+			}
+		});
+		synchronized (Demo2.class) {
+			System.out.println(&quot;没调用start方法，thread3当前状态：&quot; + thread3.getState().toString());
+			thread3.start();
+			System.out.println(&quot;调用start方法，thread3当前状态：&quot; + thread3.getState().toString());
+			Thread.sleep(200L); // 等待200毫秒，再看状态
+			System.out.println(&quot;等待200毫秒，再看thread3当前状态：&quot; + thread3.getState().toString());
+		}
+		Thread.sleep(3000L); // 再等待3秒，让thread3执行完毕，再看状态
+		System.out.println(&quot;等待3秒，让thread3抢到锁，再看thread3当前状态：&quot; + thread2.getState().toString());
+
+	}
+}
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[1.1.1 JAVA程序运行原理分析]]></title>
         <id>https://www.sunjianbo.com/jvm-operation-principle/</id>
@@ -523,64 +636,6 @@ git pustt
 </code></pre>
 <p>效果图</p>
 <figure data-type="image" tabindex="3"><img src="https://static.sunjianbo.com/gridea-auto-excerpt/image-20200311150147647.png" alt="image-20200311150147647" loading="lazy"></figure>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[WordPress文章导出迁移到Gridea]]></title>
-        <id>https://www.sunjianbo.com/wordpress-to-gridea/</id>
-        <link href="https://www.sunjianbo.com/wordpress-to-gridea/">
-        </link>
-        <updated>2020-03-10T04:12:05.000Z</updated>
-        <summary type="html"><![CDATA[<ul>
-<li>
-<p><a href="https://gridea.dev/">Gridea</a>是一个静态博客写作客户端,类似hexo,hugo等,不过可以全面图形化操作,更简单,更方便.</p>
-</li>
-<li>
-<p>本次导出主要基于<a href="https://github.com/sunjianbo/WordPress-to-Gridea-Exporter">WordPress to Gridea Exporter</a>插件,是我根据<a href="https://github.com/SchumacherFM/wordpress-to-hugo-exporter/">WordPress to Hugo Exporter<br>
-</a>简单修改而来,感谢原作者(<sup>人</sup>)</p>
-</li>
-</ul>
-]]></summary>
-        <content type="html"><![CDATA[<ul>
-<li>
-<p><a href="https://gridea.dev/">Gridea</a>是一个静态博客写作客户端,类似hexo,hugo等,不过可以全面图形化操作,更简单,更方便.</p>
-</li>
-<li>
-<p>本次导出主要基于<a href="https://github.com/sunjianbo/WordPress-to-Gridea-Exporter">WordPress to Gridea Exporter</a>插件,是我根据<a href="https://github.com/SchumacherFM/wordpress-to-hugo-exporter/">WordPress to Hugo Exporter<br>
-</a>简单修改而来,感谢原作者(<sup>人</sup>)</p>
-</li>
-</ul>
-<!-- more -->
-<blockquote>
-<p>注意:如果你使用了类似WP Database Backup等备份插件,记得去删除一些历史的备份文件,否则导出文件可能会很大</p>
-</blockquote>
-<h2 id="操作方法">操作方法</h2>
-<ol>
-<li>
-<p>登陆wordpress后台通过快速编辑将每一篇文章的别名修改为英文,否则导出的文章会出现乱码.虽然gridea能识别,但是链接也会变成乱码,看着闹挺.<br>
-<img src="https://static.sunjianbo.com/wordpress-to-gridea/alias.png" alt="alias" loading="lazy"></p>
-</li>
-<li>
-<p>下载WordPress to Gridea Exporter并安装到wordpress上,启用.<br>
-<a href="https://github.com/sunjianbo/WordPress-to-Gridea-Exporter/archive/master.zip">https://github.com/sunjianbo/WordPress-to-Gridea-Exporter/archive/master.zip</a></p>
-</li>
-<li>
-<p>点击后台管理菜单的工具--&gt;Export to Hugo然后浏览器会自动下载一个名为hugo-export.zip的文件,所需的东西都在里面了.<br>
-<img src="https://static.sunjianbo.com/wordpress-to-gridea/action.png" alt="action" loading="lazy"></p>
-</li>
-<li>
-<p>提取hugo-export.zip文件中的posts文件下的所有md文件到Documents\Gridea\posts目录下(如果不知道该目录在那,查看Gridea的设置)</p>
-</li>
-<li>
-<p>重启Gridea查看并预览是否已经读取到相关文章</p>
-</li>
-<li>
-<p>wordpress中隐藏的文章全部设为草稿了,如需发布自行编辑一下</p>
-</li>
-<li>
-<p>文章中的图片有可能需要重新处理一下,wp媒体库的图片在压缩包中wp-content/uploads目录中</p>
-</li>
-</ol>
 ]]></content>
     </entry>
 </feed>

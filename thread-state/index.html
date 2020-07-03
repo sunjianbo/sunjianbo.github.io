@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>Gridea主题修改之自动摘要 | 孙建博的小站</title>
+<title>1.1.2 线程状态 | 孙建博的小站</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -36,9 +36,27 @@
 </script>
 
 
-    <meta name="description" content="Gridea的部分主题并不带有自动摘要功能,如果需要摘要得先在文章中手动插入&lt;!--more--&gt;标记.否则首页就是光溜溜的一片标题,看起来很不舒服.
-而且像我这样直接从WordPress迁移很多文章过来的也不可能挨篇文章去加&..." />
-    <meta name="keywords" content="JavaScript,theme,Gridea" />
+    <meta name="description" content="线程有6个状态,可以查看java.lang.Thread.State
+
+
+
+状态
+描述
+
+
+
+
+New
+尚未启动的线程的线程状态
+
+
+Runnable
+可运行线程的线程状态,等待CPU调度
+
+
+Blocked
+线程阻塞等待监视器锁定的线程状..." />
+    <meta name="keywords" content="高性能编程专题,java" />
   </head>
   <body>
     <div id="app" class="main">
@@ -144,87 +162,126 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">Gridea主题修改之自动摘要</h2>
-            <div class="post-date">2020-03-11</div>
+            <h2 class="post-title">1.1.2 线程状态</h2>
+            <div class="post-date">2020-07-03</div>
             
             <div class="post-content" v-pre>
-              <p>Gridea的部分主题并不带有自动摘要功能,如果需要摘要得先在文章中手动插入<code>&lt;!--more--&gt;</code>标记.否则首页就是光溜溜的一片标题,看起来很不舒服.</p>
-<p>而且像我这样直接从WordPress迁移很多文章过来的也不可能挨篇文章去加<code>&lt;!--more--&gt;</code>标记,所以动手修改主题以达到首页自动显示摘要的目的.</p>
-<p>本文以Gridea自带主题&lt;Simple1.1.0&gt;为例,讲述如何通过js代码修改添加自定义配置并完成自动摘要功能,修改方法大同小异,其他主题也可以参考.</p>
-<!--more-->
-<h2 id="1增加自定义配置">1.增加自定义配置</h2>
-<p>编辑文件<code>%Gridea%\themes\simple\config.json</code>,<code>%Gridea%</code>就是Gridea设置中的站点源文件路径.</p>
-<p>在合适的位置上添加以下代码:</p>
-<pre><code class="language-js">	{
-      &quot;name&quot;: &quot;is_auto_excerpt&quot;,
-      &quot;label&quot;: &quot;是否启用自动摘要&quot;,
-      &quot;group&quot;: &quot;自动摘要&quot;,
-      &quot;value&quot;: true,
-      &quot;type&quot;: &quot;switch&quot;
-    },
-    {
-      &quot;name&quot;: &quot;auto_excerpt_line&quot;,
-      &quot;label&quot;: &quot;自动摘要选取行数&quot;,
-      &quot;group&quot;: &quot;自动摘要&quot;,
-      &quot;value&quot;: &quot;3&quot;,
-      &quot;type&quot;: &quot;input&quot;
-    },
-</code></pre>
-<p>就完成了主题的页面设置功能,自动摘要选取的行数可以自定义</p>
-<p>效果图:</p>
-<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/gridea-auto-excerpt/image-20200311142153575.png" alt="image-20200311142153575" loading="lazy"></figure>
-<h2 id="2首页编写自动摘要功能">2.首页编写自动摘要功能</h2>
-<p>编辑文件<code>%Gridea%\themes\simple\templates\index.ejs</code>在如图所示位置添加代码:</p>
-<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/gridea-auto-excerpt/image-20200311142947299.png" alt="image-20200311142947299" loading="lazy"></figure>
-<pre><code class="language-js">&lt;% if (post.abstract) { %&gt;
-	&lt;!-- 有手动摘要则加个more链接 --&gt;
-	&lt;a href=&quot;&lt;%= post.link %&gt;&quot;&gt;more →&lt;/a&gt;
-&lt;% } else if (site.customConfig.is_auto_excerpt) { %&gt;
-	&lt;!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 --&gt;
-	&lt;% var br_position = 0 %&gt;
-	&lt;% for (var br_count = 0; br_count &lt; site.customConfig.auto_excerpt_line; br_count++) { %&gt;
-		&lt;% br_position = post.content.indexOf('\n',br_position + 1) %&gt;
-		&lt;% if(br_position &lt; 0) { break } %&gt;
-	&lt;% } %&gt;
-	&lt;% if(br_position &gt; 0) { %&gt;
-		&lt;p&gt;&lt;%- post.content.substring(0, br_position + 1) %&gt;
-			&lt;% if(post.content.substring(0, br_position + 1).indexOf(&quot;&lt;code&quot;) &gt; 0) { %&gt;
-				&lt;!-- 自动摘要出来的内容有&lt;code则补上结尾,防止格式错误 --&gt;
-				&lt;/code&gt;&lt;/pre&gt;
-			&lt;% } %&gt;
-		&lt;p&gt;
-		&lt;!-- 加个more链接 --&gt;
-		&lt;a href=&quot;&lt;%= post.link %&gt;&quot;&gt;more →&lt;/a&gt;
-	&lt;% } %&gt;
-&lt;% } %&gt;
-</code></pre>
-<h2 id="3保存重启gridea预览查看效果">3.保存重启Gridea预览查看效果</h2>
-<h2 id="4优化">4.优化</h2>
-<p>接下来是一个小优化,调整了一下<code>more →</code>的的样式,看起来更顺眼一些.</p>
-<p>编辑文件<code>%Gridea%\themes\simple\assets\styles\main.less</code>在最后添加:</p>
-<pre><code class="language-css">.post-item .left .post-abstract a {
-  color: #4c6ef5;
-  border-bottom: 1px dotted #4c6ef5;
-  transition: all 0.3s;
+              <p>线程有6个状态,可以查看java.lang.Thread.State</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>New</td>
+<td>尚未启动的线程的线程状态</td>
+</tr>
+<tr>
+<td>Runnable</td>
+<td>可运行线程的线程状态,等待CPU调度</td>
+</tr>
+<tr>
+<td>Blocked</td>
+<td>线程阻塞等待监视器锁定的线程状态</td>
+</tr>
+<tr>
+<td>Waiting</td>
+<td>等待线程的线程状态.下列不带超时的方式:<code>Object.wait</code>,<code>Thread.join</code>,<code>LockSupport.park</code></td>
+</tr>
+<tr>
+<td>Timed Waiting</td>
+<td>具有制定等待时间的等待线程的线程状态.下列带超时的方式:<code>Thread.sleep</code>,<code>Object.wait</code>,<code>Thread.join</code>,<code>LockSupport.parkNanos</code>,<code>LockSupport.parkUntil</code></td>
+</tr>
+<tr>
+<td>Terminated</td>
+<td>终止线程的线程状态,线程正常完成执行或者出现异常</td>
+</tr>
+</tbody>
+</table>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/image-20200611094432936.png" alt="states" loading="lazy"></figure>
+<pre><code class="language-java">/**
+ * 多线程运行状态切换示例 &lt;br/&gt;
+ */
+public class Demo2 {
+	public static Thread thread1;
+	public static Demo2 obj;
+
+	public static void main(String[] args) throws Exception {
+		// 第一种状态切换 - 新建 -&gt; 运行 -&gt; 终止
+		System.out.println(&quot;#######第一种状态切换  - 新建 -&gt; 运行 -&gt; 终止################################&quot;);
+		Thread thread1 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				System.out.println(&quot;thread1当前状态：&quot; + Thread.currentThread().getState().toString());
+				System.out.println(&quot;thread1 执行了&quot;);
+			}
+		});
+		System.out.println(&quot;没调用start方法，thread1当前状态：&quot; + thread1.getState().toString());
+		thread1.start();
+		Thread.sleep(2000L); // 等待thread1执行结束，再看状态
+		System.out.println(&quot;等待两秒，再看thread1当前状态：&quot; + thread1.getState().toString());
+		// thread1.start(); TODO 注意，线程终止之后，再进行调用，会抛出IllegalThreadStateException异常
+
+		System.out.println();
+		System.out.println(&quot;############第二种：新建 -&gt; 运行 -&gt; 等待 -&gt; 运行 -&gt; 终止(sleep方式)###########################&quot;);
+		Thread thread2 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {// 将线程2移动到等待状态，1500后自动唤醒
+					Thread.sleep(1500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				System.out.println(&quot;thread2当前状态：&quot; + Thread.currentThread().getState().toString());
+				System.out.println(&quot;thread2 执行了&quot;);
+			}
+		});
+		System.out.println(&quot;没调用start方法，thread2当前状态：&quot; + thread2.getState().toString());
+		thread2.start();
+		System.out.println(&quot;调用start方法，thread2当前状态：&quot; + thread2.getState().toString());
+		Thread.sleep(200L); // 等待200毫秒，再看状态
+		System.out.println(&quot;等待200毫秒，再看thread2当前状态：&quot; + thread2.getState().toString());
+		Thread.sleep(3000L); // 再等待3秒，让thread2执行完毕，再看状态
+		System.out.println(&quot;等待3秒，再看thread2当前状态：&quot; + thread2.getState().toString());
+
+		System.out.println();
+		System.out.println(&quot;############第三种：新建 -&gt; 运行 -&gt; 阻塞 -&gt; 运行 -&gt; 终止###########################&quot;);
+		Thread thread3 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (Demo2.class) {
+					System.out.println(&quot;thread3当前状态：&quot; + Thread.currentThread().getState().toString());
+					System.out.println(&quot;thread3 执行了&quot;);
+				}
+			}
+		});
+		synchronized (Demo2.class) {
+			System.out.println(&quot;没调用start方法，thread3当前状态：&quot; + thread3.getState().toString());
+			thread3.start();
+			System.out.println(&quot;调用start方法，thread3当前状态：&quot; + thread3.getState().toString());
+			Thread.sleep(200L); // 等待200毫秒，再看状态
+			System.out.println(&quot;等待200毫秒，再看thread3当前状态：&quot; + thread3.getState().toString());
+		}
+		Thread.sleep(3000L); // 再等待3秒，让thread3执行完毕，再看状态
+		System.out.println(&quot;等待3秒，让thread3抢到锁，再看thread3当前状态：&quot; + thread2.getState().toString());
+
+	}
 }
 </code></pre>
-<p>效果图</p>
-<figure data-type="image" tabindex="3"><img src="https://static.sunjianbo.com/gridea-auto-excerpt/image-20200311150147647.png" alt="image-20200311150147647" loading="lazy"></figure>
 
             </div>
             
               <div class="tag-container">
                 
-                  <a href="https://www.sunjianbo.com/tag/ehVwyDc8T/" class="tag">
-                    JavaScript
+                  <a href="https://www.sunjianbo.com/tag/0-v5Z7UgP/" class="tag">
+                    高性能编程专题
                   </a>
                 
-                  <a href="https://www.sunjianbo.com/tag/C0glDlFW8yi/" class="tag">
-                    theme
-                  </a>
-                
-                  <a href="https://www.sunjianbo.com/tag/0HhNSXVHg/" class="tag">
-                    Gridea
+                  <a href="https://www.sunjianbo.com/tag/0tmsVkBYC52/" class="tag">
+                    java
                   </a>
                 
               </div>
@@ -232,9 +289,9 @@
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://www.sunjianbo.com/wordpress-to-gridea/">
+                <a href="https://www.sunjianbo.com/jvm-operation-principle/">
                   <h3 class="post-title">
-                    WordPress文章导出迁移到Gridea
+                    1.1.1 JAVA程序运行原理分析
                   </h3>
                 </a>
               </div>
