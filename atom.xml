@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-07-03T01:50:29.425Z</updated>
+    <updated>2020-07-17T06:51:45.396Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -10,6 +10,115 @@
     <logo>https://www.sunjianbo.com/images/avatar.png</logo>
     <icon>https://www.sunjianbo.com/favicon.ico</icon>
     <rights>All rights reserved 2020, 孙建博的小站</rights>
+    <entry>
+        <title type="html"><![CDATA[1.1.3 线程中止]]></title>
+        <id>https://www.sunjianbo.com/thread-abort/</id>
+        <link href="https://www.sunjianbo.com/thread-abort/">
+        </link>
+        <updated>2020-07-17T06:49:17.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="不推荐的中止方式">不推荐的中止方式</h2>
+<h3 id="stop">stop</h3>
+<blockquote>
+<p>中止线程,并且清除监控器锁的信息,可能导致线程安全文件,jdk不建议使用</p>
+</blockquote>
+<p>举例说明如何导致线程安全问题:</p>
+<p>先定义一个线程,实现i和j同时+1</p>
+<pre><code class="language-java">public class StopThread extends Thread {
+  private int i = 0, j = 0;
+
+  @Override
+  public void run() {
+    synchronized (this) {
+	    // 增加同步锁，确保线程安全
+	    ++i;
+	    try {
+	      // 休眠10秒,模拟耗时操作
+	      Thread.sleep(10000);
+	    } catch (InterruptedException e) {
+	      e.printStackTrace();
+	    }
+	    ++j;
+    }
+  }
+
+  /** * 打印i和j */
+  public void print() {
+  System.out.println(&quot;i=&quot; + i + &quot; j=&quot; + j);
+  }
+}
+</code></pre>
+<p>stop方式中止</p>
+<pre><code class="language-java">/**
+ * 示例3 - 线程stop强制性中止，破坏线程安全的示例
+ */
+public class Demo31 {
+  public static void main(String[] args) throws InterruptedException {
+    StopThread thread = new StopThread();
+    thread.start();
+    // 休眠1秒，确保i变量自增成功
+    Thread.sleep(1000);
+    // 暂停线程
+    thread.stop(); // 错误的终止
+    // thread.interrupt(); // 正确终止
+    while (thread.isAlive()) {
+      // 确保线程已经终止
+    } // 输出结果
+    thread.print();
+  }
+}
+
+</code></pre>
+<p>理想输出:i=0 j=0</p>
+<p>实际执行结果:i=1 j=0</p>
+<p>i没有因中止而回滚,没有保证同步代码块里面的数据一致性,破坏了线程安全</p>
+<h3 id="destroy">destroy</h3>
+<blockquote>
+<p>jdk未实现该方法</p>
+</blockquote>
+<h2 id="优雅的线程中止">优雅的线程中止</h2>
+<h3 id="interrupt">interrupt</h3>
+<ul>
+<li>
+<p>如果目标线程在调用Object class的<code>wait()</code>,<code>wait(long)</code>,<code>wait(long,int)</code>方法,<code>join()</code>,<code>join(long,int)</code>或<code>sleep(long,int)</code>方法时被阻塞,那么interrupt会生效,该线程的中断状态将被清除,抛出InterruptedException异常</p>
+</li>
+<li>
+<p>如果目标线程是被I/O或者NIO中的Channel所阻塞,同样,I/O操作会被中断或者返回特殊异常值.达到终止线程的目的.</p>
+</li>
+<li>
+<p>如果以上条件都不满足,则会设置此线程的中断状态.</p>
+</li>
+</ul>
+<p>复用上面的例子,将其中的<code>thread.stop();</code>改为<code>thread.interrupt();</code>查看执行结果:</p>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/image-20200611104339183.png" alt="" loading="lazy"></figure>
+<p>结果i=1 j=1保证了数据一致性,同时抛出一个InterruptedException异常来给开发者进行对应处理</p>
+<h3 id="标志位">标志位</h3>
+<p>代码逻辑中,增加一个判断,用来控制线程的中止.</p>
+<p>如下示例,设置一个flag,通过外部修改flag的值来让while条件不满足跳出循环以使线程继续运行到结束:</p>
+<pre><code class="language-java">/** 通过状态位来判断 */
+public class Demo4 extends Thread {
+  public volatile static boolean flag = true;
+
+  public static void main(String[] args) throws InterruptedException {
+    new Thread(() -&gt; {
+      try {
+        while (flag) { // 判断是否运行
+          System.out.println(&quot;运行中&quot;);
+          Thread.sleep(1000L);
+        }
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }).start();
+    // 3秒之后，将状态标志改为False，代表不继续运行
+    Thread.sleep(3000L);
+    flag = false;
+    System.out.println(&quot;程序运行结束&quot;);
+  }
+}
+
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[1.1.2 线程状态]]></title>
         <id>https://www.sunjianbo.com/thread-state/</id>
@@ -562,80 +671,6 @@ git pustt
 <p>当然网页上传也可以,不过上传文件限制一次100,文章多的话更麻烦一点.</p>
 <h2 id="4最后到搜索引擎搜索关键字测试一下吧">4.最后到搜索引擎搜索关键字测试一下吧.</h2>
 <h2 id="ps可以将html文件上传github的不同目录来满足不同url格式的支持">PS:可以将.html文件上传github的不同目录来满足不同url格式的支持.</h2>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Gridea主题修改之自动摘要]]></title>
-        <id>https://www.sunjianbo.com/gridea-auto-excerpt/</id>
-        <link href="https://www.sunjianbo.com/gridea-auto-excerpt/">
-        </link>
-        <updated>2020-03-11T06:42:55.000Z</updated>
-        <summary type="html"><![CDATA[<p>Gridea的部分主题并不带有自动摘要功能,如果需要摘要得先在文章中手动插入<code>&lt;!--more--&gt;</code>标记.否则首页就是光溜溜的一片标题,看起来很不舒服.</p>
-<p>而且像我这样直接从WordPress迁移很多文章过来的也不可能挨篇文章去加<code>&lt;!--more--&gt;</code>标记,所以动手修改主题以达到首页自动显示摘要的目的.</p>
-<p>本文以Gridea自带主题&lt;Simple1.1.0&gt;为例,讲述如何通过js代码修改添加自定义配置并完成自动摘要功能,修改方法大同小异,其他主题也可以参考.</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>Gridea的部分主题并不带有自动摘要功能,如果需要摘要得先在文章中手动插入<code>&lt;!--more--&gt;</code>标记.否则首页就是光溜溜的一片标题,看起来很不舒服.</p>
-<p>而且像我这样直接从WordPress迁移很多文章过来的也不可能挨篇文章去加<code>&lt;!--more--&gt;</code>标记,所以动手修改主题以达到首页自动显示摘要的目的.</p>
-<p>本文以Gridea自带主题&lt;Simple1.1.0&gt;为例,讲述如何通过js代码修改添加自定义配置并完成自动摘要功能,修改方法大同小异,其他主题也可以参考.</p>
-<!--more-->
-<h2 id="1增加自定义配置">1.增加自定义配置</h2>
-<p>编辑文件<code>%Gridea%\themes\simple\config.json</code>,<code>%Gridea%</code>就是Gridea设置中的站点源文件路径.</p>
-<p>在合适的位置上添加以下代码:</p>
-<pre><code class="language-js">	{
-      &quot;name&quot;: &quot;is_auto_excerpt&quot;,
-      &quot;label&quot;: &quot;是否启用自动摘要&quot;,
-      &quot;group&quot;: &quot;自动摘要&quot;,
-      &quot;value&quot;: true,
-      &quot;type&quot;: &quot;switch&quot;
-    },
-    {
-      &quot;name&quot;: &quot;auto_excerpt_line&quot;,
-      &quot;label&quot;: &quot;自动摘要选取行数&quot;,
-      &quot;group&quot;: &quot;自动摘要&quot;,
-      &quot;value&quot;: &quot;3&quot;,
-      &quot;type&quot;: &quot;input&quot;
-    },
-</code></pre>
-<p>就完成了主题的页面设置功能,自动摘要选取的行数可以自定义</p>
-<p>效果图:</p>
-<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/gridea-auto-excerpt/image-20200311142153575.png" alt="image-20200311142153575" loading="lazy"></figure>
-<h2 id="2首页编写自动摘要功能">2.首页编写自动摘要功能</h2>
-<p>编辑文件<code>%Gridea%\themes\simple\templates\index.ejs</code>在如图所示位置添加代码:</p>
-<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/gridea-auto-excerpt/image-20200311142947299.png" alt="image-20200311142947299" loading="lazy"></figure>
-<pre><code class="language-js">&lt;% if (post.abstract) { %&gt;
-	&lt;!-- 有手动摘要则加个more链接 --&gt;
-	&lt;a href=&quot;&lt;%= post.link %&gt;&quot;&gt;more →&lt;/a&gt;
-&lt;% } else if (site.customConfig.is_auto_excerpt) { %&gt;
-	&lt;!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 --&gt;
-	&lt;% var br_position = 0 %&gt;
-	&lt;% for (var br_count = 0; br_count &lt; site.customConfig.auto_excerpt_line; br_count++) { %&gt;
-		&lt;% br_position = post.content.indexOf('\n',br_position + 1) %&gt;
-		&lt;% if(br_position &lt; 0) { break } %&gt;
-	&lt;% } %&gt;
-	&lt;% if(br_position &gt; 0) { %&gt;
-		&lt;p&gt;&lt;%- post.content.substring(0, br_position + 1) %&gt;
-			&lt;% if(post.content.substring(0, br_position + 1).indexOf(&quot;&lt;code&quot;) &gt; 0) { %&gt;
-				&lt;!-- 自动摘要出来的内容有&lt;code则补上结尾,防止格式错误 --&gt;
-				&lt;/code&gt;&lt;/pre&gt;
-			&lt;% } %&gt;
-		&lt;p&gt;
-		&lt;!-- 加个more链接 --&gt;
-		&lt;a href=&quot;&lt;%= post.link %&gt;&quot;&gt;more →&lt;/a&gt;
-	&lt;% } %&gt;
-&lt;% } %&gt;
-</code></pre>
-<h2 id="3保存重启gridea预览查看效果">3.保存重启Gridea预览查看效果</h2>
-<h2 id="4优化">4.优化</h2>
-<p>接下来是一个小优化,调整了一下<code>more →</code>的的样式,看起来更顺眼一些.</p>
-<p>编辑文件<code>%Gridea%\themes\simple\assets\styles\main.less</code>在最后添加:</p>
-<pre><code class="language-css">.post-item .left .post-abstract a {
-  color: #4c6ef5;
-  border-bottom: 1px dotted #4c6ef5;
-  transition: all 0.3s;
-}
-</code></pre>
-<p>效果图</p>
-<figure data-type="image" tabindex="3"><img src="https://static.sunjianbo.com/gridea-auto-excerpt/image-20200311150147647.png" alt="image-20200311150147647" loading="lazy"></figure>
 ]]></content>
     </entry>
 </feed>
