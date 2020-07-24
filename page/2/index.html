@@ -11,7 +11,7 @@
 <!--
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 -->
-<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1594968700275">
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1595554176181">
 <link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
 
 
@@ -40,7 +40,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://www.sunjianbo.com">
-        <img src="https://www.sunjianbo.com/images/avatar.png?v=1594968700275" class="site-logo">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1595554176181" class="site-logo">
         <h1 class="site-title">孙建博的小站</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -136,6 +136,45 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://www.sunjianbo.com/github-pages-rewrite/">
+                  <h2 class="post-title">github pages url重定向的变相解决方法</h2>
+                </a>
+                <div class="post-date">
+                  2020-03-12
+                </div>
+                <div class="post-abstract">
+					
+					
+						<!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 -->
+						
+						
+							
+							
+						
+							
+							
+						
+							
+							
+						
+						
+							<p><p>这也是从WordPress迁移到Gridea&amp;github pages的后遗症之一.</p>
+<p>我在WP那边的url格式是https://www.sunjianbo.com/xxx.html,而弄好Gridea之后发现url格式是https://www.sunjianbo.com/post/xxx/.因为是老站嘛,搜索引擎还是有一些关键词可以搜到的,所以昨天发现了问题,从搜索引擎那边链接打开的页面都会404.</p>
+<p>我第一个想法就是通过.htaccess做url的rewrite,但是搜索一下发现github pages并不支持这种方式.</p>
+
+								
+							<p>
+							<!-- 加个more链接 -->
+							<a href="https://www.sunjianbo.com/github-pages-rewrite/">more →</a>
+						
+					
+                </div>
+              </div>
+              
+            </article>
           
             <article class="post-item">
               <div class="left">
@@ -453,45 +492,6 @@
 							<p>
 							<!-- 加个more链接 -->
 							<a href="https://www.sunjianbo.com/high-concurrency-requests-and-snap-up/">more →</a>
-						
-					
-                </div>
-              </div>
-              
-            </article>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://www.sunjianbo.com/https/">
-                  <h2 class="post-title">本站启用了SSL（HTTPS）</h2>
-                </a>
-                <div class="post-date">
-                  2018-01-31
-                </div>
-                <div class="post-abstract">
-					
-					
-						<!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 -->
-						
-						
-							
-							
-						
-							
-							
-						
-							
-							
-						
-						
-							<p><p>今天给网站www.sunjianbo.com和note.sunjianbo.com启用了ssl，全程使用宝塔面板操作，简直不要太简单。</p>
-<p>唯一值得一说的是申请证书时候要文件验证,而leanote是使用反向代理本地的9000端口提供web服务的，找了半天也没有找到应该把验证文件放在什么位置，最后一怒之下，先关了反向代理,验证通过之后在重新启用。</p>
-<p>两个站都全部开启了强制https，同样是在宝塔面板操作的，这玩意用起来还是挺爽了，简化了很多操作，也不用总是ssh到服务器了，不过还是要注意安全。</p>
-
-								
-							<p>
-							<!-- 加个more链接 -->
-							<a href="https://www.sunjianbo.com/https/">more →</a>
 						
 					
                 </div>
