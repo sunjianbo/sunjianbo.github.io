@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-07-24T01:29:47.984Z</updated>
+    <updated>2020-08-06T04:39:05.982Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -10,6 +10,86 @@
     <logo>https://www.sunjianbo.com/images/avatar.png</logo>
     <icon>https://www.sunjianbo.com/favicon.ico</icon>
     <rights>All rights reserved 2020, 孙建博的小站</rights>
+    <entry>
+        <title type="html"><![CDATA[CPU缓存和内存屏障]]></title>
+        <id>https://www.sunjianbo.com/cpu-cache-and-memory-barrier/</id>
+        <link href="https://www.sunjianbo.com/cpu-cache-and-memory-barrier/">
+        </link>
+        <updated>2020-08-06T03:40:13.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="cpu缓存">CPU缓存</h2>
+<p>为了提高程序运行的性能,现代CPU在很多方面对程序进行了优化.</p>
+<p>例如:CPU高速缓存.尽可能地避免处理器访问主内存的时间开销,处理器大多会利用缓存(Cache)以提高性能.</p>
+<h3 id="多级缓存">多级缓存</h3>
+<h4 id="l1-cache一级缓存">L1 Cache(一级缓存)</h4>
+<p>CPU第一层高速缓存,分为数据缓存和指令缓存.一般服务器CPU的L1缓存的容量在32---4096KB</p>
+<h4 id="l2-cache">L2 Cache</h4>
+<p>由于L1级高速缓存容量的限制,为了再次提高CPU的运算速度,在CPU外部放置一高速存储器,即二级缓存</p>
+<h4 id="l3-cache">L3 Cache</h4>
+<p>现在都是内置的,L3缓存的应用可以进一步降低内存延迟,同时提升大数据量计算时处理器的性能.具有较大L3缓存的处理器能提供更有效的文件系统缓存行为及较短消息和处理器队列长度.一般是多核共享一个L3缓存</p>
+<p>CPU在读取数据时,先在L1中寻找,再从L2寻找,再从L3寻找,然后是内存,再后是外存储器(硬盘等)</p>
+<h3 id="缓存同步协议">缓存同步协议</h3>
+<p>多CPU读取同样的数据进行缓存,进行不同运算之后,最终写入主内存以哪个CPU为准?</p>
+<p>在这种高速缓存回写的场景下，有一个缓存一致性协议多数CPU厂商对它进行了实现。</p>
+<p><strong>MESI协议</strong>，它规定每条缓存有个状态位，同时定义了下面四个状态:</p>
+<ul>
+<li>
+<p>**修改态（ Modified）😗*此 cache行已被修改过（脏行），内容已不同于主存，为此 cache专有；</p>
+</li>
+<li>
+<p>**专有态（ Exclusive）😗*此 cache行内容同于主存，但不出现于其它 cache中；</p>
+</li>
+<li>
+<p>**共享态（ Shared）😗*此 cache行内容同于主存，但也出现于其它 cacher中；</p>
+</li>
+<li>
+<p>**无效态（ Invalid）😗*此 cache？行内容无效（空行）。</p>
+</li>
+</ul>
+<p>多处理器时，单个CPU对缓存中数据进行了改动，需要通知给其他CPU.</p>
+<p>也就是意味着，CPU处理要控制自己的读写操作，还要<strong>监听</strong>其他CPU发出的通知，从而保证<strong>最终一致</strong></p>
+<h2 id="cpu指令重排">CPU指令重排</h2>
+<h3 id="实例">实例</h3>
+<pre><code class="language-java">//代码
+x=100;
+y=z;
+</code></pre>
+<p>正常执行的三步骤</p>
+<blockquote>
+<p>1、将100写入X<br>
+2、读取z的值<br>
+3、将z值写入y</p>
+</blockquote>
+<p>重排序后执行</p>
+<blockquote>
+<p>1、读取z的值<br>
+2、将z值写入y<br>
+3、将100写入X</p>
+</blockquote>
+<h3 id="指令重排的场景">指令重排的场景</h3>
+<p>当CPU写缓存时发现缓存区块正被其他CPU占用，为了提高CPU处理性能，可能将后面的读缓存命令优先执行。</p>
+<h3 id="as-if-serial">as-if- serial</h3>
+<p>并非随便重排，需要遵守as-if- serial语义</p>
+<p>as-if- serial语义的意思指：不管怎么重排序（编译器和处理器为了提高并行度），（单线程）程序的执行结果不能被改变。</p>
+<p>编译器， runtime和处理器都必须遵守as-if- serial语义。也就是说：编译器和处理器不会对存在数据依赖关系的操作做重排序。</p>
+<h2 id="两个问题">两个问题</h2>
+<h3 id="cpu高速缓存下的问题">CPU高速缓存下的问题</h3>
+<p>缓存中的数据与主内存的数据并不是实时同步的，各CPU（或CPU核心）间缓存的数据也不是实时同步。<strong>在同一个时间点，各CPU所看到同一内存地址的数据的值可能是不一致的。</strong></p>
+<h3 id="cpu执行指令重排序优化下的问题">CPU执行指令重排序优化下的问题</h3>
+<p>虽然遵守了as- if-seriali语义，单仅在<strong>单CPU</strong>自己执行的情况下<strong>能保证结果正确</strong>。<br>
+<strong>多核多线程中，指令逻辑无法分辨因果关联，可能出现乱序执行，导致程序运行结果错误。</strong></p>
+<h2 id="内存屏障">内存屏障</h2>
+<p>为了解決上述两个问题,处理器提供了两个内存屏障指令（ Memory Barrier）</p>
+<h3 id="写内存屏障-store-memory-barrier">写内存屏障（ Store Memory Barrier)</h3>
+<p>在指令后插入 Store Barrier，能让写入缓存中的最新数据更新写入主内存，让其他线程可见。<br>
+强制写入主内存，这种显示调用，CPU就不会因为性能考虑而去对指令重排。</p>
+<h3 id="读内存屏障-load-memory-barrier">读内存屏障（ Load Memory Barrier.)</h3>
+<p>在指令前插入 Load Barrier，可以让高速缓存中的数据失效，强制从新从主内存加载数据。<br>
+强制读取主内存内容，让CPU缓存与主内存保持一致，避免了缓存导致的一致性问题</p>
+<h2 id="结语">结语</h2>
+<p>这个章节是后面<strong>JVM线程安全问题的铺垫</strong>。<br>
+同时，也看到了现代CPU不断演进，在程序运行优化中做出的努力。不同CPU厂商所付出的人力物力成本，最终体现在不同CPU性能差距上。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[clash for windows升级后发现socks端口合并到7890了]]></title>
         <id>https://www.sunjianbo.com/clash-for-windows-socks-port-7890/</id>
@@ -28,7 +108,7 @@
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[1.1.3 线程中止]]></title>
+        <title type="html"><![CDATA[线程中止]]></title>
         <id>https://www.sunjianbo.com/thread-abort/</id>
         <link href="https://www.sunjianbo.com/thread-abort/">
         </link>
@@ -137,7 +217,7 @@ public class Demo4 extends Thread {
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[1.1.2 线程状态]]></title>
+        <title type="html"><![CDATA[线程状态]]></title>
         <id>https://www.sunjianbo.com/thread-state/</id>
         <link href="https://www.sunjianbo.com/thread-state/">
         </link>
@@ -250,7 +330,7 @@ public class Demo2 {
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[1.1.1 JAVA程序运行原理分析]]></title>
+        <title type="html"><![CDATA[JAVA程序运行原理分析]]></title>
         <id>https://www.sunjianbo.com/jvm-operation-principle/</id>
         <link href="https://www.sunjianbo.com/jvm-operation-principle/">
         </link>
@@ -620,21 +700,6 @@ spring.datasource.tomcat.validation-query=SELECT 1 FROM DUAL
 </li>
 </ol>
 <p>同时细心的小伙伴一定也发现了通过这个bot还可以实现<strong>附加媒体</strong>,<strong>增加评论</strong>,<strong>附加URL</strong>以及<strong>定时发送</strong>的功能,都可以自行研究一下.</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Typora侧边栏文件列表排序-按修改时间]]></title>
-        <id>https://www.sunjianbo.com/typora-file-sort/</id>
-        <link href="https://www.sunjianbo.com/typora-file-sort/">
-        </link>
-        <updated>2020-03-31T02:49:30.000Z</updated>
-        <content type="html"><![CDATA[<p>Typora侧边栏文件视图默认排序方式是自然排序,即按照数字或者首字母顺序排序.</p>
-<p>但是我自己用起来很不方便,比如我新建一个文件,重命名之后就会被排序到列表中间某个位置,不太好找.</p>
-<p>所以想要按照修改时间倒序,这样新建的文件就在最上面了.</p>
-<p>一开始右键菜单里找了半天没找到,后来才发现<strong>在列表的最下面</strong>.</p>
-<p>非常简单如图操作,<strong>切换升序降序只需要再多点击一次图标就行</strong>:</p>
-<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/20200331104630.png" alt="click" loading="lazy"></figure>
-<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/20200331104806.png" alt="sort" loading="lazy"></figure>
 ]]></content>
     </entry>
 </feed>
