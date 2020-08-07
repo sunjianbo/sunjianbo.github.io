@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>线程通信 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link href="https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css" rel="stylesheet">
+<!--
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+-->
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1596775035534">
+<link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-160052000-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-160052000-1');
+</script>
+
+
+    <meta name="description" content="要想实现多个线程之间的协同，如：线程执行先后顺序、获取某个线程执行的结果等等
+涉及到线程之间相互通信，分为下面四类
+文件共享
+
+网络共享
+略
+共享变量
+
+  // 共享变量
+  public static String content = ..." />
+    <meta name="keywords" content="高性能编程专题,java" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://www.sunjianbo.com">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1596775035534" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/sun_jianbo" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://weibo.com/u/1967178011" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/sun-jian-bo-59" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.facebook.com/profile.php?id=100011365915451" target="_blank">
+            <i class="fab fa-facebook"></i>
+          </a>
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://beian.miit.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://www.sunjianbo.com/atom.xml" target="_blank">RSS</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			又拍云提供网络及存储支持
+		</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			<img height="35px" width="90px" src="https://img.juemuren4449.com/4ff5b7d3ed727d330fcdda17165de906.png">
+		</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">线程通信</h2>
+            <div class="post-date">2020-08-07</div>
+            
+            <div class="post-content" v-pre>
+              <p>要想实现多个线程之间的协同，如：线程执行先后顺序、获取某个线程执行的结果等等</p>
+<p>涉及到线程之间相互通信，分为下面四类</p>
+<h2 id="文件共享">文件共享</h2>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/image-20200612091611411.png" alt="" loading="lazy"></figure>
+<h2 id="网络共享">网络共享</h2>
+<p>略</p>
+<h2 id="共享变量">共享变量</h2>
+<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/image-20200612091647383.png" alt="" loading="lazy"></figure>
+<pre><code class="language-java">  // 共享变量
+  public static String content = &quot;空&quot;;
+  
+  public static void main(String[] args) {
+    // 线程1 - 写入数据
+    new Thread(() -&gt; {
+      try {
+        while (true) {
+          content = &quot;当前时间&quot; + String.valueOf(System.currentTimeMillis());
+          Thread.sleep(1000L);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }).start();
+
+    // 线程2 - 读取数据
+    new Thread(() -&gt; {
+      try {
+        while (true) {
+          Thread.sleep(1000L);
+          System.out.println(content);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }).start();
+  }
+</code></pre>
+<h2 id="jdk提供的线程协调api">jdk提供的线程协调API</h2>
+<p>JDK中对于需要多线程协作完成某一任务的场景，提供了对应API支持。</p>
+<p>多线程协作的典型场景是：生产者-消费者模型(线程阻塞、线程唤醒)。</p>
+<p>示例：线程1去买包子，没有包子，则不再执行。线程2生产出包子，通知线程-1继续执行。</p>
+<figure data-type="image" tabindex="3"><img src="https://static.sunjianbo.com/image-20200612091856807.png" alt="" loading="lazy"></figure>
+<h3 id="被弃用的suspend和resume">被弃用的suspend和resume</h3>
+<p>作用:调用suspend挂起目标线程,通过resume可以恢复线程执行</p>
+<h4 id="正常的suspendresume">正常的suspend/resume</h4>
+<pre><code class="language-java">/** 包子店 */
+public static Object baozidian = null;
+
+/** 正常的suspend/resume */
+public void suspendResumeTest() throws Exception {
+	// 启动线程
+	Thread consumerThread = new Thread(() -&gt; {
+		while (baozidian == null) { // 如果没包子，则进入等待
+			System.out.println(&quot;1、进入等待&quot;);
+			Thread.currentThread().suspend();
+		}
+		System.out.println(&quot;2、买到包子，回家&quot;);
+	});
+	consumerThread.start();
+	// 3秒之后，生产一个包子
+	Thread.sleep(3000L);
+	baozidian = new Object();
+	consumerThread.resume();
+	System.out.println(&quot;3、通知消费者&quot;);
+}
+
+</code></pre>
+<h4 id="同步代码中使用导致死锁">同步代码中使用导致死锁</h4>
+<pre><code class="language-java">/** 死锁的suspend/resume。 suspend并不会像wait一样释放锁，故此容易写出死锁代码 */
+public void suspendResumeDeadLockTest() throws Exception {
+	// 启动线程
+	Thread consumerThread = new Thread(() -&gt; {
+		if (baozidian == null) { // 如果没包子，则进入等待
+			System.out.println(&quot;1、进入等待&quot;);
+			// 当前线程拿到锁，然后挂起
+			synchronized (this) {
+				Thread.currentThread().suspend();
+			}
+		}
+		System.out.println(&quot;2、买到包子，回家&quot;);
+	});
+	consumerThread.start();
+	// 3秒之后，生产一个包子
+	Thread.sleep(3000L);
+	baozidian = new Object();
+	// 争取到锁以后，再恢复consumerThread
+	synchronized (this) {
+		consumerThread.resume();
+	}
+	System.out.println(&quot;3、通知消费者&quot;);
+}
+
+</code></pre>
+<h4 id="resume比suspend先执行导致死锁">resume比suspend先执行导致死锁</h4>
+<pre><code class="language-java">/** 导致程序永久挂起的suspend/resume */
+public void suspendResumeDeadLockTest2() throws Exception {
+	// 启动线程
+	Thread consumerThread = new Thread(() -&gt; {
+		if (baozidian == null) {
+			System.out.println(&quot;1、没包子，进入等待&quot;);
+			try { // 为这个线程加上一点延时
+				Thread.sleep(5000L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// 这里的挂起执行在resume后面
+			Thread.currentThread().suspend();
+		}
+		System.out.println(&quot;2、买到包子，回家&quot;);
+	});
+	consumerThread.start();
+	// 3秒之后，生产一个包子
+	Thread.sleep(3000L);
+	baozidian = new Object();
+	consumerThread.resume();
+	System.out.println(&quot;3、通知消费者&quot;);
+	consumerThread.join();
+}
+</code></pre>
+<h3 id="waitnotify机制">wait/notify机制</h3>
+<p>基于监视器实现,这些方法只能由<strong>同一对象锁的持有者线程</strong>调用，也就是写在同步块里面，否则会抛出IllegalMonitorStateException异常</p>
+<p><strong>wait</strong>方法导致当前线程等待，其实就是将线程加入到对象的等待集合中，并且放弃当前持有的对象锁。</p>
+<p><strong>notify/notifyall</strong>方法唤醒一个或所有正在等待这个对象锁的线程。</p>
+<p><strong>注意：<strong>虽然会wait自动解锁，但是</strong>对顺序有要求</strong>，如果在 notify被调用之后，才开始wait方法的调用，线程会永远处于 WAITING状态。</p>
+<h4 id="正常的waitnotify">正常的wait/notify</h4>
+<pre><code class="language-java">/** 正常的wait/notify */
+public void waitNotifyTest() throws Exception {
+	// 启动线程
+	new Thread(() -&gt; {
+			synchronized (this) {
+				while (baozidian == null) { // 如果没包子，则进入等待
+				try {
+					System.out.println(&quot;1、进入等待&quot;);
+					this.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		System.out.println(&quot;2、买到包子，回家&quot;);
+	}).start();
+	// 3秒之后，生产一个包子
+	Thread.sleep(3000L);
+	baozidian = new Object();
+	synchronized (this) {
+		this.notifyAll();
+		System.out.println(&quot;3、通知消费者&quot;);
+	}
+}
+</code></pre>
+<h4 id="notify比wait先执行导致死锁">notify比wait先执行导致死锁</h4>
+<pre><code class="language-java">/** 会导致程序永久等待的wait/notify */
+public void waitNotifyDeadLockTest() throws Exception {
+	// 启动线程
+	new Thread(() -&gt; {
+		if (baozidian == null) { // 如果没包子，则进入等待
+			try {
+				Thread.sleep(5000L);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			synchronized (this) {
+				try {
+					System.out.println(&quot;1、进入等待&quot;);
+					this.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		System.out.println(&quot;2、买到包子，回家&quot;);
+	}).start();
+	// 3秒之后，生产一个包子
+	Thread.sleep(3000L);
+	baozidian = new Object();
+	synchronized (this) {
+		this.notifyAll();
+		System.out.println(&quot;3、通知消费者&quot;);
+	}
+}
+</code></pre>
+<h3 id="parkunpark机制">park/unpark机制</h3>
+<p>线程调用park则等待&quot;许可(permit)&quot;.unpark方法为指定线程提供&quot;许可&quot;</p>
+<p>不要求park和unpark方法的调用顺序</p>
+<p>多次调用unpark后,再调用park,线程会直接运行,但<strong>许可不会叠加</strong>,</p>
+<p>也就是说,连续多次调用park方法,第一次会拿到&quot;许可&quot;直接运行,后续调用依旧会进入等待.</p>
+<h4 id="正常的parkunpark">正常的park/unpark</h4>
+<pre><code class="language-java">/** 正常的park/unpark */
+public void parkUnparkTest() throws Exception {
+	// 启动线程
+	Thread consumerThread = new Thread(() -&gt; {
+		while (baozidian == null) { // 如果没包子，则进入等待
+			System.out.println(&quot;1、进入等待&quot;);
+			LockSupport.park();
+		}
+		System.out.println(&quot;2、买到包子，回家&quot;);
+	});
+	consumerThread.start();
+	// 3秒之后，生产一个包子
+	Thread.sleep(3000L);
+	baozidian = new Object();
+	LockSupport.unpark(consumerThread);
+	System.out.println(&quot;3、通知消费者&quot;);
+}
+</code></pre>
+<h4 id="同步代码中使用导致死锁-2">同步代码中使用导致死锁</h4>
+<pre><code class="language-java">/** 死锁的park/unpark */
+public void parkUnparkDeadLockTest() throws Exception {
+	// 启动线程
+	Thread consumerThread = new Thread(() -&gt; {
+		if (baozidian == null) { // 如果没包子，则进入等待
+			System.out.println(&quot;1、进入等待&quot;);
+			// 当前线程拿到锁，然后挂起
+			synchronized (this) {
+				LockSupport.park();
+			}
+		}
+		System.out.println(&quot;2、买到包子，回家&quot;);
+	});
+	consumerThread.start();
+	// 3秒之后，生产一个包子
+	Thread.sleep(3000L);
+	baozidian = new Object();
+	// 争取到锁以后，再恢复consumerThread
+	synchronized (this) {
+		LockSupport.unpark(consumerThread);
+	}
+	System.out.println(&quot;3、通知消费者&quot;);
+}
+</code></pre>
+<h3 id="伪唤醒">伪唤醒</h3>
+<p><code>警告！之前代码中用if语句来判断，是否进入等待状态，是错误的！</code>(上文代码正常的都是使用的while)<br>
+官方建议<code>应该在循环中检查等待条件</code>，原因是处于等待状态的线程可能会收到<code>错误警报和伪唤醒</code>，如果不在循环中检查等待条件，程序就会在没有满足结束条件的情况下退出。</p>
+<p>伪唤醒是指线程并非因为notify,notifyall,unpark等api调用而唤醒,是更底层原因导致的</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://www.sunjianbo.com/tag/0-v5Z7UgP/" class="tag">
+                    高性能编程专题
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/0tmsVkBYC52/" class="tag">
+                    java
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://www.sunjianbo.com/cpu-cache-and-memory-barrier/">
+                  <h3 class="post-title">
+                    CPU缓存和内存屏障
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

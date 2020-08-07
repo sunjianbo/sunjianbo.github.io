@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-08-06T04:39:05.982Z</updated>
+    <updated>2020-08-07T04:37:23.178Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -10,6 +10,248 @@
     <logo>https://www.sunjianbo.com/images/avatar.png</logo>
     <icon>https://www.sunjianbo.com/favicon.ico</icon>
     <rights>All rights reserved 2020, 孙建博的小站</rights>
+    <entry>
+        <title type="html"><![CDATA[线程通信]]></title>
+        <id>https://www.sunjianbo.com/thread-communication/</id>
+        <link href="https://www.sunjianbo.com/thread-communication/">
+        </link>
+        <updated>2020-08-07T04:13:43.000Z</updated>
+        <content type="html"><![CDATA[<p>要想实现多个线程之间的协同，如：线程执行先后顺序、获取某个线程执行的结果等等</p>
+<p>涉及到线程之间相互通信，分为下面四类</p>
+<h2 id="文件共享">文件共享</h2>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/image-20200612091611411.png" alt="" loading="lazy"></figure>
+<h2 id="网络共享">网络共享</h2>
+<p>略</p>
+<h2 id="共享变量">共享变量</h2>
+<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/image-20200612091647383.png" alt="" loading="lazy"></figure>
+<pre><code class="language-java">  // 共享变量
+  public static String content = &quot;空&quot;;
+  
+  public static void main(String[] args) {
+    // 线程1 - 写入数据
+    new Thread(() -&gt; {
+      try {
+        while (true) {
+          content = &quot;当前时间&quot; + String.valueOf(System.currentTimeMillis());
+          Thread.sleep(1000L);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }).start();
+
+    // 线程2 - 读取数据
+    new Thread(() -&gt; {
+      try {
+        while (true) {
+          Thread.sleep(1000L);
+          System.out.println(content);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }).start();
+  }
+</code></pre>
+<h2 id="jdk提供的线程协调api">jdk提供的线程协调API</h2>
+<p>JDK中对于需要多线程协作完成某一任务的场景，提供了对应API支持。</p>
+<p>多线程协作的典型场景是：生产者-消费者模型(线程阻塞、线程唤醒)。</p>
+<p>示例：线程1去买包子，没有包子，则不再执行。线程2生产出包子，通知线程-1继续执行。</p>
+<figure data-type="image" tabindex="3"><img src="https://static.sunjianbo.com/image-20200612091856807.png" alt="" loading="lazy"></figure>
+<h3 id="被弃用的suspend和resume">被弃用的suspend和resume</h3>
+<p>作用:调用suspend挂起目标线程,通过resume可以恢复线程执行</p>
+<h4 id="正常的suspendresume">正常的suspend/resume</h4>
+<pre><code class="language-java">/** 包子店 */
+public static Object baozidian = null;
+
+/** 正常的suspend/resume */
+public void suspendResumeTest() throws Exception {
+	// 启动线程
+	Thread consumerThread = new Thread(() -&gt; {
+		while (baozidian == null) { // 如果没包子，则进入等待
+			System.out.println(&quot;1、进入等待&quot;);
+			Thread.currentThread().suspend();
+		}
+		System.out.println(&quot;2、买到包子，回家&quot;);
+	});
+	consumerThread.start();
+	// 3秒之后，生产一个包子
+	Thread.sleep(3000L);
+	baozidian = new Object();
+	consumerThread.resume();
+	System.out.println(&quot;3、通知消费者&quot;);
+}
+
+</code></pre>
+<h4 id="同步代码中使用导致死锁">同步代码中使用导致死锁</h4>
+<pre><code class="language-java">/** 死锁的suspend/resume。 suspend并不会像wait一样释放锁，故此容易写出死锁代码 */
+public void suspendResumeDeadLockTest() throws Exception {
+	// 启动线程
+	Thread consumerThread = new Thread(() -&gt; {
+		if (baozidian == null) { // 如果没包子，则进入等待
+			System.out.println(&quot;1、进入等待&quot;);
+			// 当前线程拿到锁，然后挂起
+			synchronized (this) {
+				Thread.currentThread().suspend();
+			}
+		}
+		System.out.println(&quot;2、买到包子，回家&quot;);
+	});
+	consumerThread.start();
+	// 3秒之后，生产一个包子
+	Thread.sleep(3000L);
+	baozidian = new Object();
+	// 争取到锁以后，再恢复consumerThread
+	synchronized (this) {
+		consumerThread.resume();
+	}
+	System.out.println(&quot;3、通知消费者&quot;);
+}
+
+</code></pre>
+<h4 id="resume比suspend先执行导致死锁">resume比suspend先执行导致死锁</h4>
+<pre><code class="language-java">/** 导致程序永久挂起的suspend/resume */
+public void suspendResumeDeadLockTest2() throws Exception {
+	// 启动线程
+	Thread consumerThread = new Thread(() -&gt; {
+		if (baozidian == null) {
+			System.out.println(&quot;1、没包子，进入等待&quot;);
+			try { // 为这个线程加上一点延时
+				Thread.sleep(5000L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// 这里的挂起执行在resume后面
+			Thread.currentThread().suspend();
+		}
+		System.out.println(&quot;2、买到包子，回家&quot;);
+	});
+	consumerThread.start();
+	// 3秒之后，生产一个包子
+	Thread.sleep(3000L);
+	baozidian = new Object();
+	consumerThread.resume();
+	System.out.println(&quot;3、通知消费者&quot;);
+	consumerThread.join();
+}
+</code></pre>
+<h3 id="waitnotify机制">wait/notify机制</h3>
+<p>基于监视器实现,这些方法只能由<strong>同一对象锁的持有者线程</strong>调用，也就是写在同步块里面，否则会抛出IllegalMonitorStateException异常</p>
+<p><strong>wait</strong>方法导致当前线程等待，其实就是将线程加入到对象的等待集合中，并且放弃当前持有的对象锁。</p>
+<p><strong>notify/notifyall</strong>方法唤醒一个或所有正在等待这个对象锁的线程。</p>
+<p><strong>注意：<strong>虽然会wait自动解锁，但是</strong>对顺序有要求</strong>，如果在 notify被调用之后，才开始wait方法的调用，线程会永远处于 WAITING状态。</p>
+<h4 id="正常的waitnotify">正常的wait/notify</h4>
+<pre><code class="language-java">/** 正常的wait/notify */
+public void waitNotifyTest() throws Exception {
+	// 启动线程
+	new Thread(() -&gt; {
+			synchronized (this) {
+				while (baozidian == null) { // 如果没包子，则进入等待
+				try {
+					System.out.println(&quot;1、进入等待&quot;);
+					this.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		System.out.println(&quot;2、买到包子，回家&quot;);
+	}).start();
+	// 3秒之后，生产一个包子
+	Thread.sleep(3000L);
+	baozidian = new Object();
+	synchronized (this) {
+		this.notifyAll();
+		System.out.println(&quot;3、通知消费者&quot;);
+	}
+}
+</code></pre>
+<h4 id="notify比wait先执行导致死锁">notify比wait先执行导致死锁</h4>
+<pre><code class="language-java">/** 会导致程序永久等待的wait/notify */
+public void waitNotifyDeadLockTest() throws Exception {
+	// 启动线程
+	new Thread(() -&gt; {
+		if (baozidian == null) { // 如果没包子，则进入等待
+			try {
+				Thread.sleep(5000L);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			synchronized (this) {
+				try {
+					System.out.println(&quot;1、进入等待&quot;);
+					this.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		System.out.println(&quot;2、买到包子，回家&quot;);
+	}).start();
+	// 3秒之后，生产一个包子
+	Thread.sleep(3000L);
+	baozidian = new Object();
+	synchronized (this) {
+		this.notifyAll();
+		System.out.println(&quot;3、通知消费者&quot;);
+	}
+}
+</code></pre>
+<h3 id="parkunpark机制">park/unpark机制</h3>
+<p>线程调用park则等待&quot;许可(permit)&quot;.unpark方法为指定线程提供&quot;许可&quot;</p>
+<p>不要求park和unpark方法的调用顺序</p>
+<p>多次调用unpark后,再调用park,线程会直接运行,但<strong>许可不会叠加</strong>,</p>
+<p>也就是说,连续多次调用park方法,第一次会拿到&quot;许可&quot;直接运行,后续调用依旧会进入等待.</p>
+<h4 id="正常的parkunpark">正常的park/unpark</h4>
+<pre><code class="language-java">/** 正常的park/unpark */
+public void parkUnparkTest() throws Exception {
+	// 启动线程
+	Thread consumerThread = new Thread(() -&gt; {
+		while (baozidian == null) { // 如果没包子，则进入等待
+			System.out.println(&quot;1、进入等待&quot;);
+			LockSupport.park();
+		}
+		System.out.println(&quot;2、买到包子，回家&quot;);
+	});
+	consumerThread.start();
+	// 3秒之后，生产一个包子
+	Thread.sleep(3000L);
+	baozidian = new Object();
+	LockSupport.unpark(consumerThread);
+	System.out.println(&quot;3、通知消费者&quot;);
+}
+</code></pre>
+<h4 id="同步代码中使用导致死锁-2">同步代码中使用导致死锁</h4>
+<pre><code class="language-java">/** 死锁的park/unpark */
+public void parkUnparkDeadLockTest() throws Exception {
+	// 启动线程
+	Thread consumerThread = new Thread(() -&gt; {
+		if (baozidian == null) { // 如果没包子，则进入等待
+			System.out.println(&quot;1、进入等待&quot;);
+			// 当前线程拿到锁，然后挂起
+			synchronized (this) {
+				LockSupport.park();
+			}
+		}
+		System.out.println(&quot;2、买到包子，回家&quot;);
+	});
+	consumerThread.start();
+	// 3秒之后，生产一个包子
+	Thread.sleep(3000L);
+	baozidian = new Object();
+	// 争取到锁以后，再恢复consumerThread
+	synchronized (this) {
+		LockSupport.unpark(consumerThread);
+	}
+	System.out.println(&quot;3、通知消费者&quot;);
+}
+</code></pre>
+<h3 id="伪唤醒">伪唤醒</h3>
+<p><code>警告！之前代码中用if语句来判断，是否进入等待状态，是错误的！</code>(上文代码正常的都是使用的while)<br>
+官方建议<code>应该在循环中检查等待条件</code>，原因是处于等待状态的线程可能会收到<code>错误警报和伪唤醒</code>，如果不在循环中检查等待条件，程序就会在没有满足结束条件的情况下退出。</p>
+<p>伪唤醒是指线程并非因为notify,notifyall,unpark等api调用而唤醒,是更底层原因导致的</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[CPU缓存和内存屏障]]></title>
         <id>https://www.sunjianbo.com/cpu-cache-and-memory-barrier/</id>
@@ -651,55 +893,6 @@ spring.datasource.tomcat.validation-query=SELECT 1 FROM DUAL
 </ul>
 <p><strong>注意:</strong></p>
 <p>如果加jdbcType的话,XxlJobInfoMapper.xml中有两个属性写的是<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>e</mi><mi>x</mi><mi>e</mi><mi>c</mi><mi>u</mi><mi>t</mi><mi>o</mi><mi>r</mi><mi>T</mi><mi>i</mi><mi>m</mi><mi>e</mi><mi>o</mi><mi>u</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">{executorTimeout}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="mord mathdefault">x</span><span class="mord mathdefault">e</span><span class="mord mathdefault">c</span><span class="mord mathdefault">u</span><span class="mord mathdefault">t</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault">i</span><span class="mord mathdefault">m</span><span class="mord mathdefault">e</span><span class="mord mathdefault">o</span><span class="mord mathdefault">u</span><span class="mord mathdefault">t</span></span></span></span></span>{executorFailRetryCount},注意改成#{}</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[telegram频道发布增加点赞评论等反馈功能]]></title>
-        <id>https://www.sunjianbo.com/telegram-add-reactions/</id>
-        <link href="https://www.sunjianbo.com/telegram-add-reactions/">
-        </link>
-        <updated>2020-04-01T02:57:10.000Z</updated>
-        <content type="html"><![CDATA[<p>我自己经营了一个telegram的订阅频道:<a href="https://t.me/alittlefun">有点意思@alittlefun</a>用来分享一些有意思的图片什么的.</p>
-<p>之前看到别人的订阅频道有emojies的点赞功能,觉得很好,类似这样:</p>
-<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/20200331110800.png" alt="" loading="lazy"></figure>
-<p>所以想要放到自己频道来用,但是上网找了一圈只找到一个@like机器人可以满足我的要求,原文:<a href="http://x.2129.n8.nabble.com/Telegram-td30.html">http://x.2129.n8.nabble.com/Telegram-td30.html</a></p>
-<p>但是它有一个问题,就是发出来的内容是通过转发方式出来的,这样就会在上面有个标志:</p>
-<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/20200331111030.png" alt="" loading="lazy"></figure>
-<p>处女座的我哪受得了这个啊.于是绞尽脑汁一顿折腾,终于找到了方法(＾－＾)V</p>
-<h2 id="1使用botfather创建一个发布bot">1.使用@BotFather创建一个发布bot</h2>
-<p>搜索到@BotFather --&gt; <code>/start</code> --&gt; <code>/newbot</code> --&gt; 输入自定义id --&gt; 输入自定义username</p>
-<figure data-type="image" tabindex="3"><img src="https://static.sunjianbo.com/20200331111841.png" alt="step1" loading="lazy"></figure>
-<h2 id="2使用controllerbot-新增并管理频道">2.使用@ControllerBot 新增并管理频道</h2>
-<h3 id="21搜索到controllerbot-start-addchannel-复制上图标红位置的在botfather创建的token到controllerbot-粘贴">2.1搜索到@ControllerBot --&gt; <code>/start</code> --&gt; <code>/addchannel</code>--&gt; 复制上图标红位置的在BotFather创建的token到ControllerBot 粘贴</h3>
-<figure data-type="image" tabindex="4"><img src="https://static.sunjianbo.com/20200331112452.png" alt="addchannel" loading="lazy"></figure>
-<figure data-type="image" tabindex="5"><img src="https://static.sunjianbo.com/20200331112830.png" alt="token" loading="lazy"></figure>
-<h3 id="22按照提示到自己的频道去把刚刚创建的bot增加为管理员">2.2按照提示到自己的频道去把刚刚创建的bot增加为管理员</h3>
-<p>自己频道右上角Manage Channel --&gt; 点击Administrators --&gt; 点击左下角ADD ADMINISTRATOR --&gt; 搜索刚刚创建的bot(eg:alittlefun_bot)--&gt;完成管理员添加</p>
-<h3 id="23转发一条自己频道的信息给controllerbot">2.3转发一条自己频道的信息给@ControllerBot</h3>
-<h3 id="24输入城市名来确定时区直接输入shanghai">2.4输入城市名来确定时区,直接输入<code>shanghai</code></h3>
-<figure data-type="image" tabindex="6"><img src="https://static.sunjianbo.com/20200331113549.png" alt="" loading="lazy"></figure>
-<h3 id="25设置完成">2.5设置完成</h3>
-<h2 id="3发布内容">3.发布内容</h2>
-<h3 id="31点击上图create-post按钮或者手动打开之前创建的机器人alittlefun_bot-start-发送内容">3.1点击上图<strong>Create Post</strong>按钮或者手动打开之前创建的机器人(@alittlefun_bot) --&gt; <code>/start</code> --&gt; 发送内容</h3>
-<figure data-type="image" tabindex="7"><img src="https://static.sunjianbo.com/20200331131340.png" alt="" loading="lazy"></figure>
-<h3 id="32点击add-reactions按钮发送需要的emoji表情过去">3.2点击<strong>Add Reactions</strong>按钮,发送需要的emoji表情过去</h3>
-<h3 id="33最后点击文本框下面send按钮设定发送时机参考图片">3.3最后点击文本框下面Send按钮,设定发送时机(参考图片)</h3>
-<figure data-type="image" tabindex="8"><img src="https://static.sunjianbo.com/20200331132137.png" alt="" loading="lazy"></figure>
-<h2 id="4总结">4.总结</h2>
-<p>经过以上步骤即可实现在自己的频道发布带emoji点赞反馈的内容.</p>
-<p>步骤可以简单归纳为</p>
-<ol>
-<li>
-<p>@BotFather创建自定义bot</p>
-</li>
-<li>
-<p>@ControllerBot绑定自定义bot和频道</p>
-</li>
-<li>
-<p>在自定义bot发布内容</p>
-</li>
-</ol>
-<p>同时细心的小伙伴一定也发现了通过这个bot还可以实现<strong>附加媒体</strong>,<strong>增加评论</strong>,<strong>附加URL</strong>以及<strong>定时发送</strong>的功能,都可以自行研究一下.</p>
 ]]></content>
     </entry>
 </feed>
