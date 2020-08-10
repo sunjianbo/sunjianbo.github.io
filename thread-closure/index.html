@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>线程封闭 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link href="https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css" rel="stylesheet">
+<!--
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+-->
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1597044178462">
+<link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-160052000-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-160052000-1');
+</script>
+
+
+    <meta name="description" content="线程封闭的概念
+多线程访问共享可变数据时，涉及到线程间数据同步的问题。并不是所有时候，都要用到共享数据，所以线程封闭概念就提出来了。
+数据都被封闭在各自的线程之中，就不需要同步，这种通过将数据封闭在线程中而避免使用同步的技术称为线程封闭。
+..." />
+    <meta name="keywords" content="高性能编程专题,java" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://www.sunjianbo.com">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1597044178462" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/sun_jianbo" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://weibo.com/u/1967178011" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/sun-jian-bo-59" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.facebook.com/profile.php?id=100011365915451" target="_blank">
+            <i class="fab fa-facebook"></i>
+          </a>
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://beian.miit.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://www.sunjianbo.com/atom.xml" target="_blank">RSS</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			又拍云提供网络及存储支持
+		</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			<img height="35px" width="90px" src="https://img.juemuren4449.com/4ff5b7d3ed727d330fcdda17165de906.png">
+		</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">线程封闭</h2>
+            <div class="post-date">2020-08-10</div>
+            
+            <div class="post-content" v-pre>
+              <h2 id="线程封闭的概念">线程封闭的概念</h2>
+<p>多线程访问共享可变数据时，涉及到线程间数据同步的问题。并不是所有时候，都要用到共享数据，所以线程封闭概念就提出来了。</p>
+<p>数据都被封闭在各自的线程之中，就不需要同步，这种通过将数据封闭在线程中而避免使用同步的技术称为<strong>线程封闭</strong>。</p>
+<p>线程封闭具体的体现有： <strong>Thread Local</strong>、<strong>局部变量</strong></p>
+<h2 id="threadlocal">ThreadLocal</h2>
+<p>它是一个线程级别变量，每个线程都有一个 Thread Local,就是每个线程都拥有了自己独立的一个变量,竞争条件被彻底消除了，在并发模式下是绝对安全的变量。</p>
+<p>用法： ThreadLocal<T>var= new ThreadLocal<T>()</p>
+<p>会自动在每一个线程上创建一个T的副本，副本之间彼此独立，互不影响。</p>
+<p>可以用 ThreadLocal存储一些参数，以便在线程中多个方法中使用，用来代替方法传参的做法。</p>
+<blockquote>
+<p>实在难以理解的，可以理解为，JVM维护了一个 Map&lt; Thread,T&gt;,每个线程要用这个T的时候，用当前的线程去Map里面取。仅作为一个概念理解</p>
+</blockquote>
+<p>代码示例:</p>
+<pre><code class="language-java">/** 线程封闭示例 */
+public class Demo5 {
+	/** threadLocal变量，每个线程都有一个副本，互不干扰 */
+	public static ThreadLocal&lt;String&gt; value = new ThreadLocal&lt;&gt;();
+
+	/**
+	 * threadlocal测试
+	 * 
+	 * @throws Exception
+	 */
+	public void threadLocalTest() throws Exception {
+
+		// threadlocal线程封闭示例
+		value.set(&quot;这是主线程设置的123&quot;); // 主线程设置值
+		String v = value.get();
+		System.out.println(&quot;线程1执行之前，主线程取到的值：&quot; + v);
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				String v = value.get();
+				System.out.println(&quot;线程1取到的值：&quot; + v);
+				// 设置 threadLocal
+				value.set(&quot;这是线程1设置的456&quot;);
+
+				v = value.get();
+				System.out.println(&quot;重新设置之后，线程1取到的值：&quot; + v);
+				System.out.println(&quot;线程1执行结束&quot;);
+			}
+		}).start();
+
+		Thread.sleep(5000L); // 等待所有线程执行结束
+
+		v = value.get();
+		System.out.println(&quot;线程1执行之后，主线程取到的值：&quot; + v);
+
+	}
+
+	public static void main(String[] args) throws Exception {
+		new Demo5().threadLocalTest();
+	}
+}
+
+</code></pre>
+<p>运行结果:</p>
+<blockquote>
+<p>线程1执行之前，主线程取到的值：这是主线程设置的123<br>
+线程1取到的值：null<br>
+重新设置之后，线程1取到的值：这是线程1设置的456<br>
+线程1执行结束<br>
+线程1执行之后，主线程取到的值：这是主线程设置的123</p>
+</blockquote>
+<h2 id="栈封闭">栈封闭</h2>
+<p><strong>局部变量</strong>的固有属性之一就是封闭在线程中.</p>
+<p>它们位于执行线程的栈中,其他线程无法访问这个栈.</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://www.sunjianbo.com/tag/0-v5Z7UgP/" class="tag">
+                    高性能编程专题
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/0tmsVkBYC52/" class="tag">
+                    java
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://www.sunjianbo.com/thread-communication/">
+                  <h3 class="post-title">
+                    线程通信
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>
