@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-08-10T08:02:30.182Z</updated>
+    <updated>2020-08-14T08:43:42.317Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -15,7 +15,7 @@
         <id>https://www.sunjianbo.com/thread-closure/</id>
         <link href="https://www.sunjianbo.com/thread-closure/">
         </link>
-        <updated>2020-08-10T07:22:18.000Z</updated>
+        <updated>2020-08-14T08:42:18.000Z</updated>
         <content type="html"><![CDATA[<h2 id="线程封闭的概念">线程封闭的概念</h2>
 <p>多线程访问共享可变数据时，涉及到线程间数据同步的问题。并不是所有时候，都要用到共享数据，所以线程封闭概念就提出来了。</p>
 <p>数据都被封闭在各自的线程之中，就不需要同步，这种通过将数据封闭在线程中而避免使用同步的技术称为<strong>线程封闭</strong>。</p>
