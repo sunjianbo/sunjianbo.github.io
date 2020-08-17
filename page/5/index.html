@@ -11,7 +11,7 @@
 <!--
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 -->
-<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1597394607099">
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1597649468089">
 <link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
 
 
@@ -40,7 +40,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://www.sunjianbo.com">
-        <img src="https://www.sunjianbo.com/images/avatar.png?v=1597394607099" class="site-logo">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1597649468089" class="site-logo">
         <h1 class="site-title">孙建博的小站</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -136,6 +136,45 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://www.sunjianbo.com/jasperexception/">
+                  <h2 class="post-title">org.apache.jasper.JasperException: Failed to load or instantiate TagLibraryValidator class: org.apache.taglibs.standard.tlv.JstlCoreTLV</h2>
+                </a>
+                <div class="post-date">
+                  2015-07-31
+                </div>
+                <div class="post-abstract">
+					
+					
+						<!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 -->
+						
+						
+							
+							
+						
+							
+							
+						
+							
+							
+						
+						
+							<p><p><strong>报错内容：</strong></p>
+<p>org.apache.jasper.JasperException: Failed to load or instantiate TagLibraryValidator class: org.apache.taglibs.standard.tlv.JstlCoreTLV</p>
+<p><strong>产生原因：</strong></p>
+
+								
+							<p>
+							<!-- 加个more链接 -->
+							<a href="https://www.sunjianbo.com/jasperexception/">more →</a>
+						
+					
+                </div>
+              </div>
+              
+            </article>
           
             <article class="post-item">
               <div class="left">
@@ -484,45 +523,6 @@
 							<p>
 							<!-- 加个more链接 -->
 							<a href="https://www.sunjianbo.com/java-volatile/">more →</a>
-						
-					
-                </div>
-              </div>
-              
-            </article>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://www.sunjianbo.com/why-use-framework-like-spring/">
-                  <h2 class="post-title">为什么做java的web开发我们会使用struts2，springMVC和spring这样的框架?</h2>
-                </a>
-                <div class="post-date">
-                  2015-05-09
-                </div>
-                <div class="post-abstract">
-					
-					
-						<!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 -->
-						
-						
-							
-							
-						
-							
-							
-						
-							
-							
-						
-						
-							<p><p><span style="background-color: #c0c0c0;">原文出处： <a href="http://www.cnblogs.com/sharpxiajun/p/3936268.html"><span style="background-color: #c0c0c0;">cnblogs-夏天的森林</span></a></span></p>
-<p>今年我一直在思考web开发里的前后端分离的问题，到了现在也颇有点心得了，随着这个问题的深入，再加以现在公司很多web项目的控制层的技术框架由struts2迁移到springMVC，我突然有了一个新的疑问无法得到正确的解释，为什么我们现在做java的web开发，会选择struts2或者springMVC这样的框架，而不是使用servlet加jsp这样的技术呢？特别是现在我们web的前端页面都是使用velocity这样的模板语言进行开发，抛弃了jsp，这样的选择又会给我们java的web开发带来什么样的好处，延着这个问题的思路，我又发现新的疑问，为什么现在很多java企业级开发都会去选择spring框架，spring框架给我们开发的应用带来了什么？这么一想还真是问倒我了，我似乎很难找到一串能让人完全信服的答案，最终我发现，这些我认为我很熟悉很常用的技术，其实还有很多让我陌生不解的地方，这些陌生和不解的地方也正是我是否能更高层次使用它们的关键，今天这篇文章我就来讲讲这些问题，不过struts2，spring这样的技术经过这么多年的积累已经是相当庞大和复杂，它们的面很广，本人虽然已经用了它们多年，还是有很多技术不熟悉和不清楚，所以本文不是全面对我题目做出解答的文章，而是根据我现有知识结构来理解这个问题。</p>
-<p>软件里有很多优秀的框架，有一种类型的框架，它的特点是建立在一个现有技术的基础上，提供和现有技术一样业务功能的技术框架，这个新的技术框架比原技术更加易用，更加健壮同时功能更加强大，例如：jQuery，以及本文所要谈到的struts2和springMVC，深究这些框架都是相当之复杂，但是它们的优点其实只有一个：就是让使用者只关心核心业务的开发，框架帮你屏蔽原有技术跟业务开发无关的各类技术问题。像jQuery，struts2或springMVC这类框架之所以优秀，就是它们在这点上做的太好了，以至于很多使用它的程序员都已经不清楚原有技术的真实面目，因此我们要将struts2理解的更好，使用的更加熟练和深入，这里我们就要跳出struts2的技术，到struts2技术的源头servlet，仔细研究下servlet的特点，只有这样我们才能把struts2框架学的更好。</p>
-
-								
-							<p>
-							<!-- 加个more链接 -->
-							<a href="https://www.sunjianbo.com/why-use-framework-like-spring/">more →</a>
 						
 					
                 </div>
