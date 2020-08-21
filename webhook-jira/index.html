@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>使用gitlab的webhook实现合并分支时在jira上打个标签的功能 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link href="https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css" rel="stylesheet">
+<!--
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+-->
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1597974143404">
+<link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-160052000-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-160052000-1');
+</script>
+
+
+    <meta name="description" content="公司通过gitlab托管代码,采用jira作为敏捷实践的管理工具,每次发布的时候拉出当前迭代的所有故事做发布计划.
+然而实际上因为某些原因,基本上无法实现每次迭代的所有故事都能发布.只有在分支上测试完成合并到 master上的故事才会被发布..." />
+    <meta name="keywords" content="webhook,jira,git" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://www.sunjianbo.com">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1597974143404" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/sun_jianbo" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://weibo.com/u/1967178011" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/sun-jian-bo-59" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.facebook.com/profile.php?id=100011365915451" target="_blank">
+            <i class="fab fa-facebook"></i>
+          </a>
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://beian.miit.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://www.sunjianbo.com/atom.xml" target="_blank">RSS</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			又拍云提供网络及存储支持
+		</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			<img height="35px" width="90px" src="https://img.juemuren4449.com/4ff5b7d3ed727d330fcdda17165de906.png">
+		</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">使用gitlab的webhook实现合并分支时在jira上打个标签的功能</h2>
+            <div class="post-date">2020-08-21</div>
+            
+            <div class="post-content" v-pre>
+              <p>公司通过gitlab托管代码,采用jira作为敏捷实践的管理工具,每次发布的时候拉出当前迭代的所有故事做发布计划.</p>
+<p>然而实际上因为某些原因,基本上无法实现每次迭代的所有故事都能发布.只有在分支上测试完成合并到 master上的故事才会被发布.</p>
+<p>那么就想着能不能在分支合并到master的时候在jira上打个标签,这样在jira上一筛选就知道哪些故事是可以发布的了</p>
+<p>好在gitlab有webhook功能,能够在触发某些操作的时候调用自定义的接口传输相关操作的信息,而jira也提供了相应的api来方便读写,那么只需要发布一个服务提供接口给webhook调用,解析传过来的参数,符合条件的情况下去调用jira的api修改标签,这个方案也就实现了.</p>
+<h2 id="本文相关版本信息">本文相关版本信息</h2>
+<blockquote>
+<p>GitLab Community Edition 11.1.4</p>
+<p>JIRA v7.13.5</p>
+<p>python 3.5.4</p>
+<p>Flask 1.1.2</p>
+<p>requests 2.24.0</p>
+</blockquote>
+<h2 id="提前约定">提前约定</h2>
+<p>在git创建分支时分支名称需要包含jiraId</p>
+<p>我们项目组是直接以jiraId+故事标题命名分支</p>
+<h2 id="编写程序">编写程序</h2>
+<p>图快速方便所以用python写的,结果后面部署费了不少事</p>
+<h3 id="webhook调用接口传递参数解析">webhook调用接口传递参数解析</h3>
+<p>文档: https://docs.gitlab.com/ee/user/project/integrations/webhooks.html</p>
+<p>参数是json形式的</p>
+<p>主要取出其中3个参数</p>
+<ul>
+<li>
+<p>object_attributes.state</p>
+<p>gitlab设置的trigger是合并事件,实际上会在申请(opened),关闭(closed)和完成合并(merged)3个情况触发,所以要判断是否是完成合并的调用</p>
+</li>
+<li>
+<p>object_attributes.target_branch</p>
+<p>target_branch 是为了确认是合并到master的请求,合并到其他分支的请求不处理</p>
+</li>
+<li>
+<p>object_attributes. source_branch</p>
+<p>source_branch 是为了取出jiraId以进行后续操作</p>
+</li>
+</ul>
+<h3 id="jira接口调用">jira接口调用</h3>
+<p>文档: https://developer.atlassian.com/server/jira/platform/jira-rest-api-examples/#editing-an-issue-examples</p>
+<p>从source_branch利用正则截取出jiraId,拼装并调用接口地址</p>
+<p>附三个修改标签的传参,第一个是追加,后两种是覆盖设置</p>
+<pre><code>#增加
+{
+    &quot;update&quot; : {
+        &quot;labels&quot; : [{&quot;add&quot; : &quot;标签内容&quot;}]
+    }
+}
+#设置
+{
+    &quot;fields&quot; : {
+        &quot;labels&quot;: [&quot;标签内容&quot;]
+        
+        
+    }
+}
+{
+    &quot;update&quot; : {
+        &quot;labels&quot; : [{&quot;set&quot; : [&quot;标签内容&quot;]}]
+    }
+}
+</code></pre>
+<h4 id="ps">PS:</h4>
+<p>建议先用postman之类的工具先调试一下jira的接口,如果报错</p>
+<blockquote>
+<p>Field 'labels' cannot be set. It is not on the appropriate screen, or unknown.</p>
+</blockquote>
+<p>那就需要联系jira管理员,在项目的screens(项目管理-&gt;界面)中开启相关字段的api读写权限</p>
+<h3 id="完整源码如下">完整源码如下:</h3>
+<pre><code class="language-python"># -*- coding: utf-8 -*-
+
+from flask import Flask,request
+import requests
+import re
+
+baseUrl = 'http://jira.sunjianbo.com:8080/rest/api/2/issue/'
+app = Flask(__name__)
+
+@app.route(&quot;/&quot;, methods=[&quot;GET&quot;, &quot;POST&quot;])
+def test():
+    # addTag2Jira(&quot;DB19236-2398 324扥矿赛肯&quot;)
+    return &quot;hello world&quot;
+
+@app.route(&quot;/merged&quot;, methods=[&quot;GET&quot;, &quot;POST&quot;])
+def merged():
+    # print(request.headers)
+    # print(request.json)
+    # print('---')
+    body = request.json
+    object_attributes = body['object_attributes']
+    state = object_attributes['state']  # opened,closed,merged
+    source_branch = object_attributes['source_branch']
+    target_branch = object_attributes['target_branch']
+    if state == 'merged' and target_branch == 'master':
+        # 已合并到master
+        print('是已合并到master的请求,开始修改jira标签')
+        addTag2Jira(source_branch)
+    else:
+        print('不是合并到master的成功请求,而是合并到['+target_branch+']的['+state+&quot;]请求&quot;)
+    return &quot;&quot;
+
+def addTag2Jira(source_branch):
+    # 取得分支jira id
+    matchObj = re.search(r&quot;DB\d+-\d+&quot;, source_branch)
+    if matchObj:
+        print(&quot;匹配出的jiraId: &quot;, matchObj.group())
+        jiraId = matchObj.group()
+        # 去相应jira故事中打一个uat标签
+        url = baseUrl + jiraId
+        messagebody = '''
+            {
+                &quot;update&quot; : {
+                    &quot;labels&quot; : [{&quot;add&quot; : &quot;UAT&quot;}]
+                }
+            }
+            '''
+        result = fun_put(url, messagebody)
+        print(result)
+        if result.status_code == 204:
+            print('修改成功: ' + url)
+        else:
+            print('修改失败: ' + source_branch)
+    else:
+        print(&quot;分支名称上找不到jiraId: &quot; + source_branch)
+
+def fun_put(url, messagebody):
+    headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
+    r = requests.put(url, data=messagebody, headers=headers, auth=('username', 'passwd'))
+    print(r.status_code)
+    return r
+
+if __name__ == &quot;__main__&quot;:
+    app.run(host=&quot;0.0.0.0&quot;, port=8080)
+</code></pre>
+<h2 id="部署">部署</h2>
+<p>部署这里有个插曲</p>
+<p>公司服务器是离线的,所以我先离线安装了python3,然后打算安装virtualenv时报了一个ssl的错误,明明是离线安装,为毛会涉及到ssl,咱也不知道,咱也不敢问,推测是python3安装的有点问题,依赖的openssl之类的在测试机上不太全吧</p>
+<p>折腾了半天没搞定,考虑到是测试服务器我就瞎搞了一把</p>
+<p>用了</p>
+<pre><code>pip3 install -r requirements.txt --proxy=代理服务器IP:端口号
+</code></pre>
+<p>代理走了我本地电脑在线安装了Flask和 requests,瞬间就解决了(给机智的我点个赞(◔◡◔))</p>
+<h2 id="设置gitlab上的webhook">设置gitlab上的webhook</h2>
+<p>settings-&gt;integrations-&gt;填写url-&gt;Trigger勾选<code>Merge request events</code>-&gt;嫌麻烦我禁用了ssl,没有实际测试一下行不行-&gt;保存</p>
+<p><img src="https://static.sunjianbo.com/image-20200820160206463.png" alt="set-integrations" loading="lazy">)</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://www.sunjianbo.com/tag/1mkl6pblx/" class="tag">
+                    webhook
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/pAEpBXgCje/" class="tag">
+                    jira
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/79Yyvi34V/" class="tag">
+                    git
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://www.sunjianbo.com/jmm/">
+                  <h3 class="post-title">
+                    JVM内存模型(理论很枯燥)
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

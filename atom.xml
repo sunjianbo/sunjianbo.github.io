@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-08-20T07:53:19.817Z</updated>
+    <updated>2020-08-21T01:42:28.168Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -10,6 +10,156 @@
     <logo>https://www.sunjianbo.com/images/avatar.png</logo>
     <icon>https://www.sunjianbo.com/favicon.ico</icon>
     <rights>All rights reserved 2020, 孙建博的小站</rights>
+    <entry>
+        <title type="html"><![CDATA[使用gitlab的webhook实现合并分支时在jira上打个标签的功能]]></title>
+        <id>https://www.sunjianbo.com/webhook-jira/</id>
+        <link href="https://www.sunjianbo.com/webhook-jira/">
+        </link>
+        <updated>2020-08-21T01:41:30.000Z</updated>
+        <content type="html"><![CDATA[<p>公司通过gitlab托管代码,采用jira作为敏捷实践的管理工具,每次发布的时候拉出当前迭代的所有故事做发布计划.</p>
+<p>然而实际上因为某些原因,基本上无法实现每次迭代的所有故事都能发布.只有在分支上测试完成合并到 master上的故事才会被发布.</p>
+<p>那么就想着能不能在分支合并到master的时候在jira上打个标签,这样在jira上一筛选就知道哪些故事是可以发布的了</p>
+<p>好在gitlab有webhook功能,能够在触发某些操作的时候调用自定义的接口传输相关操作的信息,而jira也提供了相应的api来方便读写,那么只需要发布一个服务提供接口给webhook调用,解析传过来的参数,符合条件的情况下去调用jira的api修改标签,这个方案也就实现了.</p>
+<h2 id="本文相关版本信息">本文相关版本信息</h2>
+<blockquote>
+<p>GitLab Community Edition 11.1.4</p>
+<p>JIRA v7.13.5</p>
+<p>python 3.5.4</p>
+<p>Flask 1.1.2</p>
+<p>requests 2.24.0</p>
+</blockquote>
+<h2 id="提前约定">提前约定</h2>
+<p>在git创建分支时分支名称需要包含jiraId</p>
+<p>我们项目组是直接以jiraId+故事标题命名分支</p>
+<h2 id="编写程序">编写程序</h2>
+<p>图快速方便所以用python写的,结果后面部署费了不少事</p>
+<h3 id="webhook调用接口传递参数解析">webhook调用接口传递参数解析</h3>
+<p>文档: https://docs.gitlab.com/ee/user/project/integrations/webhooks.html</p>
+<p>参数是json形式的</p>
+<p>主要取出其中3个参数</p>
+<ul>
+<li>
+<p>object_attributes.state</p>
+<p>gitlab设置的trigger是合并事件,实际上会在申请(opened),关闭(closed)和完成合并(merged)3个情况触发,所以要判断是否是完成合并的调用</p>
+</li>
+<li>
+<p>object_attributes.target_branch</p>
+<p>target_branch 是为了确认是合并到master的请求,合并到其他分支的请求不处理</p>
+</li>
+<li>
+<p>object_attributes. source_branch</p>
+<p>source_branch 是为了取出jiraId以进行后续操作</p>
+</li>
+</ul>
+<h3 id="jira接口调用">jira接口调用</h3>
+<p>文档: https://developer.atlassian.com/server/jira/platform/jira-rest-api-examples/#editing-an-issue-examples</p>
+<p>从source_branch利用正则截取出jiraId,拼装并调用接口地址</p>
+<p>附三个修改标签的传参,第一个是追加,后两种是覆盖设置</p>
+<pre><code>#增加
+{
+    &quot;update&quot; : {
+        &quot;labels&quot; : [{&quot;add&quot; : &quot;标签内容&quot;}]
+    }
+}
+#设置
+{
+    &quot;fields&quot; : {
+        &quot;labels&quot;: [&quot;标签内容&quot;]
+        
+        
+    }
+}
+{
+    &quot;update&quot; : {
+        &quot;labels&quot; : [{&quot;set&quot; : [&quot;标签内容&quot;]}]
+    }
+}
+</code></pre>
+<h4 id="ps">PS:</h4>
+<p>建议先用postman之类的工具先调试一下jira的接口,如果报错</p>
+<blockquote>
+<p>Field 'labels' cannot be set. It is not on the appropriate screen, or unknown.</p>
+</blockquote>
+<p>那就需要联系jira管理员,在项目的screens(项目管理-&gt;界面)中开启相关字段的api读写权限</p>
+<h3 id="完整源码如下">完整源码如下:</h3>
+<pre><code class="language-python"># -*- coding: utf-8 -*-
+
+from flask import Flask,request
+import requests
+import re
+
+baseUrl = 'http://jira.sunjianbo.com:8080/rest/api/2/issue/'
+app = Flask(__name__)
+
+@app.route(&quot;/&quot;, methods=[&quot;GET&quot;, &quot;POST&quot;])
+def test():
+    # addTag2Jira(&quot;DB19236-2398 324扥矿赛肯&quot;)
+    return &quot;hello world&quot;
+
+@app.route(&quot;/merged&quot;, methods=[&quot;GET&quot;, &quot;POST&quot;])
+def merged():
+    # print(request.headers)
+    # print(request.json)
+    # print('---')
+    body = request.json
+    object_attributes = body['object_attributes']
+    state = object_attributes['state']  # opened,closed,merged
+    source_branch = object_attributes['source_branch']
+    target_branch = object_attributes['target_branch']
+    if state == 'merged' and target_branch == 'master':
+        # 已合并到master
+        print('是已合并到master的请求,开始修改jira标签')
+        addTag2Jira(source_branch)
+    else:
+        print('不是合并到master的成功请求,而是合并到['+target_branch+']的['+state+&quot;]请求&quot;)
+    return &quot;&quot;
+
+def addTag2Jira(source_branch):
+    # 取得分支jira id
+    matchObj = re.search(r&quot;DB\d+-\d+&quot;, source_branch)
+    if matchObj:
+        print(&quot;匹配出的jiraId: &quot;, matchObj.group())
+        jiraId = matchObj.group()
+        # 去相应jira故事中打一个uat标签
+        url = baseUrl + jiraId
+        messagebody = '''
+            {
+                &quot;update&quot; : {
+                    &quot;labels&quot; : [{&quot;add&quot; : &quot;UAT&quot;}]
+                }
+            }
+            '''
+        result = fun_put(url, messagebody)
+        print(result)
+        if result.status_code == 204:
+            print('修改成功: ' + url)
+        else:
+            print('修改失败: ' + source_branch)
+    else:
+        print(&quot;分支名称上找不到jiraId: &quot; + source_branch)
+
+def fun_put(url, messagebody):
+    headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
+    r = requests.put(url, data=messagebody, headers=headers, auth=('username', 'passwd'))
+    print(r.status_code)
+    return r
+
+if __name__ == &quot;__main__&quot;:
+    app.run(host=&quot;0.0.0.0&quot;, port=8080)
+</code></pre>
+<h2 id="部署">部署</h2>
+<p>部署这里有个插曲</p>
+<p>公司服务器是离线的,所以我先离线安装了python3,然后打算安装virtualenv时报了一个ssl的错误,明明是离线安装,为毛会涉及到ssl,咱也不知道,咱也不敢问,推测是python3安装的有点问题,依赖的openssl之类的在测试机上不太全吧</p>
+<p>折腾了半天没搞定,考虑到是测试服务器我就瞎搞了一把</p>
+<p>用了</p>
+<pre><code>pip3 install -r requirements.txt --proxy=代理服务器IP:端口号
+</code></pre>
+<p>代理走了我本地电脑在线安装了Flask和 requests,瞬间就解决了(给机智的我点个赞(◔◡◔))</p>
+<h2 id="设置gitlab上的webhook">设置gitlab上的webhook</h2>
+<p>settings-&gt;integrations-&gt;填写url-&gt;Trigger勾选<code>Merge request events</code>-&gt;嫌麻烦我禁用了ssl,没有实际测试一下行不行-&gt;保存</p>
+<p><img src="https://static.sunjianbo.com/image-20200820160206463.png" alt="set-integrations" loading="lazy">)</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[JVM内存模型(理论很枯燥)]]></title>
         <id>https://www.sunjianbo.com/jmm/</id>
@@ -1409,54 +1559,6 @@ public class Demo2 {
 <p>如果执行Native方法,则计数器值为空.</p>
 <p>每个线程都在这个空间有一个私有的空间,占用内存空间很少.</p>
 <p>CPU同一时间只会执行一条线程中的指令.JVM多线程会轮流切换并分配CPU执行时间.在线程切换后,需要通过程序计数器来恢复正确的执行位置.</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[activemq启动报错Failed to connect to the Wrapper at port 32000]]></title>
-        <id>https://www.sunjianbo.com/activemq-wrapper-error/</id>
-        <link href="https://www.sunjianbo.com/activemq-wrapper-error/">
-        </link>
-        <updated>2020-05-06T08:36:28.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="环境">环境</h2>
-<blockquote>
-<p>win7 x64</p>
-<p>java1.8.0_20</p>
-<p>activemq:5.15.12(当前最新)</p>
-</blockquote>
-<h2 id="报错信息">报错信息</h2>
-<p>运行<code>apache-activemq\bin\win64\activemq.bat</code>报如下错误:</p>
-<pre><code>jvm 1    | Failed to connect to the Wrapper at port 32000.
-jvm 1    | java.net.ConnectException: connect: Address is invalid on local machine, or port is not valid on remote machine
-jvm 1    | Exiting JVM...
-</code></pre>
-<p>编辑<code>win64</code>目录下<code>wrapper.conf</code>文件,取消注释</p>
-<pre><code># wrapper.debug=TRUE
-</code></pre>
-<hr>
-<p>title: 'activemq启动报错Failed to connect to the Wrapper at port 32000'<br>
-date: 2020-05-06 16:36:28<br>
-tags: [activemq,wrapper,报错]<br>
-published: true<br>
-hideInList: false<br>
-feature:<br>
-isTop: false</p>
-<hr>
-<pre><code>INFO   | jvm 1    | 2020/05/06 16:26:52 | Load native library.  One or more attempts may fail if platform specific libraries do not exist.
-INFO   | jvm 1    | 2020/05/06 16:26:52 | Loading native library failed: wrapper-windows-x86-64.dll  Cause: java.lang.UnsatisfiedLinkError: no wrapper-windows-x86-64 in java.library.path
-</code></pre>
-<h2 id="试图解决">试图解决</h2>
-<p>根据以上两个关键信息进行Google,然而崩溃的是股沟了好久没有找到解决方法</p>
-<p>期间尝试了网上说的修改<code>conf/activemq.xml</code>与<code>conf/jetty.xml</code>配置文件中的ip<code>0.0.0.0</code>改为<code>127.0.0.1</code></p>
-<p>修改<code>wrapper.conf</code>文件中的<code>wrapper.java.command=java</code>为指定<code>jdkpath\bin\java</code></p>
-<p>均无效,最后放弃这种启动方式,改为下面方式启动.没有报错</p>
-<h2 id="最终解决方案">最终解决方案</h2>
-<p>双击运行<code>apache-activemq\bin\win6\InstallService.bat</code>以安装服务</p>
-<p><code>win+r</code>启动<code>cmd</code>输入:</p>
-<pre><code>net start activemq
-</code></pre>
-<p>完全没报错,顺利启动</p>
-<p>浏览器打开<a href="http://127.0.0.1:8161">http://127.0.0.1:8161</a></p>
-<p>成功访问</p>
 ]]></content>
     </entry>
 </feed>
