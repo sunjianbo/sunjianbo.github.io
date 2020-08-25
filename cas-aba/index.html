@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>Java CAS ABA问题发生的场景分析(转) | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link href="https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css" rel="stylesheet">
+<!--
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+-->
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1598341584536">
+<link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-160052000-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-160052000-1');
+</script>
+
+
+    <meta name="description" content="原文转自:https://www.cnblogs.com/senlinyang/p/7875381.html
+CAS操作存在一个ABA问题，就是在CAS之前A变成B又变回A，CAS还是能够设置成功的，
+什么场景下会出现这个问题呢？查了一些资..." />
+    <meta name="keywords" content="CAS,java" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://www.sunjianbo.com">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1598341584536" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/sun_jianbo" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://weibo.com/u/1967178011" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/sun-jian-bo-59" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.facebook.com/profile.php?id=100011365915451" target="_blank">
+            <i class="fab fa-facebook"></i>
+          </a>
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://beian.miit.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://www.sunjianbo.com/atom.xml" target="_blank">RSS</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			又拍云提供网络及存储支持
+		</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			<img height="35px" width="90px" src="https://img.juemuren4449.com/4ff5b7d3ed727d330fcdda17165de906.png">
+		</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">Java CAS ABA问题发生的场景分析(转)</h2>
+            <div class="post-date">2020-08-25</div>
+            
+            <div class="post-content" v-pre>
+              <p>原文转自:<a href="https://www.cnblogs.com/senlinyang/p/7875381.html">https://www.cnblogs.com/senlinyang/p/7875381.html</a></p>
+<p>CAS操作存在一个ABA问题，就是在CAS之前A变成B又变回A，CAS还是能够设置成功的，</p>
+<p>什么场景下会出现这个问题呢？查了一些资料，发现在下面的两种情况下会出现ABA问题。</p>
+<h2 id="1-a最开始的内存地址是x然后失效了有分配了b恰好内存地址是x这时候通过cas操作却设置成功了">1. A最开始的内存地址是X，然后失效了，有分配了B，恰好内存地址是X，这时候通过CAS操作，却设置成功了</h2>
+<p>这种情况在带有GC的语言中，这种情况是不可能发生的，为什么呢？</p>
+<p>拿JAVA举例，在执行CAS操作时，A，B对象肯定生命周期内，GC不可能将其释放，那么A指向的内存是不会被释放的，B也就不可能分配到与A相同的内存地址，CAS失败。若在无GC的，A对象已经被释放了，那么B被分配了A的内存，CAS成功。</p>
+<h2 id="2-线程1准备用cas将变量的值由a替换为b在此之前线程2将变量的值由a替换为c又由c替换为a然后线程1执行cas时发现变量的值仍然为a所以cas成功">2. 线程1准备用CAS将变量的值由A替换为B，在此之前，线程2将变量的值由A替换为C，又由C替换为A，然后线程1执行CAS时发现变量的值仍然为A，所以CAS成功。</h2>
+<p>但实际上这时的现场已经和最初不同了，尽管CAS成功，但可能存在潜藏的问题。</p>
+<p>比如：现有一个用单向链表实现的堆栈，栈顶为A，这时线程T1已经知道A.next为B，然后希望用CAS将栈顶替换为B：head.compareAndSet(A,B);在T1执行上面这条指令之前，线程T2介入，将A、B出栈，再pushD、C、A。而对象B此时处于游离状态：此时轮到线程T1执行CAS操作，检测发现栈顶仍为A，所以CAS成功，栈顶变为B，但实际上B.next为null，其中堆栈中只有B一个元素，C和D组成的链表不再存在于堆栈中，平白无故就把C、D丢掉了。</p>
+<p>以上就是由于ABA问题带来的隐患，各种乐观锁的实现中通常都会用版本戳version来对记录或对象标记，避免并发操作带来的问题</p>
+<p>在Java中，<code>AtomicStampedReference&lt;E&gt;</code>也实现了这个作用，它通过包装[E,Integer]的元组来对对象标记版本戳stamp，从而避免ABA问题，</p>
+<p>例如下面的代码分别用AtomicInteger和AtomicStampedReference来对初始值为100的原子整型变量进行更新，AtomicInteger会成功执行CAS操作，而加上版本戳的AtomicStampedReference对于ABA问题会执行CAS失败</p>
+<pre><code class="language-java">package concur.lock;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicStampedReference;
+
+public class ABA {
+    
+    private static AtomicInteger atomicInt = new AtomicInteger(100);
+    private static AtomicStampedReference&lt;Integer&gt; atomicStampedRef = 
+            new AtomicStampedReference&lt;Integer&gt;(100, 0);
+    
+    public static void main(String[] args) throws InterruptedException {
+        Thread intT1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                atomicInt.compareAndSet(100, 101);
+                atomicInt.compareAndSet(101, 100);
+            }
+        });
+        
+        Thread intT2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                boolean c3 = atomicInt.compareAndSet(100, 101);
+                System.out.println(c3);        //true
+            }
+        });
+        
+        intT1.start();
+        intT2.start();
+        intT1.join();
+        intT2.join();
+        
+        Thread refT1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                atomicStampedRef.compareAndSet(100, 101, 
+                        atomicStampedRef.getStamp(), atomicStampedRef.getStamp()+1);
+                atomicStampedRef.compareAndSet(101, 100, 
+                        atomicStampedRef.getStamp(), atomicStampedRef.getStamp()+1);
+            }
+        });
+        
+        Thread refT2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int stamp = atomicStampedRef.getStamp();
+                System.out.println(&quot;before sleep : stamp = &quot; + stamp);    // stamp = 0
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(&quot;after sleep : stamp = &quot; + atomicStampedRef.getStamp());//stamp = 1
+                boolean c3 = atomicStampedRef.compareAndSet(100, 101, stamp, stamp+1);
+                System.out.println(c3);        //false
+            }
+        });
+        
+        refT1.start();
+        refT2.start();
+    }
+
+}
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://www.sunjianbo.com/tag/FNmJoWPIQ/" class="tag">
+                    CAS
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/0tmsVkBYC52/" class="tag">
+                    java
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://www.sunjianbo.com/webhook-jira/">
+                  <h3 class="post-title">
+                    使用gitlab的webhook实现合并分支时在jira上打个标签的功能
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>

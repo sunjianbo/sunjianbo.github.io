@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-08-21T01:42:28.168Z</updated>
+    <updated>2020-08-25T07:46:35.807Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -10,6 +10,291 @@
     <logo>https://www.sunjianbo.com/images/avatar.png</logo>
     <icon>https://www.sunjianbo.com/favicon.ico</icon>
     <rights>All rights reserved 2020, 孙建博的小站</rights>
+    <entry>
+        <title type="html"><![CDATA[线程安全以及原子操作]]></title>
+        <id>https://www.sunjianbo.com/thread-safe-atomic/</id>
+        <link href="https://www.sunjianbo.com/thread-safe-atomic/">
+        </link>
+        <updated>2020-08-25T07:45:53.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="线程安全概念">线程安全概念</h2>
+<h3 id="竞态条件与临界区">竞态条件与临界区</h3>
+<pre><code class="language-java">public class Demo{
+    public int i=0;
+    public void incr(){
+        i++
+    }
+}
+</code></pre>
+<p>多个线程访问了相同的资源,向这些资源做了<strong>写操作</strong>时,对执行顺序有要求</p>
+<p>临界区:incr方法內部就是临界区域,关键部分代码的多线程并发执行,会对执行结果产生影响。</p>
+<p>竞态条件:可能发生在临界区域内的特殊条件。多线程执行incr方法中的i++关键代码时,就产生了竞态条件。</p>
+<h2 id="一些情况是线程安全的">一些情况是线程安全的</h2>
+<h3 id="资源不共享">资源不共享</h3>
+<p>如果一段代码是线程安全的,则它不包含竞态条件。只有当多个线程更新共享资源时,才会发生竞态条件。</p>
+<p>栈封闭时,不会在线程之间共享的变量,都是线程安全的。</p>
+<p>局部对象引用本身不共享,但是引用的对象存储在共享堆中。如果方法內创建的对象,只是在方法中传递,并且不对其他线程可用,那么也是线程安全的。</p>
+<pre><code class="language-java">//例子
+public void someMethod(){
+    LocalObject localObject = new LocalObject();
+    localObject.callMethod();
+    method2(localObject);
+}
+public void method2(LocalObject localObject{
+	localObject.setValue(&quot;value&quot;);
+}
+</code></pre>
+<blockquote>
+<p>判定规则:如果创建、使用和处理资源,永远不会逃脱单个线程的控制,该资源的使用是线程安全的。</p>
+</blockquote>
+<h3 id="对象不可变">对象不可变</h3>
+<p>创建不可变的共享对象来保证对象在线程间共享时不会被修改,从而实现线程安全。</p>
+<p>实例被创建,value变量就不能再被修改,这就是不可变性。</p>
+<pre><code class="language-java">//比如没有提供set方法的私有属性
+public class Demo{
+    private int value =0;
+    public Demo(int value){
+        this.value= value
+    }
+    public int getValue(){
+        return this.value;
+    }
+}
+</code></pre>
+<h3 id="原子操作">原子操作</h3>
+<h4 id="原子操作定义">原子操作定义</h4>
+<p>原子操作可以是一个步骤,也可以是多个操作步骤,但是其顺序不可以被打乱,也不可以被切割而只执行其中的一部分(不可中断性)。</p>
+<p><font color=red>将整个操作视作一个整体是原子性的核心特征。</font></p>
+<p>最开始例子里面的i++就不是一个原子操作,她包含三步骤:</p>
+<ol>
+<li>加载i</li>
+<li>计算+1</li>
+<li>赋值i</li>
+</ol>
+<p>存在竞态条件的情况下,线程不安全,需要转变为原子操作才能安全。</p>
+<h4 id="方式一-循环cas">方式一: 循环CAS</h4>
+<h5 id="cas机制">CAS机制</h5>
+<p><code>Compare and swap</code>比较和交换。属于硬件同步原语,处理器提供了基本内存操作的原子性保证。</p>
+<p>CAS操作需要输入两个数值,一个旧值A(期望操作前的值)和一个新值B,在操作期间先比较下旧值有没有发生变化,如果没有发生变化,才交换成新值,发生了变化则不交换。(类似乐观锁)</p>
+<p>JAVA中的 <code>sun.misc.Unsafe</code>类,提供了 <code>compareAndSwaplnt()</code>和 <code>compareAndSwapLong()</code>等几个方法实现CAS</p>
+<pre><code class="language-java">package com.study.lock.lock;
+
+import sun.misc.Unsafe;
+import java.lang.reflect.Field;
+
+public class LockDemo1 {
+    volatile int value = 0;
+
+    static Unsafe unsafe; // 直接操作内存，修改对象，数组内存....强大的API
+    private static long valueOffset;
+
+    static {
+        try {
+            // 反射技术获取unsafe值
+            Field field = Unsafe.class.getDeclaredField(&quot;theUnsafe&quot;);
+            field.setAccessible(true);
+            unsafe = (Unsafe) field.get(null);
+
+            // 获取到 value 属性偏移量（用于定位value属性在内存中的具体地址）
+            valueOffset = unsafe.objectFieldOffset(LockDemo1.class
+                    .getDeclaredField(&quot;value&quot;));
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void add() {
+        // TODO xx00
+        // i++;// JAVA 层面三个步骤
+        // CAS + 循环 重试
+        int current;
+        do {
+            // 操作耗时的话， 那么 线程就会占用大量的CPU执行时间
+            current = unsafe.getIntVolatile(this, valueOffset);
+        } while (!unsafe.compareAndSwapInt(this, valueOffset, current, current + 1));
+        // 因为跨平台的问题,而我们是用反射的非正常方式获得unsafe,所以可能会失败
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        LockDemo1 ld = new LockDemo1();
+
+        for (int i = 0; i &lt; 2; i++) {
+            new Thread(() -&gt; {
+                for (int j = 0; j &lt; 10000; j++) {
+                    ld.add();
+                }
+            }).start();
+        }
+        Thread.sleep(2000L);
+        System.out.println(ld.value);
+    }
+}
+</code></pre>
+<blockquote>
+<p>其实AtomicInteger这些封装类的底层就是这么写的</p>
+</blockquote>
+<h5 id="javautilconcurrent包内的原子操作封装类">java.util.concurrent包内的原子操作封装类</h5>
+<ul>
+<li>
+<p>AtomicBoolean:原子更新布尔类型</p>
+</li>
+<li>
+<p>AtomicInteger:原子更新整型</p>
+</li>
+<li>
+<p>AtomicLong:原子更新长整型</p>
+</li>
+<li>
+<p>AtomicIntegerArray:原子更新整型数组里的元素</p>
+</li>
+<li>
+<p>AtomicLongArray:原子更新长整型数组里的元素</p>
+</li>
+<li>
+<p>AtomicReferenceArray:原子更新引用类型数组里的元素</p>
+</li>
+<li>
+<p>AtomiclntegerFieldUpdater:原子更新整型的字段的更新器</p>
+</li>
+<li>
+<p>AtomicLongFieldUpdater:原子更新长整型字段的更新器</p>
+</li>
+<li>
+<p>AtomicReferenceFieldUpdater:原子更新引用类型里的字段</p>
+</li>
+<li>
+<p>AtomicReference:原子更新引用类型</p>
+</li>
+<li>
+<p>AtomicStampedReference:原子更新带有版本号的引用类型</p>
+</li>
+<li>
+<p>AtomicMarkableReference:原子更新带有标记位的引用类型。</p>
+<p>jdk1.8更新</p>
+</li>
+<li>
+<p>更新器: DoubleAccumulator、 LongAccumulator</p>
+</li>
+<li>
+<p>计数器: DoubleAdder、 LongAdder(一个使用场景是统计接口调用次数时可使用)</p>
+</li>
+</ul>
+<blockquote>
+<p>计数器增强版,高并发下性能更好</p>
+<p>频繁更新但不太频繁读取的汇总统计信息时使用</p>
+<p>分成多个操作单元,不同线程更新不同的单元只有需要汇总的时候才计算所有单元的操作</p>
+</blockquote>
+<blockquote>
+<p>即分成多个值(Cell)减少竞争,对外暴露一个虚拟值,最后取得时候使用sum()把多个内存块的Cell相加</p>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/image-20200825135731552.png" alt="image-20200825135731552" loading="lazy"></figure>
+</blockquote>
+<h5 id="三个缺点">三个缺点:</h5>
+<ol>
+<li>循环+CAS,自旋的实现让所有线程都处于高频运行,争抢CPU执行时间的状态。如果操作长时间不成功,会带来很大的cPU资源消耗。</li>
+<li>仅针对单个变量的操作,不能用于多个变量来实现原子操作。即很长的代码没法用CAS</li>
+<li>ABA问题。(详情查看:<a href="https://www.sunjianbo.com/cas-aba/">https://www.sunjianbo.com/cas-aba/</a>)。</li>
+</ol>
+<h4 id="方式二-锁">方式二: 锁</h4>
+<p>锁能保证可见性,是基于Happens-before原则</p>
+<p>一个线程的unlock一定执行在另一个线程的lock前面,也就是说另一个线程不会插进该线程的执行过程(lock-&gt;op-&gt;unlock)中</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Java CAS ABA问题发生的场景分析(转)]]></title>
+        <id>https://www.sunjianbo.com/cas-aba/</id>
+        <link href="https://www.sunjianbo.com/cas-aba/">
+        </link>
+        <updated>2020-08-25T07:23:23.000Z</updated>
+        <content type="html"><![CDATA[<p>原文转自:<a href="https://www.cnblogs.com/senlinyang/p/7875381.html">https://www.cnblogs.com/senlinyang/p/7875381.html</a></p>
+<p>CAS操作存在一个ABA问题，就是在CAS之前A变成B又变回A，CAS还是能够设置成功的，</p>
+<p>什么场景下会出现这个问题呢？查了一些资料，发现在下面的两种情况下会出现ABA问题。</p>
+<h2 id="1-a最开始的内存地址是x然后失效了有分配了b恰好内存地址是x这时候通过cas操作却设置成功了">1. A最开始的内存地址是X，然后失效了，有分配了B，恰好内存地址是X，这时候通过CAS操作，却设置成功了</h2>
+<p>这种情况在带有GC的语言中，这种情况是不可能发生的，为什么呢？</p>
+<p>拿JAVA举例，在执行CAS操作时，A，B对象肯定生命周期内，GC不可能将其释放，那么A指向的内存是不会被释放的，B也就不可能分配到与A相同的内存地址，CAS失败。若在无GC的，A对象已经被释放了，那么B被分配了A的内存，CAS成功。</p>
+<h2 id="2-线程1准备用cas将变量的值由a替换为b在此之前线程2将变量的值由a替换为c又由c替换为a然后线程1执行cas时发现变量的值仍然为a所以cas成功">2. 线程1准备用CAS将变量的值由A替换为B，在此之前，线程2将变量的值由A替换为C，又由C替换为A，然后线程1执行CAS时发现变量的值仍然为A，所以CAS成功。</h2>
+<p>但实际上这时的现场已经和最初不同了，尽管CAS成功，但可能存在潜藏的问题。</p>
+<p>比如：现有一个用单向链表实现的堆栈，栈顶为A，这时线程T1已经知道A.next为B，然后希望用CAS将栈顶替换为B：head.compareAndSet(A,B);在T1执行上面这条指令之前，线程T2介入，将A、B出栈，再pushD、C、A。而对象B此时处于游离状态：此时轮到线程T1执行CAS操作，检测发现栈顶仍为A，所以CAS成功，栈顶变为B，但实际上B.next为null，其中堆栈中只有B一个元素，C和D组成的链表不再存在于堆栈中，平白无故就把C、D丢掉了。</p>
+<p>以上就是由于ABA问题带来的隐患，各种乐观锁的实现中通常都会用版本戳version来对记录或对象标记，避免并发操作带来的问题</p>
+<p>在Java中，<code>AtomicStampedReference&lt;E&gt;</code>也实现了这个作用，它通过包装[E,Integer]的元组来对对象标记版本戳stamp，从而避免ABA问题，</p>
+<p>例如下面的代码分别用AtomicInteger和AtomicStampedReference来对初始值为100的原子整型变量进行更新，AtomicInteger会成功执行CAS操作，而加上版本戳的AtomicStampedReference对于ABA问题会执行CAS失败</p>
+<pre><code class="language-java">package concur.lock;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicStampedReference;
+
+public class ABA {
+    
+    private static AtomicInteger atomicInt = new AtomicInteger(100);
+    private static AtomicStampedReference&lt;Integer&gt; atomicStampedRef = 
+            new AtomicStampedReference&lt;Integer&gt;(100, 0);
+    
+    public static void main(String[] args) throws InterruptedException {
+        Thread intT1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                atomicInt.compareAndSet(100, 101);
+                atomicInt.compareAndSet(101, 100);
+            }
+        });
+        
+        Thread intT2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                boolean c3 = atomicInt.compareAndSet(100, 101);
+                System.out.println(c3);        //true
+            }
+        });
+        
+        intT1.start();
+        intT2.start();
+        intT1.join();
+        intT2.join();
+        
+        Thread refT1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                atomicStampedRef.compareAndSet(100, 101, 
+                        atomicStampedRef.getStamp(), atomicStampedRef.getStamp()+1);
+                atomicStampedRef.compareAndSet(101, 100, 
+                        atomicStampedRef.getStamp(), atomicStampedRef.getStamp()+1);
+            }
+        });
+        
+        Thread refT2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int stamp = atomicStampedRef.getStamp();
+                System.out.println(&quot;before sleep : stamp = &quot; + stamp);    // stamp = 0
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(&quot;after sleep : stamp = &quot; + atomicStampedRef.getStamp());//stamp = 1
+                boolean c3 = atomicStampedRef.compareAndSet(100, 101, stamp, stamp+1);
+                System.out.println(c3);        //false
+            }
+        });
+        
+        refT1.start();
+        refT2.start();
+    }
+
+}
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[使用gitlab的webhook实现合并分支时在jira上打个标签的功能]]></title>
         <id>https://www.sunjianbo.com/webhook-jira/</id>
@@ -1405,160 +1690,6 @@ public class Demo4 extends Thread {
 }
 
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[线程状态]]></title>
-        <id>https://www.sunjianbo.com/thread-state/</id>
-        <link href="https://www.sunjianbo.com/thread-state/">
-        </link>
-        <updated>2020-07-03T01:47:48.000Z</updated>
-        <content type="html"><![CDATA[<p>线程有6个状态,可以查看java.lang.Thread.State</p>
-<table>
-<thead>
-<tr>
-<th>状态</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>New</td>
-<td>尚未启动的线程的线程状态</td>
-</tr>
-<tr>
-<td>Runnable</td>
-<td>可运行线程的线程状态,等待CPU调度</td>
-</tr>
-<tr>
-<td>Blocked</td>
-<td>线程阻塞等待监视器锁定的线程状态</td>
-</tr>
-<tr>
-<td>Waiting</td>
-<td>等待线程的线程状态.下列不带超时的方式:<code>Object.wait</code>,<code>Thread.join</code>,<code>LockSupport.park</code></td>
-</tr>
-<tr>
-<td>Timed Waiting</td>
-<td>具有制定等待时间的等待线程的线程状态.下列带超时的方式:<code>Thread.sleep</code>,<code>Object.wait</code>,<code>Thread.join</code>,<code>LockSupport.parkNanos</code>,<code>LockSupport.parkUntil</code></td>
-</tr>
-<tr>
-<td>Terminated</td>
-<td>终止线程的线程状态,线程正常完成执行或者出现异常</td>
-</tr>
-</tbody>
-</table>
-<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/image-20200611094432936.png" alt="states" loading="lazy"></figure>
-<pre><code class="language-java">/**
- * 多线程运行状态切换示例 &lt;br/&gt;
- */
-public class Demo2 {
-	public static Thread thread1;
-	public static Demo2 obj;
-
-	public static void main(String[] args) throws Exception {
-		// 第一种状态切换 - 新建 -&gt; 运行 -&gt; 终止
-		System.out.println(&quot;#######第一种状态切换  - 新建 -&gt; 运行 -&gt; 终止################################&quot;);
-		Thread thread1 = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				System.out.println(&quot;thread1当前状态：&quot; + Thread.currentThread().getState().toString());
-				System.out.println(&quot;thread1 执行了&quot;);
-			}
-		});
-		System.out.println(&quot;没调用start方法，thread1当前状态：&quot; + thread1.getState().toString());
-		thread1.start();
-		Thread.sleep(2000L); // 等待thread1执行结束，再看状态
-		System.out.println(&quot;等待两秒，再看thread1当前状态：&quot; + thread1.getState().toString());
-		// thread1.start(); TODO 注意，线程终止之后，再进行调用，会抛出IllegalThreadStateException异常
-
-		System.out.println();
-		System.out.println(&quot;############第二种：新建 -&gt; 运行 -&gt; 等待 -&gt; 运行 -&gt; 终止(sleep方式)###########################&quot;);
-		Thread thread2 = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {// 将线程2移动到等待状态，1500后自动唤醒
-					Thread.sleep(1500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				System.out.println(&quot;thread2当前状态：&quot; + Thread.currentThread().getState().toString());
-				System.out.println(&quot;thread2 执行了&quot;);
-			}
-		});
-		System.out.println(&quot;没调用start方法，thread2当前状态：&quot; + thread2.getState().toString());
-		thread2.start();
-		System.out.println(&quot;调用start方法，thread2当前状态：&quot; + thread2.getState().toString());
-		Thread.sleep(200L); // 等待200毫秒，再看状态
-		System.out.println(&quot;等待200毫秒，再看thread2当前状态：&quot; + thread2.getState().toString());
-		Thread.sleep(3000L); // 再等待3秒，让thread2执行完毕，再看状态
-		System.out.println(&quot;等待3秒，再看thread2当前状态：&quot; + thread2.getState().toString());
-
-		System.out.println();
-		System.out.println(&quot;############第三种：新建 -&gt; 运行 -&gt; 阻塞 -&gt; 运行 -&gt; 终止###########################&quot;);
-		Thread thread3 = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				synchronized (Demo2.class) {
-					System.out.println(&quot;thread3当前状态：&quot; + Thread.currentThread().getState().toString());
-					System.out.println(&quot;thread3 执行了&quot;);
-				}
-			}
-		});
-		synchronized (Demo2.class) {
-			System.out.println(&quot;没调用start方法，thread3当前状态：&quot; + thread3.getState().toString());
-			thread3.start();
-			System.out.println(&quot;调用start方法，thread3当前状态：&quot; + thread3.getState().toString());
-			Thread.sleep(200L); // 等待200毫秒，再看状态
-			System.out.println(&quot;等待200毫秒，再看thread3当前状态：&quot; + thread3.getState().toString());
-		}
-		Thread.sleep(3000L); // 再等待3秒，让thread3执行完毕，再看状态
-		System.out.println(&quot;等待3秒，让thread3抢到锁，再看thread3当前状态：&quot; + thread2.getState().toString());
-
-	}
-}
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[JAVA程序运行原理分析]]></title>
-        <id>https://www.sunjianbo.com/jvm-operation-principle/</id>
-        <link href="https://www.sunjianbo.com/jvm-operation-principle/">
-        </link>
-        <updated>2020-07-02T03:08:07.000Z</updated>
-        <content type="html"><![CDATA[<p>我的理解JVM内存结构就是程序由字节码文件读入到jvm中解析存储到执行所需要的一些东西</p>
-<h2 id="class文件内容">class文件内容</h2>
-<p>class文件包含JAVA程序执行的字节码;数据严格按照格式紧凑排列在class文件中的二进制流,中间无任何分隔符;文件开头有一个0xcafebabe(16进制)特殊的一个标志.</p>
-<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/image-20200610134740885.png" alt="class" loading="lazy"></figure>
-<p>class文件内存储的是指令码</p>
-<h2 id="jvm运行时数据区">JVM运行时数据区</h2>
-<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/image-20200610141943161.png" alt="jvm" loading="lazy"></figure>
-<h3 id="线程共享">线程共享</h3>
-<h4 id="方法区">方法区</h4>
-<p>jvm用来存储加载的类信息,常量,静态变量,编译后的代码等数据.</p>
-<p>这是虚拟机中的一个逻辑区划,具体实现根据不同虚拟机来实现.</p>
-<p>如:oracle的HotSpot在java7中方法区放在永久代,java8放在元数据空间,并且通过GC机制对这个区域进行管理</p>
-<h4 id="堆内存">堆内存</h4>
-<p>堆内存是VM启动时创建,用于存放对象的实例.</p>
-<p>还可以细分为:老年代,新生代(Eden,From Survivor,To Survivor).</p>
-<p>垃圾回收器主要就是管理堆内存.</p>
-<p>如果满了,就会出现OutOfMemoryError</p>
-<h2 id="线程独享">线程独享</h2>
-<h4 id="虚拟机栈">虚拟机栈</h4>
-<p>每个线程都在这个空间又一个私有的空间.</p>
-<p>线程栈由多个栈帧组成.</p>
-<p>一个线程会执行一个或多个方法,一个方法对应一个栈帧.</p>
-<p><strong>栈帧内容包含:局部变量表,操作数栈,动态链接,方法返回地址,附加信息等.</strong></p>
-<p>栈内存默认最大是<strong>1M</strong>.超出则抛出StackOverFlowError</p>
-<h4 id="本地方法栈">本地方法栈</h4>
-<p>和虚拟机栈功能类似,不同的是虚拟机栈是为虚拟机执行java方法而准备的,本地方法栈是为虚拟机使用Native本地方法而准备的.</p>
-<p>虚拟机规范没有规定具体的实现,由不同的虚拟机厂商去实现.</p>
-<p>HotSpot虚拟机中的虚拟机栈和本地方法栈的实现是一样的.同样,超出大小以后也会抛出StackOverFlowError</p>
-<h4 id="程序计数器program-counter-register">程序计数器(Program Counter Register)</h4>
-<p>记录当前线程执行字节码的位置,存储的是字节码指令地址.</p>
-<p>如果执行Native方法,则计数器值为空.</p>
-<p>每个线程都在这个空间有一个私有的空间,占用内存空间很少.</p>
-<p>CPU同一时间只会执行一条线程中的指令.JVM多线程会轮流切换并分配CPU执行时间.在线程切换后,需要通过程序计数器来恢复正确的执行位置.</p>
 ]]></content>
     </entry>
 </feed>

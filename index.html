@@ -11,7 +11,7 @@
 <!--
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 -->
-<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1597974143404">
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1598341584536">
 <link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
 
 
@@ -40,7 +40,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://www.sunjianbo.com">
-        <img src="https://www.sunjianbo.com/images/avatar.png?v=1597974143404" class="site-logo">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1598341584536" class="site-logo">
         <h1 class="site-title">孙建博的小站</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -136,6 +136,87 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://www.sunjianbo.com/thread-safe-atomic/">
+                  <h2 class="post-title">线程安全以及原子操作</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-25
+                </div>
+                <div class="post-abstract">
+					
+					
+						<!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 -->
+						
+						
+							
+							
+						
+							
+							
+						
+							
+							
+						
+						
+							<p><h2 id="线程安全概念">线程安全概念</h2>
+<h3 id="竞态条件与临界区">竞态条件与临界区</h3>
+<pre><code class="language-java">public class Demo{
+
+								
+									<!-- 自动摘要出来的内容有<code则补上结尾,防止格式错误 -->
+									</code></pre>
+								
+							<p>
+							<!-- 加个more链接 -->
+							<a href="https://www.sunjianbo.com/thread-safe-atomic/">more →</a>
+						
+					
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://www.sunjianbo.com/cas-aba/">
+                  <h2 class="post-title">Java CAS ABA问题发生的场景分析(转)</h2>
+                </a>
+                <div class="post-date">
+                  2020-08-25
+                </div>
+                <div class="post-abstract">
+					
+					
+						<!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 -->
+						
+						
+							
+							
+						
+							
+							
+						
+							
+							
+						
+						
+							<p><p>原文转自:<a href="https://www.cnblogs.com/senlinyang/p/7875381.html">https://www.cnblogs.com/senlinyang/p/7875381.html</a></p>
+<p>CAS操作存在一个ABA问题，就是在CAS之前A变成B又变回A，CAS还是能够设置成功的，</p>
+<p>什么场景下会出现这个问题呢？查了一些资料，发现在下面的两种情况下会出现ABA问题。</p>
+
+								
+							<p>
+							<!-- 加个more链接 -->
+							<a href="https://www.sunjianbo.com/cas-aba/">more →</a>
+						
+					
+                </div>
+              </div>
+              
+            </article>
           
             <article class="post-item">
               <div class="left">
@@ -442,84 +523,6 @@
 							<p>
 							<!-- 加个more链接 -->
 							<a href="https://www.sunjianbo.com/thread-abort/">more →</a>
-						
-					
-                </div>
-              </div>
-              
-            </article>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://www.sunjianbo.com/thread-state/">
-                  <h2 class="post-title">线程状态</h2>
-                </a>
-                <div class="post-date">
-                  2020-07-03
-                </div>
-                <div class="post-abstract">
-					
-					
-						<!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 -->
-						
-						
-							
-							
-						
-							
-							
-						
-							
-							
-						
-						
-							<p><p>线程有6个状态,可以查看java.lang.Thread.State</p>
-<table>
-<thead>
-
-								
-							<p>
-							<!-- 加个more链接 -->
-							<a href="https://www.sunjianbo.com/thread-state/">more →</a>
-						
-					
-                </div>
-              </div>
-              
-            </article>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://www.sunjianbo.com/jvm-operation-principle/">
-                  <h2 class="post-title">JAVA程序运行原理分析</h2>
-                </a>
-                <div class="post-date">
-                  2020-07-02
-                </div>
-                <div class="post-abstract">
-					
-					
-						<!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 -->
-						
-						
-							
-							
-						
-							
-							
-						
-							
-							
-						
-						
-							<p><p>我的理解JVM内存结构就是程序由字节码文件读入到jvm中解析存储到执行所需要的一些东西</p>
-<h2 id="class文件内容">class文件内容</h2>
-<p>class文件包含JAVA程序执行的字节码;数据严格按照格式紧凑排列在class文件中的二进制流,中间无任何分隔符;文件开头有一个0xcafebabe(16进制)特殊的一个标志.</p>
-
-								
-							<p>
-							<!-- 加个more链接 -->
-							<a href="https://www.sunjianbo.com/jvm-operation-principle/">more →</a>
 						
 					
                 </div>

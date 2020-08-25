@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>线程安全以及原子操作 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link href="https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css" rel="stylesheet">
+<!--
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+-->
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1598341584536">
+<link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-160052000-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-160052000-1');
+</script>
+
+
+    <meta name="description" content="线程安全概念
+竞态条件与临界区
+public class Demo{
+    public int i=0;
+    public void incr(){
+        i++
+    }
+}
+
+多个线程访问了相同的资源,向这些资源做了..." />
+    <meta name="keywords" content="高性能编程专题,java" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://www.sunjianbo.com">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1598341584536" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Book
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/sun_jianbo" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://weibo.com/u/1967178011" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/sun-jian-bo-59" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.facebook.com/profile.php?id=100011365915451" target="_blank">
+            <i class="fab fa-facebook"></i>
+          </a>
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://beian.miit.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://www.sunjianbo.com/atom.xml" target="_blank">RSS</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			又拍云提供网络及存储支持
+		</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			<img height="35px" width="90px" src="https://img.juemuren4449.com/4ff5b7d3ed727d330fcdda17165de906.png">
+		</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">线程安全以及原子操作</h2>
+            <div class="post-date">2020-08-25</div>
+            
+            <div class="post-content" v-pre>
+              <h2 id="线程安全概念">线程安全概念</h2>
+<h3 id="竞态条件与临界区">竞态条件与临界区</h3>
+<pre><code class="language-java">public class Demo{
+    public int i=0;
+    public void incr(){
+        i++
+    }
+}
+</code></pre>
+<p>多个线程访问了相同的资源,向这些资源做了<strong>写操作</strong>时,对执行顺序有要求</p>
+<p>临界区:incr方法內部就是临界区域,关键部分代码的多线程并发执行,会对执行结果产生影响。</p>
+<p>竞态条件:可能发生在临界区域内的特殊条件。多线程执行incr方法中的i++关键代码时,就产生了竞态条件。</p>
+<h2 id="一些情况是线程安全的">一些情况是线程安全的</h2>
+<h3 id="资源不共享">资源不共享</h3>
+<p>如果一段代码是线程安全的,则它不包含竞态条件。只有当多个线程更新共享资源时,才会发生竞态条件。</p>
+<p>栈封闭时,不会在线程之间共享的变量,都是线程安全的。</p>
+<p>局部对象引用本身不共享,但是引用的对象存储在共享堆中。如果方法內创建的对象,只是在方法中传递,并且不对其他线程可用,那么也是线程安全的。</p>
+<pre><code class="language-java">//例子
+public void someMethod(){
+    LocalObject localObject = new LocalObject();
+    localObject.callMethod();
+    method2(localObject);
+}
+public void method2(LocalObject localObject{
+	localObject.setValue(&quot;value&quot;);
+}
+</code></pre>
+<blockquote>
+<p>判定规则:如果创建、使用和处理资源,永远不会逃脱单个线程的控制,该资源的使用是线程安全的。</p>
+</blockquote>
+<h3 id="对象不可变">对象不可变</h3>
+<p>创建不可变的共享对象来保证对象在线程间共享时不会被修改,从而实现线程安全。</p>
+<p>实例被创建,value变量就不能再被修改,这就是不可变性。</p>
+<pre><code class="language-java">//比如没有提供set方法的私有属性
+public class Demo{
+    private int value =0;
+    public Demo(int value){
+        this.value= value
+    }
+    public int getValue(){
+        return this.value;
+    }
+}
+</code></pre>
+<h3 id="原子操作">原子操作</h3>
+<h4 id="原子操作定义">原子操作定义</h4>
+<p>原子操作可以是一个步骤,也可以是多个操作步骤,但是其顺序不可以被打乱,也不可以被切割而只执行其中的一部分(不可中断性)。</p>
+<p><font color=red>将整个操作视作一个整体是原子性的核心特征。</font></p>
+<p>最开始例子里面的i++就不是一个原子操作,她包含三步骤:</p>
+<ol>
+<li>加载i</li>
+<li>计算+1</li>
+<li>赋值i</li>
+</ol>
+<p>存在竞态条件的情况下,线程不安全,需要转变为原子操作才能安全。</p>
+<h4 id="方式一-循环cas">方式一: 循环CAS</h4>
+<h5 id="cas机制">CAS机制</h5>
+<p><code>Compare and swap</code>比较和交换。属于硬件同步原语,处理器提供了基本内存操作的原子性保证。</p>
+<p>CAS操作需要输入两个数值,一个旧值A(期望操作前的值)和一个新值B,在操作期间先比较下旧值有没有发生变化,如果没有发生变化,才交换成新值,发生了变化则不交换。(类似乐观锁)</p>
+<p>JAVA中的 <code>sun.misc.Unsafe</code>类,提供了 <code>compareAndSwaplnt()</code>和 <code>compareAndSwapLong()</code>等几个方法实现CAS</p>
+<pre><code class="language-java">package com.study.lock.lock;
+
+import sun.misc.Unsafe;
+import java.lang.reflect.Field;
+
+public class LockDemo1 {
+    volatile int value = 0;
+
+    static Unsafe unsafe; // 直接操作内存，修改对象，数组内存....强大的API
+    private static long valueOffset;
+
+    static {
+        try {
+            // 反射技术获取unsafe值
+            Field field = Unsafe.class.getDeclaredField(&quot;theUnsafe&quot;);
+            field.setAccessible(true);
+            unsafe = (Unsafe) field.get(null);
+
+            // 获取到 value 属性偏移量（用于定位value属性在内存中的具体地址）
+            valueOffset = unsafe.objectFieldOffset(LockDemo1.class
+                    .getDeclaredField(&quot;value&quot;));
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void add() {
+        // TODO xx00
+        // i++;// JAVA 层面三个步骤
+        // CAS + 循环 重试
+        int current;
+        do {
+            // 操作耗时的话， 那么 线程就会占用大量的CPU执行时间
+            current = unsafe.getIntVolatile(this, valueOffset);
+        } while (!unsafe.compareAndSwapInt(this, valueOffset, current, current + 1));
+        // 因为跨平台的问题,而我们是用反射的非正常方式获得unsafe,所以可能会失败
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        LockDemo1 ld = new LockDemo1();
+
+        for (int i = 0; i &lt; 2; i++) {
+            new Thread(() -&gt; {
+                for (int j = 0; j &lt; 10000; j++) {
+                    ld.add();
+                }
+            }).start();
+        }
+        Thread.sleep(2000L);
+        System.out.println(ld.value);
+    }
+}
+</code></pre>
+<blockquote>
+<p>其实AtomicInteger这些封装类的底层就是这么写的</p>
+</blockquote>
+<h5 id="javautilconcurrent包内的原子操作封装类">java.util.concurrent包内的原子操作封装类</h5>
+<ul>
+<li>
+<p>AtomicBoolean:原子更新布尔类型</p>
+</li>
+<li>
+<p>AtomicInteger:原子更新整型</p>
+</li>
+<li>
+<p>AtomicLong:原子更新长整型</p>
+</li>
+<li>
+<p>AtomicIntegerArray:原子更新整型数组里的元素</p>
+</li>
+<li>
+<p>AtomicLongArray:原子更新长整型数组里的元素</p>
+</li>
+<li>
+<p>AtomicReferenceArray:原子更新引用类型数组里的元素</p>
+</li>
+<li>
+<p>AtomiclntegerFieldUpdater:原子更新整型的字段的更新器</p>
+</li>
+<li>
+<p>AtomicLongFieldUpdater:原子更新长整型字段的更新器</p>
+</li>
+<li>
+<p>AtomicReferenceFieldUpdater:原子更新引用类型里的字段</p>
+</li>
+<li>
+<p>AtomicReference:原子更新引用类型</p>
+</li>
+<li>
+<p>AtomicStampedReference:原子更新带有版本号的引用类型</p>
+</li>
+<li>
+<p>AtomicMarkableReference:原子更新带有标记位的引用类型。</p>
+<p>jdk1.8更新</p>
+</li>
+<li>
+<p>更新器: DoubleAccumulator、 LongAccumulator</p>
+</li>
+<li>
+<p>计数器: DoubleAdder、 LongAdder(一个使用场景是统计接口调用次数时可使用)</p>
+</li>
+</ul>
+<blockquote>
+<p>计数器增强版,高并发下性能更好</p>
+<p>频繁更新但不太频繁读取的汇总统计信息时使用</p>
+<p>分成多个操作单元,不同线程更新不同的单元只有需要汇总的时候才计算所有单元的操作</p>
+</blockquote>
+<blockquote>
+<p>即分成多个值(Cell)减少竞争,对外暴露一个虚拟值,最后取得时候使用sum()把多个内存块的Cell相加</p>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/image-20200825135731552.png" alt="image-20200825135731552" loading="lazy"></figure>
+</blockquote>
+<h5 id="三个缺点">三个缺点:</h5>
+<ol>
+<li>循环+CAS,自旋的实现让所有线程都处于高频运行,争抢CPU执行时间的状态。如果操作长时间不成功,会带来很大的cPU资源消耗。</li>
+<li>仅针对单个变量的操作,不能用于多个变量来实现原子操作。即很长的代码没法用CAS</li>
+<li>ABA问题。(详情查看:<a href="https://www.sunjianbo.com/cas-aba/">https://www.sunjianbo.com/cas-aba/</a>)。</li>
+</ol>
+<h4 id="方式二-锁">方式二: 锁</h4>
+<p>锁能保证可见性,是基于Happens-before原则</p>
+<p>一个线程的unlock一定执行在另一个线程的lock前面,也就是说另一个线程不会插进该线程的执行过程(lock-&gt;op-&gt;unlock)中</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://www.sunjianbo.com/tag/0-v5Z7UgP/" class="tag">
+                    高性能编程专题
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/0tmsVkBYC52/" class="tag">
+                    java
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://www.sunjianbo.com/cas-aba/">
+                  <h3 class="post-title">
+                    Java CAS ABA问题发生的场景分析(转)
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>
