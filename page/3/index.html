@@ -11,7 +11,7 @@
 <!--
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 -->
-<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1598341584536">
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1598603334262">
 <link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
 
 
@@ -40,7 +40,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://www.sunjianbo.com">
-        <img src="https://www.sunjianbo.com/images/avatar.png?v=1598341584536" class="site-logo">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1598603334262" class="site-logo">
         <h1 class="site-title">孙建博的小站</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -136,6 +136,28 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://www.sunjianbo.com/gridea-auto-excerpt/">
+                  <h2 class="post-title">Gridea主题修改之自动摘要</h2>
+                </a>
+                <div class="post-date">
+                  2020-03-11
+                </div>
+                <div class="post-abstract">
+					<p>Gridea的部分主题并不带有自动摘要功能,如果需要摘要得先在文章中手动插入<code>&lt;!--more--&gt;</code>标记.否则首页就是光溜溜的一片标题,看起来很不舒服.</p>
+<p>而且像我这样直接从WordPress迁移很多文章过来的也不可能挨篇文章去加<code>&lt;!--more--&gt;</code>标记,所以动手修改主题以达到首页自动显示摘要的目的.</p>
+<p>本文以Gridea自带主题&lt;Simple1.1.0&gt;为例,讲述如何通过js代码修改添加自定义配置并完成自动摘要功能,修改方法大同小异,其他主题也可以参考.</p>
+
+					
+						<!-- 有手动摘要则加个more链接 -->
+						<a href="https://www.sunjianbo.com/gridea-auto-excerpt/">more →</a>
+					
+                </div>
+              </div>
+              
+            </article>
           
             <article class="post-item">
               <div class="left">
@@ -470,48 +492,6 @@
 							<p>
 							<!-- 加个more链接 -->
 							<a href="https://www.sunjianbo.com/https/">more →</a>
-						
-					
-                </div>
-              </div>
-              
-            </article>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://www.sunjianbo.com/lostbtpwd/">
-                  <h2 class="post-title">忘记Linux 3.X/4.x/5.x 宝塔面板密码的解决方案</h2>
-                </a>
-                <div class="post-date">
-                  2017-10-14
-                </div>
-                <div class="post-abstract">
-					
-					
-						<!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 -->
-						
-						
-							
-							
-						
-							
-							
-						
-							
-							
-						
-						
-							<p><p>如果是忘记了默认密码</p>
-<p>可以输入以下命令回车找回默认初始密码（默认账号admin）</p>
-<pre><code>cat /www/server/panel/default.pl
-
-								
-									<!-- 自动摘要出来的内容有<code则补上结尾,防止格式错误 -->
-									</code></pre>
-								
-							<p>
-							<!-- 加个more链接 -->
-							<a href="https://www.sunjianbo.com/lostbtpwd/">more →</a>
 						
 					
                 </div>
