@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-08-28T08:28:59.114Z</updated>
+    <updated>2020-08-31T07:23:19.805Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -10,6 +10,46 @@
     <logo>https://www.sunjianbo.com/images/avatar.png</logo>
     <icon>https://www.sunjianbo.com/favicon.ico</icon>
     <rights>All rights reserved 2020, 孙建博的小站</rights>
+    <entry>
+        <title type="html"><![CDATA[简七理财001-小白理财第一课]]></title>
+        <id>https://www.sunjianbo.com/jianqilicai001/</id>
+        <link href="https://www.sunjianbo.com/jianqilicai001/">
+        </link>
+        <updated>2020-08-31T07:19:30.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>书名:</strong>	简七理财001-小白理财第一课</p>
+<p><strong>作者:</strong>	简七理财</p>
+<p><strong>阅读时间:</strong>	20200826~20200827</p>
+<hr>
+<h4 id="读后感">读后感:</h4>
+<p>拿到掌阅f1第一天,随便找了本看起来顺眼的书开始打卡</p>
+<p>断断续续累积两个小时读完,这个时间用的有点长了,以后这种书还是要读的更快一点</p>
+<p>书看起来是13年的,很多东西过时了,甚至里面还推荐大家买P2P理财【瑟瑟发抖】</p>
+<p>整个看下来发现最有用的还是自我投资这一部分,其他的看过就忘就好,对我来说没什么价值</p>
+<h4 id="笔记">笔记:</h4>
+<p>理财不是让我们不花钱，而是让我们成为金钱的主人，通过规划去更好的更安心的生活</p>
+<p>一个人能够取得的最终成就，不是由你的起点决定的，而是在过程中是否能有清晰的目标、保持规划并且严格的执行。所以你的生活会变得怎么样，完全取决于你愿不愿意从现在开始去规划自己的未来。</p>
+<p>投资自己四部曲</p>
+<ol>
+<li>
+<p>投资自己的视野和洞察力</p>
+<p>方式一是阅读，大量的阅读。方式二是旅行，勇敢滴旅行。</p>
+</li>
+<li>
+<p>投资自己挑战的勇气和技巧</p>
+<p>如何定义“挑战”？手到擒来那不算，要就要踮起脚尖来都够不到，必须跳起来才有机会触到的才是真正的挑战。</p>
+<p>☆尝试一次练摊儿：比如在圣诞节晚上去商业街兜售小饰品，并与城管斗智斗勇； ☆尝试一个人旅行：从做攻略到完成旅行全程靠自己完成，如要增加难度可考虑出境游；</p>
+<p>☆尝试在100人面前演讲：主动申请一个机会，在一群人面前演讲一个你感兴趣的题目； ☆坚持一种运动的习惯：例如坚持晨跑、或者坚持游泳三个月。</p>
+</li>
+<li>
+<p>投资自己独特的眼光和方法论</p>
+<p>除了阅读、学习、体验之外，还要会总结和提炼</p>
+</li>
+<li>
+<p>投资自己的心态和情绪管理</p>
+</li>
+</ol>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[JAVA锁相关]]></title>
         <id>https://www.sunjianbo.com/synchronized/</id>
@@ -1901,23 +1941,6 @@ y=z;
 <h2 id="结语">结语</h2>
 <p>这个章节是后面<strong>JVM线程安全问题的铺垫</strong>。<br>
 同时，也看到了现代CPU不断演进，在程序运行优化中做出的努力。不同CPU厂商所付出的人力物力成本，最终体现在不同CPU性能差距上。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[clash for windows升级后发现socks端口合并到7890了]]></title>
-        <id>https://www.sunjianbo.com/clash-for-windows-socks-port-7890/</id>
-        <link href="https://www.sunjianbo.com/clash-for-windows-socks-port-7890/">
-        </link>
-        <updated>2020-07-24T01:19:11.000Z</updated>
-        <content type="html"><![CDATA[<p>昨天手贱更新了一下订阅,结果不能用了,估计是规则进行了更新,没办法只好升级clash.</p>
-<p>新版clash页面大改</p>
-<p>升级完之后chrome怎么都上不去,后来仔细一看发现最新版0.11.1只写了一个端口7890</p>
-<p>查看发布日志发现在0.10.2版本的时候将端口进行了合并</p>
-<blockquote>
-<p>migrate to mixed-port from port and socks-port</p>
-</blockquote>
-<p>虽说一个端口混合了http和socks用起来确实方便了,但是我这样的老用户还真是有点麻烦了,首先要改浏览器插件SwitchyOmega里面的端口,然后还要改Proxifier里面的端口.</p>
-<p>关键是要是没注意到端口变化的人还真是要浪费很多的时间来排查问题.</p>
 ]]></content>
     </entry>
 </feed>
