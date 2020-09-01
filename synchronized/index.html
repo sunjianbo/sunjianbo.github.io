@@ -11,7 +11,7 @@
 <!--
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 -->
-<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1598858583447">
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1598949018956">
 <link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
 
 
@@ -55,7 +55,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://www.sunjianbo.com">
-        <img src="https://www.sunjianbo.com/images/avatar.png?v=1598858583447" class="site-logo">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1598949018956" class="site-logo">
         <h1 class="site-title">孙建博的小站</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -426,7 +426,7 @@ public class ObjectSyncDemo4 {
 </blockquote>
 <h2 id="reentrantlock">ReentrantLock</h2>
 <p>独享锁;支持公平锁、非公平锁两种模式;可重入锁;</p>
-<p><code>ReentrantLock</code>在上锁时，会根据实例化时指定的策略去获取锁，默认为非公平锁。如果上锁成功，锁状态值+1(重入，最大次数为 <code>Integer.MAX_VALUE</code>)，并将锁持有者设置为当前线程实例。在 <code>Sync</code> 内部维护了一个队列，存放了所有上锁失败的线程。公平锁在上锁前，会检查在自己前面是否还有其他线程等待，如果有就放弃竞争，继续等待。而非公平锁会抓住每个机会，不管是否前面是否还有其它线程等待，只顾上锁</p>
+<p><code>ReentrantLock</code>在上锁时，会根据实例化时指定的策略去获取锁，默认为非公平锁。如果上锁成功，锁状态值+1(重入，最大次数为 <code>Integer.MAX_VALUE</code>)，并将锁持有者设置为当前线程实例。在 <code>Sync(AQS)</code> 内部维护了一个队列，存放了所有上锁失败的线程。公平锁在上锁前，会检查在自己前面是否还有其他线程等待，如果有就放弃竞争，继续等待。而非公平锁会抓住每个机会，不管是否前面是否还有其它线程等待，只顾上锁</p>
 <p><code>ReetrantLock</code>在释放锁时，将状态计数器减一(重入)，当状态计数器为0时，锁可用。此时再从等待队列中寻找合适的线程唤醒，默认从队首开始，如果队列正在更新中，且未找到合适的线程，那么从队尾开始寻找。</p>
 <h2 id="readwritelock">ReadWriteLock</h2>
 <p>维护一对关联锁,一个用于只读操作,一个用于写入;读锁可以由多个读线程同时持有,写锁是排他的。</p>

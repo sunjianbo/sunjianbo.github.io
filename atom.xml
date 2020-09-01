@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-08-31T07:23:19.805Z</updated>
+    <updated>2020-09-01T08:44:21.847Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -20,12 +20,12 @@
 <p><strong>作者:</strong>	简七理财</p>
 <p><strong>阅读时间:</strong>	20200826~20200827</p>
 <hr>
-<h4 id="读后感">读后感:</h4>
+<h3 id="读后感">读后感:</h3>
 <p>拿到掌阅f1第一天,随便找了本看起来顺眼的书开始打卡</p>
 <p>断断续续累积两个小时读完,这个时间用的有点长了,以后这种书还是要读的更快一点</p>
 <p>书看起来是13年的,很多东西过时了,甚至里面还推荐大家买P2P理财【瑟瑟发抖】</p>
 <p>整个看下来发现最有用的还是自我投资这一部分,其他的看过就忘就好,对我来说没什么价值</p>
-<h4 id="笔记">笔记:</h4>
+<h3 id="笔记">笔记:</h3>
 <p>理财不是让我们不花钱，而是让我们成为金钱的主人，通过规划去更好的更安心的生活</p>
 <p>一个人能够取得的最终成就，不是由你的起点决定的，而是在过程中是否能有清晰的目标、保持规划并且严格的执行。所以你的生活会变得怎么样，完全取决于你愿不愿意从现在开始去规划自己的未来。</p>
 <p>投资自己四部曲</p>
@@ -320,7 +320,7 @@ public class ObjectSyncDemo4 {
 </blockquote>
 <h2 id="reentrantlock">ReentrantLock</h2>
 <p>独享锁;支持公平锁、非公平锁两种模式;可重入锁;</p>
-<p><code>ReentrantLock</code>在上锁时，会根据实例化时指定的策略去获取锁，默认为非公平锁。如果上锁成功，锁状态值+1(重入，最大次数为 <code>Integer.MAX_VALUE</code>)，并将锁持有者设置为当前线程实例。在 <code>Sync</code> 内部维护了一个队列，存放了所有上锁失败的线程。公平锁在上锁前，会检查在自己前面是否还有其他线程等待，如果有就放弃竞争，继续等待。而非公平锁会抓住每个机会，不管是否前面是否还有其它线程等待，只顾上锁</p>
+<p><code>ReentrantLock</code>在上锁时，会根据实例化时指定的策略去获取锁，默认为非公平锁。如果上锁成功，锁状态值+1(重入，最大次数为 <code>Integer.MAX_VALUE</code>)，并将锁持有者设置为当前线程实例。在 <code>Sync(AQS)</code> 内部维护了一个队列，存放了所有上锁失败的线程。公平锁在上锁前，会检查在自己前面是否还有其他线程等待，如果有就放弃竞争，继续等待。而非公平锁会抓住每个机会，不管是否前面是否还有其它线程等待，只顾上锁</p>
 <p><code>ReetrantLock</code>在释放锁时，将状态计数器减一(重入)，当状态计数器为0时，锁可用。此时再从等待队列中寻找合适的线程唤醒，默认从队首开始，如果队列正在更新中，且未找到合适的线程，那么从队尾开始寻找。</p>
 <h2 id="readwritelock">ReadWriteLock</h2>
 <p>维护一对关联锁,一个用于只读操作,一个用于写入;读锁可以由多个读线程同时持有,写锁是排他的。</p>
