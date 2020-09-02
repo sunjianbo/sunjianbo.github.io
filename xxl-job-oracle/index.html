@@ -11,7 +11,7 @@
 <!--
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 -->
-<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1598949018956">
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1599013465098">
 <link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
 
 
@@ -51,7 +51,7 @@ doc/db/tables_xxl_job.sql
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://www.sunjianbo.com">
-        <img src="https://www.sunjianbo.com/images/avatar.png?v=1598949018956" class="site-logo">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1599013465098" class="site-logo">
         <h1 class="site-title">孙建博的小站</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -248,7 +248,14 @@ spring.datasource.tomcat.validation-query=SELECT 1 FROM DUAL
 <li>增加jdbcType以防空值报错</li>
 </ul>
 <p><strong>注意:</strong></p>
-<p>如果加jdbcType的话,XxlJobInfoMapper.xml中有两个属性写的是<code>${executorTimeout}``${executorFailRetryCount}</code>,注意改成#{}</p>
+<p>如果加jdbcType的话,XxlJobInfoMapper.xml中有两个属性写的是<code>${executorTimeout},${executorFailRetryCount}</code>,注意改成#{}</p>
+<h2 id="后续bug修复">后续bug修复</h2>
+<blockquote>
+<p>2020-09-02更新</p>
+</blockquote>
+<p>修改<code>com.xxl.job.admin.core.thread.JobLogReportHelper</code>类</p>
+<p>74~76行的<code>triggerdaycount</code>,<code>triggerDayCountRunning</code>,<code>triggerDayCountSuc</code>改为全大写,共6处</p>
+<p>以修复报表问题</p>
 
             </div>
             
