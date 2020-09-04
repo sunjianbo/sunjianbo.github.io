@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-09-02T02:24:41.167Z</updated>
+    <updated>2020-09-04T07:25:35.075Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
@@ -10,6 +10,380 @@
     <logo>https://www.sunjianbo.com/images/avatar.png</logo>
     <icon>https://www.sunjianbo.com/favicon.ico</icon>
     <rights>All rights reserved 2020, 孙建博的小站</rights>
+    <entry>
+        <title type="html"><![CDATA[AQS抽象队列同步器详解]]></title>
+        <id>https://www.sunjianbo.com/aqs/</id>
+        <link href="https://www.sunjianbo.com/aqs/">
+        </link>
+        <updated>2020-09-04T07:24:54.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="1-观察一下锁的基本功能">1. 观察一下锁的基本功能</h2>
+<p>同步锁的本质 - 排队</p>
+<p><code>同步的方式:</code>独享锁-单个队列窗口,共享锁-多个队列窗口</p>
+<p><code>抢锁的方式:</code>插队抢(不公平锁)、先来后到抢锁(公平锁)</p>
+<p><code>没抢到锁的处理方式:</code>快速尝试多次(CAS自旋锁)、阻塞等待</p>
+<p><code>唤酲阻塞线程的方式(叫号器):</code>全部通知、通知下一个</p>
+<h2 id="2-先手撸一个简单的独占锁">2. 先手撸一个简单的独占锁</h2>
+<pre><code class="language-java">// 自己实现(独享锁) - 常用的
+public class MyLock implements Lock {
+     // 如何判断一个锁的状态,或者说 
+    volatile  AtomicReference&lt;Thread&gt; owner = new AtomicReference&lt;&gt;();
+    // 保存正在等待的线程
+    volatile LinkedBlockingQueue&lt;Thread&gt; waiters = new LinkedBlockingQueue&lt;&gt;();
+
+    @Override
+    public boolean tryLock() {
+        return owner.compareAndSet(null, Thread.currentThread());
+    }
+
+    @Override
+    public void lock() {
+        boolean addQ = true;//防止重复加入集合,这里用了最简单的方式,演示,多少有点问题,领会精神就行
+        while (!tryLock()) {
+            if (addQ) {
+                // 没拿到锁,加入到等待集合
+                waiters.offer(Thread.currentThread());
+                addQ = false;
+            } else {
+                // 阻塞 挂起当前线程
+                LockSupport.park();//伪唤醒,就是非unpark唤醒的,所以上面用while
+                // 后续，等待其他线程释放锁，收到通知之后继续循环
+            }
+        }
+        waiters.remove(Thread.currentThread());
+    }
+
+    @Override
+    public void unlock() {
+        // cas 修改 owner 拥有者
+        if (owner.compareAndSet(Thread.currentThread(), null)) {
+            Iterator&lt;Thread&gt; iterator = waiters.iterator();
+            while (iterator.hasNext()) {
+                Thread waiter = iterator.next();
+                LockSupport.unpark(waiter); // 唤醒线程继续 抢锁
+            }
+
+        }
+    }
+    ...
+</code></pre>
+<p>嗯,写的很不错,查看一下java源码看看是不是差不多</p>
+<pre><code class="language-java">public class ReentrantLock {
+    private final Sync sync;
+
+    abstract static class Sync extends AbstractQueuedSynchronizer {
+        ...
+    }
+
+    public void lock() {
+        sync.lock();
+    }
+
+    public boolean tryLock() {
+        return sync.nonfairTryAcquire(1);
+    }
+
+    public void unlock() {
+        sync.release(1);
+    }
+</code></pre>
+<p>嗯?源码怎么这么简洁,<code>sync</code>是什么鬼?</p>
+<p><code>Sync extends AbstractQueuedSynchronizer</code></p>
+<p>这就是<strong>AQS</strong></p>
+<h2 id="3-aqs抽象队列同步器的概念">3. AQS抽象队列同步器的概念</h2>
+<p>提供了对资源占用、释放,线程的等待、唤醒等等接口的定义和具体实现</p>
+<p>可以用在各种需要控制资源争用的场景中。(ReentrantLock/ CountDownLatch/ Semphore)</p>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/image-20200831160051565.png" alt="image-20200831160051565" loading="lazy"></figure>
+<p><code>acquire、 acquireShared:</code>定义了资源争用的逻辑,如果没拿到,则等待。</p>
+<p><code>tryAcquire、 tryAcquireShared:</code>实际执行占用资源的操作,内容由使用者具体去实现。</p>
+<p><code>release、 releaseShared:</code>定义释放资源的逻辑,释放之后,通知后续节点进行争抢。</p>
+<p><code>tryRelease、 tryReleaseShared:</code>实际执行资源释放的操作,具体内容由AQS使用者去实现。</p>
+<h2 id="4-我们也自己整一个aqs">4. 我们也自己整一个AQS</h2>
+<pre><code class="language-java">// 抽象队列同步器 - 还是独占的
+// state， owner， waiters
+public class MyAqs {
+    // 1、 如何判断一个资源的拥有者
+    public volatile AtomicReference&lt;Thread&gt; owner = new AtomicReference&lt;&gt;();
+    // 保存 正在等待的线程
+    public volatile LinkedBlockingQueue&lt;Thread&gt; waiters = new LinkedBlockingQueue&lt;&gt;();
+    
+    public boolean tryAcquire() { // 交给使用者去实现。 模板方法设计模式
+        throw new UnsupportedOperationException();
+    }
+
+    public void acquire() {
+        boolean addQ = true;
+        while (!tryAcquire()) {
+            if (addQ) {
+                // 没拿到锁，加入到等待集合
+                waiters.offer(Thread.currentThread());
+                addQ = false;
+            } else {
+                // 阻塞 挂起当前的线程，不要继续往下跑了
+                LockSupport.park(); // 伪唤醒，就是非unpark唤醒的
+            }
+        }
+        waiters.remove(Thread.currentThread()); // 把线程移除
+    }
+
+    public boolean tryRelease() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void release() { // 定义了 释放资源之后要做的操作
+        if (tryRelease()) {
+            // 通知等待者
+            Iterator&lt;Thread&gt; iterator = waiters.iterator();
+            while (iterator.hasNext()) {
+                Thread next = iterator.next();
+                LockSupport.unpark(next); // 唤醒
+            }
+        }
+    }
+}
+</code></pre>
+<p>然后在MyLock中使用AQS</p>
+<pre><code class="language-java">// 自己实现(独享锁) - 常用的
+public class MyLock implements Lock {
+	// 抽象工具类AQS
+    MyAqs aqs = new MyAqs(){
+        @Override
+        public boolean tryAcquire() {
+            return owner.compareAndSet(null, Thread.currentThread());
+        }
+
+        @Override
+        public boolean tryRelease() {
+            // 可重入的情况下，要判断资源的占用情况（state字段保存了资源的占用次数）
+            return owner.compareAndSet(Thread.currentThread(), null);
+        }
+    };
+
+    @Override
+    public boolean tryLock() {
+        return aqs.tryAcquire();
+    }
+
+    @Override
+    public void lock() {
+        aqs.acquire();
+    }
+
+    @Override
+    public void unlock() {
+        aqs.release();
+    }
+    ...
+</code></pre>
+<p>这样就和ReentrantLock源码差不多了,源码大体思路就是这样,只是源码AQS考虑了更多适用的情况,添加了更多的功能</p>
+<p>比如公平锁和非公平锁的实现,公平锁是lock()直接进去资源争抢阶段acquire();非公平锁是lock()进来先尝试直接占用资源,然后才进入acquire()争抢</p>
+<p>而且等待队列不是用的Queue而是用的链表,其中也使用了很多CAS,有兴趣的可以完整看一遍.</p>
+<p>补充一份资源占用流程</p>
+<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/image-20200901144318257.png" alt="image-20200901144318257" loading="lazy"></figure>
+<h2 id="5-aqs的其他应用-信号量-倒计数器和回环栅栏">5. AQS的其他应用 - 信号量、倒计数器和回环栅栏</h2>
+<p>AQS是一种很优雅的抽象,她还可以用来实现更多的操作</p>
+<p>再说应用之前我们还要补充一下AQS中共享的资源占用的一些方法</p>
+<h3 id="51-完善一下我们的aqs">5.1 完善一下我们的AQS</h3>
+<p>这里增加一些共享资源争用的方法,其实就是前面提到的<code>acquireShared,tryAcquireShared,releaseShared,tryReleaseShared</code></p>
+<p><code>release、 releaseShared:</code>定义释放资源的逻辑,释放之后,通知后续节点进行争抢。</p>
+<p><code>tryRelease、 tryReleaseShared:</code>实际执行资源释放的操作,具体内容由AQS使用者去实现</p>
+<pre><code class="language-java"> 	// 记录资源状态
+    public volatile AtomicInteger state = new AtomicInteger(0);
+    public AtomicInteger getState() { return state; }
+    public void setState(AtomicInteger state) { this.state = state; }
+
+	// 共享资源占用的逻辑，返回资源的占用情况
+    public int tryAcquireShared(){
+        throw new UnsupportedOperationException();
+    }
+
+    public void acquireShared(){
+        boolean addQ = true;
+        while(tryAcquireShared() &lt; 0) {
+            if (addQ) {
+                // 没拿到锁，加入到等待集合
+                waiters.offer(Thread.currentThread());
+                addQ = false;
+            } else {
+                // 阻塞 挂起当前的线程，不要继续往下跑了
+                LockSupport.park(); // 伪唤醒，就是非unpark唤醒的
+            }
+        }
+        waiters.remove(Thread.currentThread()); // 把线程移除
+    }
+
+    public boolean tryReleaseShared(){
+        throw new UnsupportedOperationException();
+    }
+
+    public void releaseShared(){
+        if (tryReleaseShared()) {
+            // 通知等待者
+            Iterator&lt;Thread&gt; iterator = waiters.iterator();
+            while (iterator.hasNext()) {
+                Thread next = iterator.next();
+                LockSupport.unpark(next); // 唤醒
+            }
+        }
+    }
+ 	// 独占资源相关的代码
+	...
+</code></pre>
+<h3 id="52-semaphore">5.2 Semaphore</h3>
+<p>又称&quot;信号量&quot;,控制多个线程争抢许可。</p>
+<ul>
+<li><code>acquire:</code>获取一个许可,如果没有就等待</li>
+<li><code>release:</code>释放一个许可。</li>
+<li><code>availablePermits:</code>方法得到可用的许可数目</li>
+</ul>
+<p><strong>使用场景示例</strong></p>
+<ol>
+<li>代码并发处理限流(hystrix)</li>
+</ol>
+<h4 id="照例手撸一个mysemaphore">照例手撸一个MySemaphore</h4>
+<pre><code class="language-java">// 自定义的信号量实现
+public class MySemaphore {
+    MyAqs aqs = new MyAqs() {
+        @Override
+        public int tryAcquireShared() { // 信号量获取， 数量 - 1
+            for(;;) {
+                int count =  getState().get();
+                int n = count - 1;
+                if(count &lt;= 0 || n &lt; 0) {
+                    return -1;
+                }
+                if(getState().compareAndSet(count, n)) {
+                    return 1;
+                }
+            }
+        }
+
+        @Override
+        public boolean tryReleaseShared() { // state + 1
+            return getState().incrementAndGet() &gt;= 0;
+        }
+    };
+
+    /** 许可数量 */
+    public MySemaphore(int count) {
+        aqs.getState().set(count); // 设置资源的状态
+    }
+
+    public void acquire() {
+        aqs.acquireShared();
+    } // 获取令牌
+
+    public void release() {
+        aqs.releaseShared();
+    } // 释放令牌
+}
+
+</code></pre>
+<h3 id="53-countdownlatch">5.3 CountDownLatch</h3>
+<p>java1.5被引入的一个工具类,常被称为:倒计数器。</p>
+<p>创建对象时,传入指定数值作为线程参与的数量;</p>
+<p><code>await</code>:方法等待计数器值变为0,在这之前,线程进入等待状态;</p>
+<p><code>countdown</code>:计数器数值减一,直到为0;</p>
+<p>经常用于等待其他线程执行到某一节点,再继续执行当前线程代码</p>
+<p><strong>使用场景示例</strong></p>
+<ol>
+<li>统计线程执行的情况</li>
+<li>压力测试中,使用 countDownLatch实现最大程度的并发处理;</li>
+<li>多个线程之间,相互通信,比如线程异步调用完接口,结果通知;</li>
+</ol>
+<blockquote>
+<p>类似田径运动,八个赛道运动员依次准备,等到所有人就绪,裁判才吹响口哨</p>
+</blockquote>
+<h4 id="依旧手撸一个mycountdownlatch">依旧手撸一个MyCountDownLatch</h4>
+<pre><code class="language-java">// CountDownLatch 自己实现
+public class  MyCountDownLatch {
+    MyAqs myAqs = new MyAqs() {
+        @Override
+        public int tryAcquireShared() { // 如果非等于0，代表当前还有线程没准备就绪，则认为需要等待
+            return this.getState().get() == 0 ? 1 : -1;
+        }
+
+        @Override
+        public boolean tryReleaseShared() { // 如果非等于0，代表当前还有线程没准备就绪，则不会通知继续执行
+            return this.getState().decrementAndGet() == 0;
+        }
+    };
+
+    public  MyCountDownLatch(int count) {
+        myAqs.setState(new AtomicInteger(count));
+    }
+
+    public void await() {
+        myAqs.acquireShared();
+    }
+
+    public void countDown() {
+        myAqs.releaseShared();
+    }
+}
+</code></pre>
+<h3 id="54-cyclicbarrier">5.4 CyclicBarrier</h3>
+<p>也是1.5加入的,又称为&quot;线程栅栏&quot;,&quot;回环栅栏&quot;。</p>
+<p>创建对象时,指定栅栏线程数量。</p>
+<p><code>await</code>:等指定数量的线程都处于等待状态时,继续执行后续代码。</p>
+<p><code>barrierAction</code>:线程数量到了指定量之后,自动触发执行指定任务。</p>
+<p>栅栏没有显式的使用AQS,她使用锁,每一个线程获取一把锁,且count--,当count为0时,signalAll()且重置count</p>
+<p><strong>使用场景示例</strong></p>
+<ol>
+<li>数据量比较大时,实现批量插入数据到数据库;</li>
+<li>数据统计,30个线程统计30天数据,全部统计完毕后,执行汇总</li>
+</ol>
+<blockquote>
+<p>类似打游戏,比如吃鸡,每凑够100人就开始一场游戏</p>
+</blockquote>
+<h4 id="撸秃噜皮了的mycyclicbarrier">撸秃噜皮了的MyCyclicBarrier</h4>
+<pre><code class="language-java">public class MyCyclicBarrier {
+    private int count;//计数
+    private int initNum;//用于重置count
+    private Runnable barrierAction;//barrierAction
+    private ReentrantLock lock = new ReentrantLock();
+    private Condition trip = lock.newCondition();
+
+    public MyCyclicBarrier(int initNum, Runnable barrierAction){
+        this.initNum = initNum;
+        this.count = initNum;
+        this.barrierAction = barrierAction;
+    }
+
+    public void await() throws InterruptedException {
+        lock.lock();
+        try {
+            if (--count == 0) {  // tripped 数量够了
+                if (barrierAction != null)
+                    barrierAction.run(); // 触发执行指定的任务
+                // 唤醒等待的线程继续执行。重新计数
+                trip.signalAll(); // 唤醒线程
+                count = initNum; // count重置
+                return;
+            }
+            //没到数量,进入等待
+            trip.await();
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+</code></pre>
+<h3 id="55-countdownlatch和cyclicbarrier的区别">5.5 CountDownLatch和CyclicBarrier的区别</h3>
+<ol>
+<li>
+<p>CountDownLatch只是一次计数, CyclicBarrier对象可多次触发执行;</p>
+</li>
+<li>
+<p>CountDownLatch的多个参与者只是参与计数,不会阻塞本身,后面的代码继续执行,只有等待计数归零的代码在阻塞;</p>
+<p>而CyclicBarrier的多个参与者在执行到await()方法的时候都会被栅栏拦住,直到满足数量的参与者就绪才会开门放行</p>
+<p>所以CountDownLatch相当于一个人在等其他人就绪后做什么,而CyclicBarrier是所有人等其他人就绪后一起开始做什么</p>
+</li>
+<li>
+<p>同时,CountDownLatch需要已知总数,当总数不固定的时候没法使用</p>
+</li>
+</ol>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[简七理财001-小白理财第一课]]></title>
         <id>https://www.sunjianbo.com/jianqilicai001/</id>
@@ -1861,86 +2235,6 @@ public void parkUnparkDeadLockTest() throws Exception {
 <p><code>警告！之前代码中用if语句来判断，是否进入等待状态，是错误的！</code>(上文代码正常的都是使用的while)<br>
 官方建议<code>应该在循环中检查等待条件</code>，原因是处于等待状态的线程可能会收到<code>错误警报和伪唤醒</code>，如果不在循环中检查等待条件，程序就会在没有满足结束条件的情况下退出。</p>
 <p>伪唤醒是指线程并非因为notify,notifyall,unpark等api调用而唤醒,是更底层原因导致的</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[CPU缓存和内存屏障]]></title>
-        <id>https://www.sunjianbo.com/cpu-cache-and-memory-barrier/</id>
-        <link href="https://www.sunjianbo.com/cpu-cache-and-memory-barrier/">
-        </link>
-        <updated>2020-08-06T03:40:13.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="cpu缓存">CPU缓存</h2>
-<p>为了提高程序运行的性能,现代CPU在很多方面对程序进行了优化.</p>
-<p>例如:CPU高速缓存.尽可能地避免处理器访问主内存的时间开销,处理器大多会利用缓存(Cache)以提高性能.</p>
-<h3 id="多级缓存">多级缓存</h3>
-<h4 id="l1-cache一级缓存">L1 Cache(一级缓存)</h4>
-<p>CPU第一层高速缓存,分为数据缓存和指令缓存.一般服务器CPU的L1缓存的容量在32---4096KB</p>
-<h4 id="l2-cache">L2 Cache</h4>
-<p>由于L1级高速缓存容量的限制,为了再次提高CPU的运算速度,在CPU外部放置一高速存储器,即二级缓存</p>
-<h4 id="l3-cache">L3 Cache</h4>
-<p>现在都是内置的,L3缓存的应用可以进一步降低内存延迟,同时提升大数据量计算时处理器的性能.具有较大L3缓存的处理器能提供更有效的文件系统缓存行为及较短消息和处理器队列长度.一般是多核共享一个L3缓存</p>
-<p>CPU在读取数据时,先在L1中寻找,再从L2寻找,再从L3寻找,然后是内存,再后是外存储器(硬盘等)</p>
-<h3 id="缓存同步协议">缓存同步协议</h3>
-<p>多CPU读取同样的数据进行缓存,进行不同运算之后,最终写入主内存以哪个CPU为准?</p>
-<p>在这种高速缓存回写的场景下，有一个缓存一致性协议多数CPU厂商对它进行了实现。</p>
-<p><strong>MESI协议</strong>，它规定每条缓存有个状态位，同时定义了下面四个状态:</p>
-<ul>
-<li>
-<p>**修改态（ Modified）😗*此 cache行已被修改过（脏行），内容已不同于主存，为此 cache专有；</p>
-</li>
-<li>
-<p>**专有态（ Exclusive）😗*此 cache行内容同于主存，但不出现于其它 cache中；</p>
-</li>
-<li>
-<p>**共享态（ Shared）😗*此 cache行内容同于主存，但也出现于其它 cacher中；</p>
-</li>
-<li>
-<p>**无效态（ Invalid）😗*此 cache？行内容无效（空行）。</p>
-</li>
-</ul>
-<p>多处理器时，单个CPU对缓存中数据进行了改动，需要通知给其他CPU.</p>
-<p>也就是意味着，CPU处理要控制自己的读写操作，还要<strong>监听</strong>其他CPU发出的通知，从而保证<strong>最终一致</strong></p>
-<h2 id="cpu指令重排">CPU指令重排</h2>
-<h3 id="实例">实例</h3>
-<pre><code class="language-java">//代码
-x=100;
-y=z;
-</code></pre>
-<p>正常执行的三步骤</p>
-<blockquote>
-<p>1、将100写入X<br>
-2、读取z的值<br>
-3、将z值写入y</p>
-</blockquote>
-<p>重排序后执行</p>
-<blockquote>
-<p>1、读取z的值<br>
-2、将z值写入y<br>
-3、将100写入X</p>
-</blockquote>
-<h3 id="指令重排的场景">指令重排的场景</h3>
-<p>当CPU写缓存时发现缓存区块正被其他CPU占用，为了提高CPU处理性能，可能将后面的读缓存命令优先执行。</p>
-<h3 id="as-if-serial">as-if- serial</h3>
-<p>并非随便重排，需要遵守as-if- serial语义</p>
-<p>as-if- serial语义的意思指：不管怎么重排序（编译器和处理器为了提高并行度），（单线程）程序的执行结果不能被改变。</p>
-<p>编译器， runtime和处理器都必须遵守as-if- serial语义。也就是说：编译器和处理器不会对存在数据依赖关系的操作做重排序。</p>
-<h2 id="两个问题">两个问题</h2>
-<h3 id="cpu高速缓存下的问题">CPU高速缓存下的问题</h3>
-<p>缓存中的数据与主内存的数据并不是实时同步的，各CPU（或CPU核心）间缓存的数据也不是实时同步。<strong>在同一个时间点，各CPU所看到同一内存地址的数据的值可能是不一致的。</strong></p>
-<h3 id="cpu执行指令重排序优化下的问题">CPU执行指令重排序优化下的问题</h3>
-<p>虽然遵守了as- if-seriali语义，单仅在<strong>单CPU</strong>自己执行的情况下<strong>能保证结果正确</strong>。<br>
-<strong>多核多线程中，指令逻辑无法分辨因果关联，可能出现乱序执行，导致程序运行结果错误。</strong></p>
-<h2 id="内存屏障">内存屏障</h2>
-<p>为了解決上述两个问题,处理器提供了两个内存屏障指令（ Memory Barrier）</p>
-<h3 id="写内存屏障-store-memory-barrier">写内存屏障（ Store Memory Barrier)</h3>
-<p>在指令后插入 Store Barrier，能让写入缓存中的最新数据更新写入主内存，让其他线程可见。<br>
-强制写入主内存，这种显示调用，CPU就不会因为性能考虑而去对指令重排。</p>
-<h3 id="读内存屏障-load-memory-barrier">读内存屏障（ Load Memory Barrier.)</h3>
-<p>在指令前插入 Load Barrier，可以让高速缓存中的数据失效，强制从新从主内存加载数据。<br>
-强制读取主内存内容，让CPU缓存与主内存保持一致，避免了缓存导致的一致性问题</p>
-<h2 id="结语">结语</h2>
-<p>这个章节是后面<strong>JVM线程安全问题的铺垫</strong>。<br>
-同时，也看到了现代CPU不断演进，在程序运行优化中做出的努力。不同CPU厂商所付出的人力物力成本，最终体现在不同CPU性能差距上。</p>
 ]]></content>
     </entry>
 </feed>

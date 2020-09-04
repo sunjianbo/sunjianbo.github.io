@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>AQS抽象队列同步器详解 | 孙建博的小站</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link href="https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css" rel="stylesheet">
+<!--
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+-->
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1599204327589">
+<link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-160052000-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-160052000-1');
+</script>
+
+
+    <meta name="description" content="1. 观察一下锁的基本功能
+同步锁的本质 - 排队
+同步的方式:独享锁-单个队列窗口,共享锁-多个队列窗口
+抢锁的方式:插队抢(不公平锁)、先来后到抢锁(公平锁)
+没抢到锁的处理方式:快速尝试多次(CAS自旋锁)、阻塞等待
+唤酲阻塞线程的方..." />
+    <meta name="keywords" content="高性能编程专题,java" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://www.sunjianbo.com">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1599204327589" class="site-logo">
+        <h1 class="site-title">孙建博的小站</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/about" class="site-nav">
+            关于
+          </a>
+        
+      
+        
+          <a href="/tag/9upb3sFdx/" class="site-nav">
+            读书
+          </a>
+        
+      
+        
+          <a href="https://sunjianbo.github.io/learning/" class="site-nav">
+            Study
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/sunjianbo" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://twitter.com/sun_jianbo" target="_blank">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://weibo.com/u/1967178011" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.zhihu.com/people/sun-jian-bo-59" target="_blank">
+            <i class="fab fa-zhihu"></i>
+          </a>
+        
+      
+        
+          <a class="social-link" href="https://www.facebook.com/profile.php?id=100011365915451" target="_blank">
+            <i class="fab fa-facebook"></i>
+          </a>
+        
+      
+    </div>
+    <div class="site-description">
+      互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+ | <a href="http://beian.miit.gov.cn">沪ICP备18003299号-1</a> | <a class="rss" href="https://www.sunjianbo.com/atom.xml" target="_blank">RSS</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			又拍云提供网络及存储支持
+		</a>
+		<br>
+		<a href="https://www.upyun.com/?utm_source=lianmeng&amp;utm_medium=referral/" target="_blank">
+			<img height="35px" width="90px" src="https://img.juemuren4449.com/4ff5b7d3ed727d330fcdda17165de906.png">
+		</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">AQS抽象队列同步器详解</h2>
+            <div class="post-date">2020-09-04</div>
+            
+            <div class="post-content" v-pre>
+              <h2 id="1-观察一下锁的基本功能">1. 观察一下锁的基本功能</h2>
+<p>同步锁的本质 - 排队</p>
+<p><code>同步的方式:</code>独享锁-单个队列窗口,共享锁-多个队列窗口</p>
+<p><code>抢锁的方式:</code>插队抢(不公平锁)、先来后到抢锁(公平锁)</p>
+<p><code>没抢到锁的处理方式:</code>快速尝试多次(CAS自旋锁)、阻塞等待</p>
+<p><code>唤酲阻塞线程的方式(叫号器):</code>全部通知、通知下一个</p>
+<h2 id="2-先手撸一个简单的独占锁">2. 先手撸一个简单的独占锁</h2>
+<pre><code class="language-java">// 自己实现(独享锁) - 常用的
+public class MyLock implements Lock {
+     // 如何判断一个锁的状态,或者说 
+    volatile  AtomicReference&lt;Thread&gt; owner = new AtomicReference&lt;&gt;();
+    // 保存正在等待的线程
+    volatile LinkedBlockingQueue&lt;Thread&gt; waiters = new LinkedBlockingQueue&lt;&gt;();
+
+    @Override
+    public boolean tryLock() {
+        return owner.compareAndSet(null, Thread.currentThread());
+    }
+
+    @Override
+    public void lock() {
+        boolean addQ = true;//防止重复加入集合,这里用了最简单的方式,演示,多少有点问题,领会精神就行
+        while (!tryLock()) {
+            if (addQ) {
+                // 没拿到锁,加入到等待集合
+                waiters.offer(Thread.currentThread());
+                addQ = false;
+            } else {
+                // 阻塞 挂起当前线程
+                LockSupport.park();//伪唤醒,就是非unpark唤醒的,所以上面用while
+                // 后续，等待其他线程释放锁，收到通知之后继续循环
+            }
+        }
+        waiters.remove(Thread.currentThread());
+    }
+
+    @Override
+    public void unlock() {
+        // cas 修改 owner 拥有者
+        if (owner.compareAndSet(Thread.currentThread(), null)) {
+            Iterator&lt;Thread&gt; iterator = waiters.iterator();
+            while (iterator.hasNext()) {
+                Thread waiter = iterator.next();
+                LockSupport.unpark(waiter); // 唤醒线程继续 抢锁
+            }
+
+        }
+    }
+    ...
+</code></pre>
+<p>嗯,写的很不错,查看一下java源码看看是不是差不多</p>
+<pre><code class="language-java">public class ReentrantLock {
+    private final Sync sync;
+
+    abstract static class Sync extends AbstractQueuedSynchronizer {
+        ...
+    }
+
+    public void lock() {
+        sync.lock();
+    }
+
+    public boolean tryLock() {
+        return sync.nonfairTryAcquire(1);
+    }
+
+    public void unlock() {
+        sync.release(1);
+    }
+</code></pre>
+<p>嗯?源码怎么这么简洁,<code>sync</code>是什么鬼?</p>
+<p><code>Sync extends AbstractQueuedSynchronizer</code></p>
+<p>这就是<strong>AQS</strong></p>
+<h2 id="3-aqs抽象队列同步器的概念">3. AQS抽象队列同步器的概念</h2>
+<p>提供了对资源占用、释放,线程的等待、唤醒等等接口的定义和具体实现</p>
+<p>可以用在各种需要控制资源争用的场景中。(ReentrantLock/ CountDownLatch/ Semphore)</p>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/image-20200831160051565.png" alt="image-20200831160051565" loading="lazy"></figure>
+<p><code>acquire、 acquireShared:</code>定义了资源争用的逻辑,如果没拿到,则等待。</p>
+<p><code>tryAcquire、 tryAcquireShared:</code>实际执行占用资源的操作,内容由使用者具体去实现。</p>
+<p><code>release、 releaseShared:</code>定义释放资源的逻辑,释放之后,通知后续节点进行争抢。</p>
+<p><code>tryRelease、 tryReleaseShared:</code>实际执行资源释放的操作,具体内容由AQS使用者去实现。</p>
+<h2 id="4-我们也自己整一个aqs">4. 我们也自己整一个AQS</h2>
+<pre><code class="language-java">// 抽象队列同步器 - 还是独占的
+// state， owner， waiters
+public class MyAqs {
+    // 1、 如何判断一个资源的拥有者
+    public volatile AtomicReference&lt;Thread&gt; owner = new AtomicReference&lt;&gt;();
+    // 保存 正在等待的线程
+    public volatile LinkedBlockingQueue&lt;Thread&gt; waiters = new LinkedBlockingQueue&lt;&gt;();
+    
+    public boolean tryAcquire() { // 交给使用者去实现。 模板方法设计模式
+        throw new UnsupportedOperationException();
+    }
+
+    public void acquire() {
+        boolean addQ = true;
+        while (!tryAcquire()) {
+            if (addQ) {
+                // 没拿到锁，加入到等待集合
+                waiters.offer(Thread.currentThread());
+                addQ = false;
+            } else {
+                // 阻塞 挂起当前的线程，不要继续往下跑了
+                LockSupport.park(); // 伪唤醒，就是非unpark唤醒的
+            }
+        }
+        waiters.remove(Thread.currentThread()); // 把线程移除
+    }
+
+    public boolean tryRelease() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void release() { // 定义了 释放资源之后要做的操作
+        if (tryRelease()) {
+            // 通知等待者
+            Iterator&lt;Thread&gt; iterator = waiters.iterator();
+            while (iterator.hasNext()) {
+                Thread next = iterator.next();
+                LockSupport.unpark(next); // 唤醒
+            }
+        }
+    }
+}
+</code></pre>
+<p>然后在MyLock中使用AQS</p>
+<pre><code class="language-java">// 自己实现(独享锁) - 常用的
+public class MyLock implements Lock {
+	// 抽象工具类AQS
+    MyAqs aqs = new MyAqs(){
+        @Override
+        public boolean tryAcquire() {
+            return owner.compareAndSet(null, Thread.currentThread());
+        }
+
+        @Override
+        public boolean tryRelease() {
+            // 可重入的情况下，要判断资源的占用情况（state字段保存了资源的占用次数）
+            return owner.compareAndSet(Thread.currentThread(), null);
+        }
+    };
+
+    @Override
+    public boolean tryLock() {
+        return aqs.tryAcquire();
+    }
+
+    @Override
+    public void lock() {
+        aqs.acquire();
+    }
+
+    @Override
+    public void unlock() {
+        aqs.release();
+    }
+    ...
+</code></pre>
+<p>这样就和ReentrantLock源码差不多了,源码大体思路就是这样,只是源码AQS考虑了更多适用的情况,添加了更多的功能</p>
+<p>比如公平锁和非公平锁的实现,公平锁是lock()直接进去资源争抢阶段acquire();非公平锁是lock()进来先尝试直接占用资源,然后才进入acquire()争抢</p>
+<p>而且等待队列不是用的Queue而是用的链表,其中也使用了很多CAS,有兴趣的可以完整看一遍.</p>
+<p>补充一份资源占用流程</p>
+<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/image-20200901144318257.png" alt="image-20200901144318257" loading="lazy"></figure>
+<h2 id="5-aqs的其他应用-信号量-倒计数器和回环栅栏">5. AQS的其他应用 - 信号量、倒计数器和回环栅栏</h2>
+<p>AQS是一种很优雅的抽象,她还可以用来实现更多的操作</p>
+<p>再说应用之前我们还要补充一下AQS中共享的资源占用的一些方法</p>
+<h3 id="51-完善一下我们的aqs">5.1 完善一下我们的AQS</h3>
+<p>这里增加一些共享资源争用的方法,其实就是前面提到的<code>acquireShared,tryAcquireShared,releaseShared,tryReleaseShared</code></p>
+<p><code>release、 releaseShared:</code>定义释放资源的逻辑,释放之后,通知后续节点进行争抢。</p>
+<p><code>tryRelease、 tryReleaseShared:</code>实际执行资源释放的操作,具体内容由AQS使用者去实现</p>
+<pre><code class="language-java"> 	// 记录资源状态
+    public volatile AtomicInteger state = new AtomicInteger(0);
+    public AtomicInteger getState() { return state; }
+    public void setState(AtomicInteger state) { this.state = state; }
+
+	// 共享资源占用的逻辑，返回资源的占用情况
+    public int tryAcquireShared(){
+        throw new UnsupportedOperationException();
+    }
+
+    public void acquireShared(){
+        boolean addQ = true;
+        while(tryAcquireShared() &lt; 0) {
+            if (addQ) {
+                // 没拿到锁，加入到等待集合
+                waiters.offer(Thread.currentThread());
+                addQ = false;
+            } else {
+                // 阻塞 挂起当前的线程，不要继续往下跑了
+                LockSupport.park(); // 伪唤醒，就是非unpark唤醒的
+            }
+        }
+        waiters.remove(Thread.currentThread()); // 把线程移除
+    }
+
+    public boolean tryReleaseShared(){
+        throw new UnsupportedOperationException();
+    }
+
+    public void releaseShared(){
+        if (tryReleaseShared()) {
+            // 通知等待者
+            Iterator&lt;Thread&gt; iterator = waiters.iterator();
+            while (iterator.hasNext()) {
+                Thread next = iterator.next();
+                LockSupport.unpark(next); // 唤醒
+            }
+        }
+    }
+ 	// 独占资源相关的代码
+	...
+</code></pre>
+<h3 id="52-semaphore">5.2 Semaphore</h3>
+<p>又称&quot;信号量&quot;,控制多个线程争抢许可。</p>
+<ul>
+<li><code>acquire:</code>获取一个许可,如果没有就等待</li>
+<li><code>release:</code>释放一个许可。</li>
+<li><code>availablePermits:</code>方法得到可用的许可数目</li>
+</ul>
+<p><strong>使用场景示例</strong></p>
+<ol>
+<li>代码并发处理限流(hystrix)</li>
+</ol>
+<h4 id="照例手撸一个mysemaphore">照例手撸一个MySemaphore</h4>
+<pre><code class="language-java">// 自定义的信号量实现
+public class MySemaphore {
+    MyAqs aqs = new MyAqs() {
+        @Override
+        public int tryAcquireShared() { // 信号量获取， 数量 - 1
+            for(;;) {
+                int count =  getState().get();
+                int n = count - 1;
+                if(count &lt;= 0 || n &lt; 0) {
+                    return -1;
+                }
+                if(getState().compareAndSet(count, n)) {
+                    return 1;
+                }
+            }
+        }
+
+        @Override
+        public boolean tryReleaseShared() { // state + 1
+            return getState().incrementAndGet() &gt;= 0;
+        }
+    };
+
+    /** 许可数量 */
+    public MySemaphore(int count) {
+        aqs.getState().set(count); // 设置资源的状态
+    }
+
+    public void acquire() {
+        aqs.acquireShared();
+    } // 获取令牌
+
+    public void release() {
+        aqs.releaseShared();
+    } // 释放令牌
+}
+
+</code></pre>
+<h3 id="53-countdownlatch">5.3 CountDownLatch</h3>
+<p>java1.5被引入的一个工具类,常被称为:倒计数器。</p>
+<p>创建对象时,传入指定数值作为线程参与的数量;</p>
+<p><code>await</code>:方法等待计数器值变为0,在这之前,线程进入等待状态;</p>
+<p><code>countdown</code>:计数器数值减一,直到为0;</p>
+<p>经常用于等待其他线程执行到某一节点,再继续执行当前线程代码</p>
+<p><strong>使用场景示例</strong></p>
+<ol>
+<li>统计线程执行的情况</li>
+<li>压力测试中,使用 countDownLatch实现最大程度的并发处理;</li>
+<li>多个线程之间,相互通信,比如线程异步调用完接口,结果通知;</li>
+</ol>
+<blockquote>
+<p>类似田径运动,八个赛道运动员依次准备,等到所有人就绪,裁判才吹响口哨</p>
+</blockquote>
+<h4 id="依旧手撸一个mycountdownlatch">依旧手撸一个MyCountDownLatch</h4>
+<pre><code class="language-java">// CountDownLatch 自己实现
+public class  MyCountDownLatch {
+    MyAqs myAqs = new MyAqs() {
+        @Override
+        public int tryAcquireShared() { // 如果非等于0，代表当前还有线程没准备就绪，则认为需要等待
+            return this.getState().get() == 0 ? 1 : -1;
+        }
+
+        @Override
+        public boolean tryReleaseShared() { // 如果非等于0，代表当前还有线程没准备就绪，则不会通知继续执行
+            return this.getState().decrementAndGet() == 0;
+        }
+    };
+
+    public  MyCountDownLatch(int count) {
+        myAqs.setState(new AtomicInteger(count));
+    }
+
+    public void await() {
+        myAqs.acquireShared();
+    }
+
+    public void countDown() {
+        myAqs.releaseShared();
+    }
+}
+</code></pre>
+<h3 id="54-cyclicbarrier">5.4 CyclicBarrier</h3>
+<p>也是1.5加入的,又称为&quot;线程栅栏&quot;,&quot;回环栅栏&quot;。</p>
+<p>创建对象时,指定栅栏线程数量。</p>
+<p><code>await</code>:等指定数量的线程都处于等待状态时,继续执行后续代码。</p>
+<p><code>barrierAction</code>:线程数量到了指定量之后,自动触发执行指定任务。</p>
+<p>栅栏没有显式的使用AQS,她使用锁,每一个线程获取一把锁,且count--,当count为0时,signalAll()且重置count</p>
+<p><strong>使用场景示例</strong></p>
+<ol>
+<li>数据量比较大时,实现批量插入数据到数据库;</li>
+<li>数据统计,30个线程统计30天数据,全部统计完毕后,执行汇总</li>
+</ol>
+<blockquote>
+<p>类似打游戏,比如吃鸡,每凑够100人就开始一场游戏</p>
+</blockquote>
+<h4 id="撸秃噜皮了的mycyclicbarrier">撸秃噜皮了的MyCyclicBarrier</h4>
+<pre><code class="language-java">public class MyCyclicBarrier {
+    private int count;//计数
+    private int initNum;//用于重置count
+    private Runnable barrierAction;//barrierAction
+    private ReentrantLock lock = new ReentrantLock();
+    private Condition trip = lock.newCondition();
+
+    public MyCyclicBarrier(int initNum, Runnable barrierAction){
+        this.initNum = initNum;
+        this.count = initNum;
+        this.barrierAction = barrierAction;
+    }
+
+    public void await() throws InterruptedException {
+        lock.lock();
+        try {
+            if (--count == 0) {  // tripped 数量够了
+                if (barrierAction != null)
+                    barrierAction.run(); // 触发执行指定的任务
+                // 唤醒等待的线程继续执行。重新计数
+                trip.signalAll(); // 唤醒线程
+                count = initNum; // count重置
+                return;
+            }
+            //没到数量,进入等待
+            trip.await();
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+</code></pre>
+<h3 id="55-countdownlatch和cyclicbarrier的区别">5.5 CountDownLatch和CyclicBarrier的区别</h3>
+<ol>
+<li>
+<p>CountDownLatch只是一次计数, CyclicBarrier对象可多次触发执行;</p>
+</li>
+<li>
+<p>CountDownLatch的多个参与者只是参与计数,不会阻塞本身,后面的代码继续执行,只有等待计数归零的代码在阻塞;</p>
+<p>而CyclicBarrier的多个参与者在执行到await()方法的时候都会被栅栏拦住,直到满足数量的参与者就绪才会开门放行</p>
+<p>所以CountDownLatch相当于一个人在等其他人就绪后做什么,而CyclicBarrier是所有人等其他人就绪后一起开始做什么</p>
+</li>
+<li>
+<p>同时,CountDownLatch需要已知总数,当总数不固定的时候没法使用</p>
+</li>
+</ol>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://www.sunjianbo.com/tag/0-v5Z7UgP/" class="tag">
+                    高性能编程专题
+                  </a>
+                
+                  <a href="https://www.sunjianbo.com/tag/0tmsVkBYC52/" class="tag">
+                    java
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://www.sunjianbo.com/jianqilicai001/">
+                  <h3 class="post-title">
+                    简七理财001-小白理财第一课
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: '5ce975b5e810adcff909',
+        clientSecret: '47a44c7079d7ef40001b3ac20a45fa13b7dbd477',
+        repo: 'sunjianbo.github.io',
+        owner: 'sunjianbo',
+        admin: ['sunjianbo'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>
