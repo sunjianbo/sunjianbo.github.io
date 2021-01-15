@@ -2,14 +2,126 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://www.sunjianbo.com</id>
     <title>孙建博的小站</title>
-    <updated>2020-09-04T08:13:58.397Z</updated>
+    <updated>2021-01-15T08:52:24.532Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://www.sunjianbo.com"/>
     <link rel="self" href="https://www.sunjianbo.com/atom.xml"/>
     <subtitle>互联网、编程、生活感悟，在这里希望你我都能有所收获，得到提升</subtitle>
     <logo>https://www.sunjianbo.com/images/avatar.png</logo>
     <icon>https://www.sunjianbo.com/favicon.ico</icon>
-    <rights>All rights reserved 2020, 孙建博的小站</rights>
+    <rights>All rights reserved 2021, 孙建博的小站</rights>
+    <entry>
+        <title type="html"><![CDATA[一些东西从腾讯云迁到群晖docker]]></title>
+        <id>https://www.sunjianbo.com/qcloud-move-to-nas/</id>
+        <link href="https://www.sunjianbo.com/qcloud-move-to-nas/">
+        </link>
+        <updated>2021-01-15T08:49:06.000Z</updated>
+        <content type="html"><![CDATA[<p>腾讯云服务器即将到期,所以迁移一些东西,主要是leanote以及宝塔面板上面一些也不知道还用不用的网站服务</p>
+<h2 id="1群晖docker上下载好镜像">1.群晖docker上下载好镜像</h2>
+<h3 id="11-群晖docker镜像下载加速">1.1 群晖docker镜像下载加速</h3>
+<p>打开docker-注册表-设置-选择dockerhub编辑-启用注册表镜像,填入url:</p>
+<blockquote>
+<p>https://mirror.ccs.tencentyun.com</p>
+</blockquote>
+<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/20210115150646.png" alt="mirror" loading="lazy"></figure>
+<h3 id="12-提前下载好相关镜像">1.2 提前下载好相关镜像</h3>
+<p>因为文件挺大的,下载要很长时间,所以我开始下载之后第二天才进行后续的步骤</p>
+<p>下载镜像如下:</p>
+<blockquote>
+<p>axboy/leanote:latest				//2.6.1带数据库版leanote</p>
+<p>pch18/baota:lastest				 //宝塔面板lastest有5个多G</p>
+<p>asdaragon/qiandao:lastest	//签到程序</p>
+</blockquote>
+<h2 id="2docker配置">2.docker配置</h2>
+<h3 id="21-leanote">2.1 leanote</h3>
+<h4 id="211-leanote-docker配置">2.1.1 leanote docker配置</h4>
+<p>选中<code>axboy/leanote:latest</code>镜像,点击启动</p>
+<h5 id="卷设置">卷设置</h5>
+<p>名称随便配,点击高级设置,切换到卷标签,进行目录的一些映射,官方推荐映射以下内容</p>
+<pre><code>/data/db                # 内置mongodb的数据目录，nodb版无此目录
+/data/leanote/conf      # 笔记的配置文件目录
+/data/leanote/files     # 笔记内上传的图片、文件存放目录
+/data/leanote/public/upload     # 头像上传路径
+</code></pre>
+<p>我是这样映射的</p>
+<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/image-20210111155030511.png" alt="image-20210111155030511" loading="lazy"></figure>
+<h5 id="端口配置">端口配置</h5>
+<p>考虑不会有其他应用使用这个mongodb,所以端口删除<code>27017</code>,只保留<code>9000</code>的映射</p>
+<figure data-type="image" tabindex="3"><img src="https://static.sunjianbo.com/image-20210112091044152.png" alt="image-20210112091044152" loading="lazy"></figure>
+<p>其他按需修改,也可以默认</p>
+<p>最后应用</p>
+<h4 id="212-leanote-数据迁移">2.1.2 leanote 数据迁移</h4>
+<h5 id="数据库迁移">数据库迁移</h5>
+<p>浏览器用管理账号登录源站，在后台备份数据库，下载到本地</p>
+<figure data-type="image" tabindex="4"><img src="https://static.sunjianbo.com/image-20210115094529792.png" alt="image-20210115094529792" loading="lazy"></figure>
+<p>下载好文件上传到群晖中</p>
+<p>ssh登陆群晖,输入以下命令(/volume1/docker/newleanote/files/是我上传backup_leanote_1610674560.tar.gz到的群晖的目录)</p>
+<pre><code># 将备份压缩包cp到容器中的/tmp 
+sudo docker cp /volume1/docker/newleanote/files/backup_leanote_1610674560.tar.gz axboy-leanote-new:/tmp/
+</code></pre>
+<p>然后进入docker</p>
+<pre><code>sudo docker exec -it axboy-leanote-new bash
+# 解压缩
+mkdir /tmp/leanotedb
+tar -zxvf /tmp/backup_leanote_1610674560.tar.gz -C /tmp/leanotedb/
+# 恢复备份的数据库
+mongorestore -h localhost -d leanote --dir /tmp/leanotedb/  --drop
+</code></pre>
+<figure data-type="image" tabindex="5"><img src="https://static.sunjianbo.com/image-20210115110422651.png" alt="image-20210115110422651" loading="lazy"></figure>
+<p>0 failed 数据库就导入成功了</p>
+<h5 id="数据迁移">数据迁移</h5>
+<p>备份源站leanote目录下的files目录,放到docker映射的群晖目录(/volume1/docker/newleanote/files/)即可</p>
+<h5 id="其他">其他</h5>
+<ol>
+<li>登陆新站admin账户,在后台设置中重新设置对应的mongo命令地址</li>
+</ol>
+<pre><code>/usr/bin/mongodump
+/usr/bin/mongorestore
+</code></pre>
+<p>​	在新站备份一下数据库试试</p>
+<ol start="2">
+<li>登陆新站admin账户,在后台设置中修改相应的<code>Site's URL</code>以正确的展示图片</li>
+</ol>
+<blockquote>
+<p>leanote 初始密码:admin/abc123</p>
+<p>这个其实用不到,我只是记录一下</p>
+</blockquote>
+<h3 id="22-宝塔面板">2.2 宝塔面板</h3>
+<h4 id="221宝塔面板-docker配置">2.2.1宝塔面板 docker配置</h4>
+<h5 id="卷配置">卷配置</h5>
+<pre><code>/www/server/	# 面板文件
+/www/backup/	# 备份目录
+/www/wwwroot/	# 宝塔面板的网站根目录文件夹路径
+/www/wwwlogs	# 站点日志
+</code></pre>
+<p>但是我们选的这个镜像只支持backup和wwwroot目录的映射</p>
+<figure data-type="image" tabindex="6"><img src="https://static.sunjianbo.com/image-20210115145039965.png" alt="image-20210115145039965" loading="lazy"></figure>
+<h5 id="端口配置-2">端口配置</h5>
+<p>端口只映射管理端口<code>8888</code>好了</p>
+<figure data-type="image" tabindex="7"><img src="https://static.sunjianbo.com/image-20210112090846685.png" alt="image-20210112090846685" loading="lazy"></figure>
+<p>其他按需修改,也可以默认</p>
+<p>应用并启动</p>
+<h5 id="无法登陆问题">无法登陆问题</h5>
+<p>使用docker创建者提供的初始的用户名密码<code>username/password</code>登陆错误,通过以下方法解决</p>
+<pre><code>sudo docker exec -it 运行的容器ID bash
+bt
+5
+输入新的密码
+</code></pre>
+<p>然后使用<code>username/新密码</code>登陆</p>
+<h4 id="222-宝塔面板数据迁移">2.2.2 宝塔面板数据迁移</h4>
+<p>以前使用过宝塔的一键迁移插件,体验非常好,本来以为这次应该很容易,结果遇到了两个问题</p>
+<ol>
+<li>5版本到6版本宝塔进行了底层架构层面的修改,导致无法直接迁移,甚至能下载的迁移插件都是两个东西了</li>
+<li>那么考虑同样使用5版本的docker镜像部署之后,迁移时报错</li>
+</ol>
+<figure data-type="image" tabindex="8"><img src="https://static.sunjianbo.com/image-20210113092119777.png" alt="image-20210113092119777" loading="lazy"></figure>
+<p>​	安全组里都是开启的,我考虑映射一下22端口到本机,但是总是提示占用,修改了群晖内置的ssh端口也依旧是占用</p>
+<p>那么就决定先把迁出端的宝塔升级到7再试一下吧</p>
+<p>然而杯具的是我的系统是centos6.5,不能升级到7版本o(≧口≦)o</p>
+<p>最后放弃一键迁移的打算,采用了手动在新宝塔上添加网站,然后覆盖相关文件的方案,具体很简单不细说了</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[AQS抽象队列同步器详解]]></title>
         <id>https://www.sunjianbo.com/aqs/</id>
@@ -1993,248 +2105,6 @@ public class Demo5 {
 <h2 id="栈封闭">栈封闭</h2>
 <p><strong>局部变量</strong>的固有属性之一就是封闭在线程中.</p>
 <p>它们位于执行线程的栈中,其他线程无法访问这个栈.</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[线程通信]]></title>
-        <id>https://www.sunjianbo.com/thread-communication/</id>
-        <link href="https://www.sunjianbo.com/thread-communication/">
-        </link>
-        <updated>2020-08-07T04:13:43.000Z</updated>
-        <content type="html"><![CDATA[<p>要想实现多个线程之间的协同，如：线程执行先后顺序、获取某个线程执行的结果等等</p>
-<p>涉及到线程之间相互通信，分为下面四类</p>
-<h2 id="文件共享">文件共享</h2>
-<figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/image-20200612091611411.png" alt="" loading="lazy"></figure>
-<h2 id="网络共享">网络共享</h2>
-<p>略</p>
-<h2 id="共享变量">共享变量</h2>
-<figure data-type="image" tabindex="2"><img src="https://static.sunjianbo.com/image-20200612091647383.png" alt="" loading="lazy"></figure>
-<pre><code class="language-java">  // 共享变量
-  public static String content = &quot;空&quot;;
-  
-  public static void main(String[] args) {
-    // 线程1 - 写入数据
-    new Thread(() -&gt; {
-      try {
-        while (true) {
-          content = &quot;当前时间&quot; + String.valueOf(System.currentTimeMillis());
-          Thread.sleep(1000L);
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }).start();
-
-    // 线程2 - 读取数据
-    new Thread(() -&gt; {
-      try {
-        while (true) {
-          Thread.sleep(1000L);
-          System.out.println(content);
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }).start();
-  }
-</code></pre>
-<h2 id="jdk提供的线程协调api">jdk提供的线程协调API</h2>
-<p>JDK中对于需要多线程协作完成某一任务的场景，提供了对应API支持。</p>
-<p>多线程协作的典型场景是：生产者-消费者模型(线程阻塞、线程唤醒)。</p>
-<p>示例：线程1去买包子，没有包子，则不再执行。线程2生产出包子，通知线程-1继续执行。</p>
-<figure data-type="image" tabindex="3"><img src="https://static.sunjianbo.com/image-20200612091856807.png" alt="" loading="lazy"></figure>
-<h3 id="被弃用的suspend和resume">被弃用的suspend和resume</h3>
-<p>作用:调用suspend挂起目标线程,通过resume可以恢复线程执行</p>
-<h4 id="正常的suspendresume">正常的suspend/resume</h4>
-<pre><code class="language-java">/** 包子店 */
-public static Object baozidian = null;
-
-/** 正常的suspend/resume */
-public void suspendResumeTest() throws Exception {
-	// 启动线程
-	Thread consumerThread = new Thread(() -&gt; {
-		while (baozidian == null) { // 如果没包子，则进入等待
-			System.out.println(&quot;1、进入等待&quot;);
-			Thread.currentThread().suspend();
-		}
-		System.out.println(&quot;2、买到包子，回家&quot;);
-	});
-	consumerThread.start();
-	// 3秒之后，生产一个包子
-	Thread.sleep(3000L);
-	baozidian = new Object();
-	consumerThread.resume();
-	System.out.println(&quot;3、通知消费者&quot;);
-}
-
-</code></pre>
-<h4 id="同步代码中使用导致死锁">同步代码中使用导致死锁</h4>
-<pre><code class="language-java">/** 死锁的suspend/resume。 suspend并不会像wait一样释放锁，故此容易写出死锁代码 */
-public void suspendResumeDeadLockTest() throws Exception {
-	// 启动线程
-	Thread consumerThread = new Thread(() -&gt; {
-		if (baozidian == null) { // 如果没包子，则进入等待
-			System.out.println(&quot;1、进入等待&quot;);
-			// 当前线程拿到锁，然后挂起
-			synchronized (this) {
-				Thread.currentThread().suspend();
-			}
-		}
-		System.out.println(&quot;2、买到包子，回家&quot;);
-	});
-	consumerThread.start();
-	// 3秒之后，生产一个包子
-	Thread.sleep(3000L);
-	baozidian = new Object();
-	// 争取到锁以后，再恢复consumerThread
-	synchronized (this) {
-		consumerThread.resume();
-	}
-	System.out.println(&quot;3、通知消费者&quot;);
-}
-
-</code></pre>
-<h4 id="resume比suspend先执行导致死锁">resume比suspend先执行导致死锁</h4>
-<pre><code class="language-java">/** 导致程序永久挂起的suspend/resume */
-public void suspendResumeDeadLockTest2() throws Exception {
-	// 启动线程
-	Thread consumerThread = new Thread(() -&gt; {
-		if (baozidian == null) {
-			System.out.println(&quot;1、没包子，进入等待&quot;);
-			try { // 为这个线程加上一点延时
-				Thread.sleep(5000L);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			// 这里的挂起执行在resume后面
-			Thread.currentThread().suspend();
-		}
-		System.out.println(&quot;2、买到包子，回家&quot;);
-	});
-	consumerThread.start();
-	// 3秒之后，生产一个包子
-	Thread.sleep(3000L);
-	baozidian = new Object();
-	consumerThread.resume();
-	System.out.println(&quot;3、通知消费者&quot;);
-	consumerThread.join();
-}
-</code></pre>
-<h3 id="waitnotify机制">wait/notify机制</h3>
-<p>基于监视器实现,这些方法只能由<strong>同一对象锁的持有者线程</strong>调用，也就是写在同步块里面，否则会抛出IllegalMonitorStateException异常</p>
-<p><strong>wait</strong>方法导致当前线程等待，其实就是将线程加入到对象的等待集合中，并且放弃当前持有的对象锁。</p>
-<p><strong>notify/notifyall</strong>方法唤醒一个或所有正在等待这个对象锁的线程。</p>
-<p><strong>注意：<strong>虽然会wait自动解锁，但是</strong>对顺序有要求</strong>，如果在 notify被调用之后，才开始wait方法的调用，线程会永远处于 WAITING状态。</p>
-<h4 id="正常的waitnotify">正常的wait/notify</h4>
-<pre><code class="language-java">/** 正常的wait/notify */
-public void waitNotifyTest() throws Exception {
-	// 启动线程
-	new Thread(() -&gt; {
-			synchronized (this) {
-				while (baozidian == null) { // 如果没包子，则进入等待
-				try {
-					System.out.println(&quot;1、进入等待&quot;);
-					this.wait();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		System.out.println(&quot;2、买到包子，回家&quot;);
-	}).start();
-	// 3秒之后，生产一个包子
-	Thread.sleep(3000L);
-	baozidian = new Object();
-	synchronized (this) {
-		this.notifyAll();
-		System.out.println(&quot;3、通知消费者&quot;);
-	}
-}
-</code></pre>
-<h4 id="notify比wait先执行导致死锁">notify比wait先执行导致死锁</h4>
-<pre><code class="language-java">/** 会导致程序永久等待的wait/notify */
-public void waitNotifyDeadLockTest() throws Exception {
-	// 启动线程
-	new Thread(() -&gt; {
-		if (baozidian == null) { // 如果没包子，则进入等待
-			try {
-				Thread.sleep(5000L);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
-			synchronized (this) {
-				try {
-					System.out.println(&quot;1、进入等待&quot;);
-					this.wait();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		System.out.println(&quot;2、买到包子，回家&quot;);
-	}).start();
-	// 3秒之后，生产一个包子
-	Thread.sleep(3000L);
-	baozidian = new Object();
-	synchronized (this) {
-		this.notifyAll();
-		System.out.println(&quot;3、通知消费者&quot;);
-	}
-}
-</code></pre>
-<h3 id="parkunpark机制">park/unpark机制</h3>
-<p>线程调用park则等待&quot;许可(permit)&quot;.unpark方法为指定线程提供&quot;许可&quot;</p>
-<p>不要求park和unpark方法的调用顺序</p>
-<p>多次调用unpark后,再调用park,线程会直接运行,但<strong>许可不会叠加</strong>,</p>
-<p>也就是说,连续多次调用park方法,第一次会拿到&quot;许可&quot;直接运行,后续调用依旧会进入等待.</p>
-<h4 id="正常的parkunpark">正常的park/unpark</h4>
-<pre><code class="language-java">/** 正常的park/unpark */
-public void parkUnparkTest() throws Exception {
-	// 启动线程
-	Thread consumerThread = new Thread(() -&gt; {
-		while (baozidian == null) { // 如果没包子，则进入等待
-			System.out.println(&quot;1、进入等待&quot;);
-			LockSupport.park();
-		}
-		System.out.println(&quot;2、买到包子，回家&quot;);
-	});
-	consumerThread.start();
-	// 3秒之后，生产一个包子
-	Thread.sleep(3000L);
-	baozidian = new Object();
-	LockSupport.unpark(consumerThread);
-	System.out.println(&quot;3、通知消费者&quot;);
-}
-</code></pre>
-<h4 id="同步代码中使用导致死锁-2">同步代码中使用导致死锁</h4>
-<pre><code class="language-java">/** 死锁的park/unpark */
-public void parkUnparkDeadLockTest() throws Exception {
-	// 启动线程
-	Thread consumerThread = new Thread(() -&gt; {
-		if (baozidian == null) { // 如果没包子，则进入等待
-			System.out.println(&quot;1、进入等待&quot;);
-			// 当前线程拿到锁，然后挂起
-			synchronized (this) {
-				LockSupport.park();
-			}
-		}
-		System.out.println(&quot;2、买到包子，回家&quot;);
-	});
-	consumerThread.start();
-	// 3秒之后，生产一个包子
-	Thread.sleep(3000L);
-	baozidian = new Object();
-	// 争取到锁以后，再恢复consumerThread
-	synchronized (this) {
-		LockSupport.unpark(consumerThread);
-	}
-	System.out.println(&quot;3、通知消费者&quot;);
-}
-</code></pre>
-<h3 id="伪唤醒">伪唤醒</h3>
-<p><code>警告！之前代码中用if语句来判断，是否进入等待状态，是错误的！</code>(上文代码正常的都是使用的while)<br>
-官方建议<code>应该在循环中检查等待条件</code>，原因是处于等待状态的线程可能会收到<code>错误警报和伪唤醒</code>，如果不在循环中检查等待条件，程序就会在没有满足结束条件的情况下退出。</p>
-<p>伪唤醒是指线程并非因为notify,notifyall,unpark等api调用而唤醒,是更底层原因导致的</p>
 ]]></content>
     </entry>
 </feed>
