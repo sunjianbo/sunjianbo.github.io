@@ -11,7 +11,7 @@
 <!--
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 -->
-<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1610700735853">
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1610701099478">
 <link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
 
 
@@ -49,7 +49,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://www.sunjianbo.com">
-        <img src="https://www.sunjianbo.com/images/avatar.png?v=1610700735853" class="site-logo">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1610701099478" class="site-logo">
         <h1 class="site-title">孙建博的小站</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -160,17 +160,15 @@
 <h2 id="1群晖docker上下载好镜像">1.群晖docker上下载好镜像</h2>
 <h3 id="11-群晖docker镜像下载加速">1.1 群晖docker镜像下载加速</h3>
 <p>打开docker-注册表-设置-选择dockerhub编辑-启用注册表镜像,填入url:</p>
-<blockquote>
-<p>https://mirror.ccs.tencentyun.com</p>
-</blockquote>
+<pre><code>https://mirror.ccs.tencentyun.com
+</code></pre>
 <figure data-type="image" tabindex="1"><img src="https://static.sunjianbo.com/20210115150646.png" alt="mirror" loading="lazy"></figure>
 <h3 id="12-提前下载好相关镜像">1.2 提前下载好相关镜像</h3>
 <p>因为文件挺大的,下载要很长时间,所以我开始下载之后第二天才进行后续的步骤</p>
 <p>下载镜像如下:</p>
 <blockquote>
 <p>axboy/leanote:latest				//2.6.1带数据库版leanote</p>
-<p>pch18/baota:lastest				 //宝塔面板lastest有5个多G</p>
-<p>asdaragon/qiandao:lastest	//签到程序</p>
+<p>pch18/baota:clear				 //宝塔面板lastest有5个多G,clear不默认安装nginx,mysql,php等程序</p>
 </blockquote>
 <h2 id="2docker配置">2.docker配置</h2>
 <h3 id="21-leanote">2.1 leanote</h3>
