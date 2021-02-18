@@ -11,7 +11,7 @@
 <!--
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 -->
-<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1611128457358">
+<link rel="shortcut icon" href="https://www.sunjianbo.com/favicon.ico?v=1613634759903">
 <link rel="stylesheet" href="https://www.sunjianbo.com/styles/main.css">
 
 
@@ -40,7 +40,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://www.sunjianbo.com">
-        <img src="https://www.sunjianbo.com/images/avatar.png?v=1611128457358" class="site-logo">
+        <img src="https://www.sunjianbo.com/images/avatar.png?v=1613634759903" class="site-logo">
         <h1 class="site-title">孙建博的小站</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -142,6 +142,45 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://www.sunjianbo.com/java-readcfgonstartfailed/">
+                  <h2 class="post-title">程序在开机启动时无法读取配置文件</h2>
+                </a>
+                <div class="post-date">
+                  2014-12-17
+                </div>
+                <div class="post-abstract">
+					
+					
+						<!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 -->
+						
+						
+							
+							
+						
+							
+							
+						
+							
+							
+						
+						
+							<p><p>最近写的程序提供了开机启动功能，但是测试时发现开机启动后程序无法读取配置文件。</p>
+<p>配置文件时采用相对路径的方式存储在程序目录下的</p>
+<p>后来经过调试，发现开机启动后当前目录是当前登录用户的目录下，xp基本为“C:\Documents and Settings\用户名\”，win7以上基本为“C:\Users\用户名\”。程序只会在这个目录下查找配置文件，自然就找不到了。</p>
+
+								
+							<p>
+							<!-- 加个more链接 -->
+							<a href="https://www.sunjianbo.com/java-readcfgonstartfailed/">more →</a>
+						
+					
+                </div>
+              </div>
+              
+            </article>
           
             <article class="post-item">
               <div class="left">
@@ -490,48 +529,6 @@
 							<p>
 							<!-- 加个more链接 -->
 							<a href="https://www.sunjianbo.com/java-jframe-pack/">more →</a>
-						
-					
-                </div>
-              </div>
-              
-            </article>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://www.sunjianbo.com/java-properties-list/">
-                  <h2 class="post-title">Properties.list(PrintStream out)方法</h2>
-                </a>
-                <div class="post-date">
-                  2014-11-25
-                </div>
-                <div class="post-abstract">
-					
-					
-						<!-- 没有手动摘要切开启了自动摘要,则根据配置筛除摘要内容 -->
-						
-						
-							
-							
-						
-							
-							
-						
-							
-							
-						
-						
-							<p><p>前两天写的程序，今天发现有个bug，超过一定长度的字符串在保存到配置文件中时变成了balabala...这样的形式。</p>
-<p>调试代码发现原来是<code>Properties.list(PrintStream out)</code>方法会将value长度大于40的截取前37个字符加上...作为保存的实际值。</p>
-<pre><code class="language-java">    /**
-
-								
-									<!-- 自动摘要出来的内容有<code则补上结尾,防止格式错误 -->
-									</code></pre>
-								
-							<p>
-							<!-- 加个more链接 -->
-							<a href="https://www.sunjianbo.com/java-properties-list/">more →</a>
 						
 					
                 </div>
