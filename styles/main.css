@@ -349,7 +349,7 @@ a {
 }
 .sidebar .top-container .site-nav {
   display: block;
-  padding: 8px 16px;
+  padding: 0px 0px;
   margin: 16px 0;
   color: #dee2e6;
   transition: all 0.3s;
